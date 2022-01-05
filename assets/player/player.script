@@ -11,13 +11,14 @@ function apply_gravity_force(self, message_id, message, sender)
 	end
 end
 
+
 function init(self)
 	DefRX.create_stream("gravity")
 	DefRX.observe(self, "gravity", apply_gravity_force)
-	self.state=STATE.float
 	self.vel=vmath.vector3()
 	self.parent_planet=nil
 	self.rotation_fix=true
+	self.state=STATE.float
 	msg.post(".", "acquire_input_focus")
 end
 function update(self,dt)
@@ -62,12 +63,10 @@ function on_input(self, action_id, action)
 		print(jump_direction)
 		self.vel=self.vel+jump_direction*self.jumpforce
 		self.rotation_fix=true
-		print("jump")
-		
-			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(-self.vel))
-			go.animate(".", "rotation",go.PLAYBACK_ONCE_FORWARD, rot, go.EASING_OUTCUBIC, 0.1,0.1,function()
-				self.state=STATE.float
-				self.rotation_fix=false
-			end)
+		local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(-self.vel))
+		go.animate(".", "rotation",go.PLAYBACK_ONCE_FORWARD, rot, go.EASING_OUTCUBIC, 0.3,0.1,function()
+			self.state=STATE.float
+			self.rotation_fix=false
+		end)
 	end
 end
