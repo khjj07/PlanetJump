@@ -1,0 +1,83 @@
+images {
+  image: "/Planets with Space Background in Flat Style/Planets 2.0 Preview/Cream-Violet-Planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets 2.0 Preview/Frost-Planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets 2.0 Preview/Purple-Planet-wih-Moon.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets 2.0 Preview/Red-Lines-PLanet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background With Shadows/Red Lines PLanet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background With Shadows/Storm-Planet 1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/blue-planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/cyan-planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Dark-PLanet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Ice-Planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Lava-PLanet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Orange-Planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Purple-Planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Storm-Planet.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background With Shadows/earth.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/earth-like.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Galaxy.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Space.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/Sun.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Planets with Space Background in Flat Style/Planets and Background/white-dwarf-star.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0

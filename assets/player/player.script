@@ -1,0 +1,73 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+local STATE={
+	float=hash("float"),
+	stand=hash("stand")
+}
+go.property("jumpforce", 1500)
+
+function apply_gravity_force(self, message_id, message, sender)
+	if self.state == STATE.float then
+		self.vel=self.vel+message.force+message.rotate_vel
+	end
+end
+
+function init(self)
+	DefRX.create_stream("gravity")
+	DefRX.observe(self, "gravity", apply_gravity_force)
+	self.state=STATE.float
+	self.vel=vmath.vector3()
+	self.parent_planet=nil
+	self.rotation_fix=true
+	msg.post(".", "acquire_input_focus")
+end
+function update(self,dt)
+
+	if self.state == STATE.float then
+	
+		if vmath.length(self.vel)>0 and not self.rotation_fix then
+			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(-self.vel))
+			go.set_rotation(rot)
+		end
+		DefRX.notify("float_timer", {position=go.get_position()})
+	end
+	local pos = go.get_position()+self.vel*dt
+	go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+	if message_id==hash("contact_point_response") then
+		if message.other_group==hash("ground") and self.state==STATE.float then
+			self.float_handler=nil
+			self.state=STATE.stand
+			self.gravity=vmath.vector3()
+			self.vel=vmath.vector3()
+			self.parent_planet=message.other_id
+			local planet_pos = go.get_position(self.parent_planet)
+			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(go.get_position()-planet_pos))
+			go.set_rotation(rot)
+			--go.set_position(go.get_position()+message.distance*message.normal)
+			go.set_parent(".",self.parent_planet,true)
+			DefRX.notify("update_planet", {position=planet_pos})
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id==hash("touch") and action.pressed and self.state==STATE.stand then
+		local planet_pos = go.get_position(self.parent_planet)
+		self.parent_planet=nil
+		go.set_parent(".",self.parent_planet,true)
+		local jump_direction = vmath.normalize(go.get_world_position()-planet_pos)
+		print(jump_direction)
+		self.vel=self.vel+jump_direction*self.jumpforce
+		self.rotation_fix=true
+		print("jump")
+		
+			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(-self.vel))
+			go.animate(".", "rotation",go.PLAYBACK_ONCE_FORWARD, rot, go.EASING_OUTCUBIC, 0.1,0.1,function()
+				self.state=STATE.float
+				self.rotation_fix=false
+			end)
+	end
+end

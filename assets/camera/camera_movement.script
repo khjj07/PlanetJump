@@ -1,0 +1,18 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+function init(self)
+	DefRX.create_stream("update_planet")
+	DefRX.create_stream("float_timer")
+	DefRX.observe(self, "update_planet", function(self, message_id, message,sender)
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
+	end)
+	DefRX.observe(self, "float_timer", function(self, message_id, message,sender)
+		go.cancel_animations(".", "position")
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
+	end)
+end
+
+
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+end
