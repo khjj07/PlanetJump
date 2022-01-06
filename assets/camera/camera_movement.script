@@ -1,14 +1,20 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
+local rendercam = require "rendercam.rendercam"
 function init(self)
 	DefRX.create_stream("update_planet")
-	DefRX.create_stream("float_timer")
+	DefRX.create_stream("floating")
+	DefRX.create_stream("camera_view")
 	DefRX.observe(self, "update_planet", function(self, message_id, message,sender)
-		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
-	end)
-	DefRX.observe(self, "float_timer", function(self, message_id, message,sender)
 		go.cancel_animations(".", "position")
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
 	end)
+	DefRX.observe(self, "floating", function(self, message_id, message,sender)
+		go.cancel_animations(".", "position")
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
+	end)
+end
+function update(self,dt)
+	--rendercam.world_to_screen(pos, adjust, raw)
 end
 
 

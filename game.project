@@ -17,4 +17,8 @@ title = PlanetJump
 dependencies#0 = https://github.com/khjj07/DefUtil/archive/refs/tags/1.21.zip
 dependencies#1 = https://github.com/rgrams/rendercam/archive/1.0.3.zip
 dependencies#2 = https://github.com/indiesoftby/defold-hyper-trails/archive/master.zip
+dependencies#3 = https://github.com/dev-masih/defgraph/archive/master.zip
+
+[physics]
+gravity_y = 0.0
 

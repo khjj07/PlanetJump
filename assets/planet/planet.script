@@ -2,6 +2,7 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 go.property("gravity_force", 1000)
 go.property("rotate_speed", 30)
 go.property("rotate_direction", 1)
+local G=30000
 function init(self)
 	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
 end
@@ -13,9 +14,10 @@ function on_message(self, message_id, message, sender)
 		if message.own_group==hash("gravity_area") then
 			local distance = vmath.length(go.get_world_position()-go.get_world_position(message.other_id))
 			local direction =vmath.normalize(go.get_world_position()-go.get_world_position(message.other_id))
-			local force = direction*self.gravity_force/((distance^2)/20000)
 			local rot = vmath.quat_rotation_z(math.pi/180*90*self.rotate_direction)
-			DefRX.notify("gravity", {force=force,rotate_vel=vmath.rotate(rot, direction)*self.rotate_speed/30*distance/400})
+			local force = direction*self.gravity_force/((distance^2)/G)+vmath.rotate(rot, direction)*self.rotate_speed/30*distance/400
+			DefRX.notify("gravity", {force=force,rotate_vel=vmath.rotate(rot, -direction)*self.rotate_speed})
+			print(vmath.dot(vmath.rotate(rot, direction), direction))
 		elseif message.own_group==hash("ground") then
 
 		end

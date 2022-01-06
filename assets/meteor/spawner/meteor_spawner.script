@@ -1,5 +1,28 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+go.property("target", hash(""))
+go.property("min_distance", 50)
+go.property("max_distance", 100)
+go.property("min_spawn_delay", 1)
+go.property("max_spawn_delay", 3)
+go.property("min_meteor_spead", 50)
+go.property("max_meteor_speed", 100)
+
+
+function spawn(self, message_id, message, sender)
+	timer.delay(math.random(self.min_spawn_delay,self.max_spawn_delay), false, function()
+		spawn(self, message_id, message, sender)
+	end)
+end
+
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	DefRX.create_stream("target_update")
+	DefRX.observe(self, "target_update", spawn)
+	self.player_pos=vmath.vector3()
+	math.randomseed(os.time())
+end
+
+
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
 end
