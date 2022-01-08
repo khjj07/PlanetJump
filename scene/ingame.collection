@@ -1,78 +1,4 @@
-name: "default"
-instances {
-  id: "planet"
-  prototype: "/assets/planet/planet.go"
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  component_properties {
-    id: "planet"
-    properties {
-      id: "rotate_speed"
-      value: "5.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-    properties {
-      id: "rotate_direction"
-      value: "-1.0"
-      type: PROPERTY_TYPE_NUMBER
-    }
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "player"
-  prototype: "/assets/player/player.go"
-  children: "floor"
-  position {
-    x: 0.0
-    y: 731.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 10.0
-    y: 10.0
-    z: 1.0
-  }
-}
-instances {
-  id: "planet1"
-  prototype: "/assets/planet/planet.go"
-  position {
-    x: -3779.0
-    y: 3145.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
+name: "scene"
 instances {
   id: "camera"
   prototype: "/assets/camera/camera.go"
@@ -87,66 +13,36 @@ instances {
     z: 0.0
     w: 1.0
   }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "planet2"
-  prototype: "/assets/planet/planet.go"
-  position {
-    x: 624.0
-    y: 5361.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "player_trail"
-  prototype: "/assets/trail/player_trail.go"
-  position {
-    x: 0.0
-    y: 688.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
   component_properties {
-    id: "trail_follow_parent"
+    id: "camera"
     properties {
-      id: "target"
-      value: "/player"
-      type: PROPERTY_TYPE_HASH
+      id: "orthoScale"
+      value: "12.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "fixedAspectRatio"
+      value: "true"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "aspectRatio"
+      value: "9.0, 16.0, 0.0"
+      type: PROPERTY_TYPE_VECTOR3
     }
   }
   scale3 {
-    x: 10.0
-    y: 10.0
+    x: 1.0
+    y: 1.0
     z: 1.0
   }
 }
 instances {
-  id: "planet3"
-  prototype: "/assets/planet/planet.go"
+  id: "planet_spawner"
+  prototype: "/assets/planet/spawner/planet_spawner.go"
   position {
-    x: -7640.0
-    y: 426.0
+    x: 0.0
+    y: 0.0
     z: 0.0
   }
   rotation {
@@ -161,12 +57,12 @@ instances {
     z: 1.0
   }
 }
-instances {
-  id: "planet4"
-  prototype: "/assets/planet/planet.go"
+collection_instances {
+  id: "initial_planet"
+  collection: "/assets/planet/planet.collection"
   position {
-    x: -9775.0
-    y: -4338.0
+    x: 0.0
+    y: 0.0
     z: 0.0
   }
   rotation {
@@ -176,17 +72,17 @@ instances {
     w: 1.0
   }
   scale3 {
-    x: 1.0
-    y: 1.0
+    x: 2.0
+    y: 2.0
     z: 1.0
   }
 }
-instances {
-  id: "planet5"
-  prototype: "/assets/planet/planet.go"
+collection_instances {
+  id: "player"
+  collection: "/assets/player/player.collection"
   position {
-    x: 2513.0
-    y: -4025.0
+    x: 0.0
+    y: 621.0
     z: 0.0
   }
   rotation {
@@ -196,109 +92,9 @@ instances {
     w: 1.0
   }
   scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "planet6"
-  prototype: "/assets/planet/planet.go"
-  position {
-    x: 9638.0
-    y: 2677.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "planet7"
-  prototype: "/assets/planet/planet.go"
-  position {
-    x: 4987.0
-    y: 4578.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "planet8"
-  prototype: "/assets/planet/planet.go"
-  position {
-    x: 4739.0
-    y: 81.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "meteor"
-  prototype: "/assets/meteor/meteor.go"
-  position {
-    x: -9566.0
-    y: 5906.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
+    x: 0.3
+    y: 0.3
     z: 1.0
   }
 }
 scale_along_z: 0
-embedded_instances {
-  id: "floor"
-  data: ""
-  position {
-    x: 0.0
-    y: -13.8
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}

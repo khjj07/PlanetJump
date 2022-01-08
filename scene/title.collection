@@ -1,4 +1,4 @@
-name: "default"
+name: "scene"
 instances {
   id: "title"
   prototype: "/assets/ui/title/title.go"

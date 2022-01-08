@@ -1,0 +1,146 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+go.property("target", hash(""))
+go.property("min_scale", 200)
+go.property("max_scale", 300)
+go.property("min_distance", 0)
+go.property("max_distance", 100)
+go.property("min_rotate_speed", 10)
+go.property("max_rotate_speed", 40)
+local DEFAULT_RANGE = 1500
+local SPAWN_MIN = 3
+local SPAWN_MAX = 5
+local MAX_RETRY = 500
+local INITIAL_PLANET = 
+{
+	instance=hash("/initial_planet/planet"),
+	position=vmath.vector3(0,0,0),
+	rotate_speed=30,
+	rotate_direction=1,
+	scale=1,
+	range=DEFAULT_RANGE,
+	used=true
+}
+function check_spawnable(self,new_planet)
+	new_planet.range = DEFAULT_RANGE
+	for _, planet in pairs(self.planet) do
+		local distance = vmath.length(new_planet.position-planet.position)
+		if planet.range+new_planet.range > distance then
+			return false
+		end
+	end
+	return true
+end
+
+function random_position_in_range(self,center)
+	local pos = vmath.vector3()
+	pos=pos+center.position
+	local theta = math.pi/180*math.random(1,360)
+	local radius = DEFAULT_RANGE*2+math.random(self.min_distance,self.max_distance)
+	pos.x = pos.x + math.sin(theta)*radius
+	pos.y = pos.y + math.cos(theta)*radius
+	return pos
+end
+
+
+function spawn(self,center)
+	local new_planet={}
+	new_planet.position = random_position_in_range(self,center)
+	new_planet.rotate_speed = math.random(self.min_rotate_speed,self.max_rotate_speed) 
+	new_planet.rotate_direction = math.random(0,1)
+	new_planet.scale = math.random(self.min_scale,self.max_scale)/100
+	local retry=0
+	while retry<MAX_RETRY and not check_spawnable(self,new_planet) do
+		new_planet.position = random_position_in_range(self,center) 
+		new_planet.scale = math.random(self.min_scale,self.max_scale)/100
+		retry=retry+1
+	end
+	if retry~=MAX_RETRY then
+		local prop = {
+			[hash("/planet")]={rotate_speed = new_planet.rotate_speed,rotate_direction = new_planet.rotate_direction}
+		}
+		print("scale : "..tostring(new_planet.scale))
+		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
+		new_planet.instance = instance[hash("/planet")]
+		table.insert(self.planet, new_planet)
+	end
+end
+
+
+function initialize(self, message_id, message, sender)
+	self.player_pos=vmath.vector3()
+	self.planet={}
+	self.target={INITIAL_PLANET}
+	table.insert(self.planet, INITIAL_PLANET)
+	for i = 1, math.random(SPAWN_MIN,SPAWN_MAX) do
+		spawn(self,INITIAL_PLANET)
+	end
+	for _, planet in pairs(self.planet) do
+		if not planet.used then
+			table.insert(self.target, planet)
+			for j = 1, math.random(SPAWN_MIN,SPAWN_MAX) do
+				timer.delay(0.001*j, false, function()
+					spawn(self,planet)
+				end)
+			end
+			planet.used=true
+		end
+	end
+end
+
+function insert_new_near_target(self,from)
+	for _, planet in pairs(self.planet) do
+		if not planet.used and vmath.length(planet.position-from)<DEFAULT_RANGE*2 then
+			table.insert(self.target, planet)
+		end
+	end
+end
+
+function spawn_with_new_target(self, message_id, message, sender)
+	insert_new_near_target(self,message.position)
+	for _, target in pairs(self.target) do
+		if not target.used then
+			for j = 1, math.random(SPAWN_MIN,SPAWN_MAX) do
+				spawn(self,target)
+			end
+			target.used=true
+		end
+	end
+end
+
+function remove_planet(self, message_id, message, sender)
+	for p, planet in pairs(self.planet) do
+		if message.id == planet.instance then
+			table.remove(self.planet,p)
+			print("remove")
+			break
+		end
+	end
+	for t, target in pairs(self.target) do
+		if message.id == target.instance then
+			table.remove(self.target,t)
+			break
+		end
+	end
+	msg.post(sender, "dead_response")
+end
+
+function update(self, dt)
+	print(#self.planet)
+end
+
+function init(self)
+	math.randomseed(os.time())
+	DefRX.create_stream("game_start")
+	DefRX.observe(self, "game_start", initialize)
+	DefRX.notify("game_start")
+	DefRX.create_stream("spawn_planet")
+	DefRX.observe(self, "spawn_planet", spawn_with_new_target)
+	DefRX.create_stream("remove_planet")
+	DefRX.observe(self, "remove_planet", remove_planet)
+end
+
+
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+end
