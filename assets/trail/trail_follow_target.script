@@ -4,6 +4,7 @@ function set_position(self, message_id, message, sender)
 	if message.id == self.target then
 		go.set_position(go.get_world_position(self.target))
 		msg.post("#trail_maker", "update")
+		print(go.get_world_position())
 	end
 end
 

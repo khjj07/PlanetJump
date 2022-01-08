@@ -6,6 +6,7 @@ go.property("min_distance", 0)
 go.property("max_distance", 100)
 go.property("min_rotate_speed", 10)
 go.property("max_rotate_speed", 40)
+
 local DEFAULT_RANGE = 1500
 local SPAWN_MIN = 3
 local SPAWN_MAX = 5
@@ -56,9 +57,9 @@ function spawn(self,center)
 	end
 	if retry~=MAX_RETRY then
 		local prop = {
-			[hash("/planet")]={rotate_speed = new_planet.rotate_speed,rotate_direction = new_planet.rotate_direction}
+			[hash("/planet")]={rotate_speed = new_planet.rotate_speed,rotate_direction = new_planet.rotate_direction,seed=math.random(0,500),play=true},
+			[hash("/range")]={seed=math.random(0,500)}
 		}
-		print("scale : "..tostring(new_planet.scale))
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
 		table.insert(self.planet, new_planet)
@@ -66,10 +67,7 @@ function spawn(self,center)
 end
 
 
-function initialize(self, message_id, message, sender)
-	self.player_pos=vmath.vector3()
-	self.planet={}
-	self.target={INITIAL_PLANET}
+local function initialize(self, message_id, message, sender)
 	table.insert(self.planet, INITIAL_PLANET)
 	for i = 1, math.random(SPAWN_MIN,SPAWN_MAX) do
 		spawn(self,INITIAL_PLANET)
@@ -89,7 +87,7 @@ end
 
 function insert_new_near_target(self,from)
 	for _, planet in pairs(self.planet) do
-		if not planet.used and vmath.length(planet.position-from)<DEFAULT_RANGE*2 then
+		if not planet.used and vmath.length(planet.position-from)<DEFAULT_RANGE*3 then
 			table.insert(self.target, planet)
 		end
 	end
@@ -126,17 +124,20 @@ end
 
 function update(self, dt)
 	print(#self.planet)
+
 end
 
 function init(self)
 	math.randomseed(os.time())
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", initialize)
-	DefRX.notify("game_start")
 	DefRX.create_stream("spawn_planet")
 	DefRX.observe(self, "spawn_planet", spawn_with_new_target)
 	DefRX.create_stream("remove_planet")
 	DefRX.observe(self, "remove_planet", remove_planet)
+	self.player_pos=vmath.vector3()
+	self.planet={}
+	self.target={INITIAL_PLANET}
 end
 
 

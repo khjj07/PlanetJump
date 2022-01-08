@@ -35,16 +35,39 @@ instances {
     w: 1.0
   }
   component_properties {
+    id: "trail_maker"
+    properties {
+      id: "use_world_position"
+      value: "true"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "trail_width"
+      value: "10.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "trail_tint_color"
+      value: "0.8, 1.0, 0.6, 1.0"
+      type: PROPERTY_TYPE_VECTOR4
+    }
+    properties {
+      id: "points_count"
+      value: "16.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+  component_properties {
     id: "trail_follow_parent"
     properties {
       id: "target"
-      value: "/player"
+      value: "/player/player"
       type: PROPERTY_TYPE_HASH
     }
   }
   scale3 {
-    x: 1.0
-    y: 1.0
+    x: 50.0
+    y: 50.0
     z: 1.0
   }
 }

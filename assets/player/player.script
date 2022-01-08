@@ -5,7 +5,7 @@ local STATE={
 	stand=hash("stand")
 }
 go.property("jumpforce", 3000)
-
+go.property("play", false)
 local function draw_line(from, to,color)
 	color=color or vmath.vector4(1,0,0,1)
 	msg.post("@render:", "draw_line", { start_point = from, end_point = to, color = color })
@@ -23,10 +23,15 @@ function apply_gravity_force(self, message_id, message, sender)
 		draw_line(go.get_world_position(), go.get_world_position()+jump_direction*self.jumpforce+self.rotate_vel)
 	end
 end
+local function initialize(self, message_id, message, sender)
+	self.play=true
+end
 
 function init(self)
 	DefRX.create_stream("gravity")
 	DefRX.observe(self, "gravity", apply_gravity_force)
+	DefRX.create_stream("game_start")
+	DefRX.observe(self, "game_start", initialize)
 	self.vel=vmath.vector3()
 	self.parent_planet=nil
 	self.state=STATE.float
@@ -70,7 +75,7 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if action_id==hash("touch") and action.pressed and self.state==STATE.stand then
+	if self.play and action_id==hash("touch") and action.pressed and self.state==STATE.stand then
 		local planet_pos = go.get_position(self.parent_planet)
 		self.parent_planet=nil
 		go.set_parent(".",self.parent_planet,true)
