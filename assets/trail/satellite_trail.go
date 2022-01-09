@@ -24,12 +24,12 @@ components {
   }
   properties {
     id: "trail_tint_color"
-    value: "0.8, 1.0, 0.6, 1.0"
+    value: "1.0, 1.0, 1.0, 1.0"
     type: PROPERTY_TYPE_VECTOR4
   }
   properties {
     id: "points_count"
-    value: "16.0"
+    value: "4.0"
     type: PROPERTY_TYPE_NUMBER
   }
   properties {
@@ -49,8 +49,8 @@ components {
   }
 }
 components {
-  id: "trail_player"
-  component: "/assets/trail/trail_player.script"
+  id: "trail_satellite"
+  component: "/assets/trail/trail_satellite.script"
   position {
     x: 0.0
     y: 0.0

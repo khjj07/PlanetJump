@@ -1,23 +1,76 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
-go.property("gravity_force", 7000)
-go.property("rotate_speed", 30)
+go.property("gravity_force", 4000)
+go.property("rotate_speed", 20)
 go.property("rotate_direction", 1)
+go.property("seed", 0)
+go.property("play", false)
+go.property("min_satellite_num", 0)
+go.property("max_satellite_num", 3)
+go.property("min_satellite_speed", 5)
+go.property("max_satellite_speed", 10)
+go.property("min_satellite_distance", 500)
+go.property("max_satellite_distance", 600)
+go.property("satellite_rotate_direction", 1)
 local G=30000
 local MAX_DISTANCE = 12000
+local RESET_DISTANCE = 8000
 function check_planet(self, message_id, message, sender)
 	if vmath.length(message.position-go.get_world_position())>MAX_DISTANCE then
 		DefRX.notify("remove_planet",{id=go.get_id()})
+	elseif vmath.length(message.position-go.get_world_position())>RESET_DISTANCE then
+		DefRX.notify("reset_planet",{id=go.get_id()})
+	end
+end
+local function spawn_setelliste(self)
+	local new_satellite = {}
+	local theta = math.random(1,360)
+	local distance = math.random(self.min_satellite_distance,self.max_satellite_distance)
+	local x,y=math.sin(math.pi/180*theta)*distance,math.cos(math.pi/180*theta)*distance
+	new_satellite.position = vmath.vector3(x,y,0)
+	new_satellite.speed = math.random(self.min_satellite_speed,self.max_satellite_speed)
+	new_satellite.direction = math.random(0,1)
+	local prop = {
+		[hash("/center")]={rotate_speed = new_satellite.speed,rotate_direction = new_satellite.direction,seed=math.random(0,500)},
+	}
+	local instance = collectionfactory.create("#satellite",go.get_world_position(),nil,prop)
+	go.set_scale(0.25,instance[hash("/satellite")])
+	go.set_position(new_satellite.position,instance[hash("/satellite")])
+	
+	table.insert(self.ids,instance[hash("/center")])
+	table.insert(self.ids,instance[hash("/satellite")])
+end
+
+local function initialize(self, message_id, message, sender)
+	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
+end
+local function satellite_rate()
+	local num = math.random(1,100)
+	num = math.random(1,100)
+	if num <= 50 then
+		return 0 
+	elseif num <= 80 then
+		return 1 
+	else
+		return 2 
 	end
 end
 
 function init(self)
 	DefRX.create_stream("jump")
 	DefRX.observe(self, "jump", check_planet)
+	DefRX.create_stream("game_start")
+	DefRX.observe(self, "game_start", initialize)
+	math.randomseed(self.seed)
 	self.ids={"planet","range"}
 	if self.rotate_direction == 0 then
 		self.rotate_direction=-1
 	end
-	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
+	if self.play then
+		go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
+		for i = 1, satellite_rate() do
+			spawn_setelliste(self)
+		end
+	end
 end
 
 
@@ -32,7 +85,7 @@ function on_message(self, message_id, message, sender)
 			local force = direction*self.gravity_force/((distance^2)/G)+vmath.rotate(rot, direction)*self.rotate_speed/30*distance/400
 			DefRX.notify("gravity", {force=force,rotate_vel=vmath.rotate(rot, -direction)*self.rotate_speed})
 		elseif message.own_group==hash("ground") then
-
+			
 		end
 	end
 	if message_id==hash("dead_response") then

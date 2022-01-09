@@ -3,6 +3,7 @@ instances {
   id: "player"
   prototype: "/assets/player/player.go"
   children: "floor"
+  children: "player_trail"
   position {
     x: 0.0
     y: 0.0
@@ -34,17 +35,9 @@ instances {
     z: 0.0
     w: 1.0
   }
-  component_properties {
-    id: "trail_follow_parent"
-    properties {
-      id: "target"
-      value: "/player"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
   scale3 {
-    x: 1.0
-    y: 1.0
+    x: 10.0
+    y: 10.0
     z: 1.0
   }
 }

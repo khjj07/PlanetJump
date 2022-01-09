@@ -1,5 +1,5 @@
 function init(self)
-	self.current="#title"
+	self.current="#ingame"
 	print(msg.url())
 	msg.post(self.current, "load")
 end

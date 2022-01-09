@@ -5,7 +5,7 @@ function G.init(self)
 	self.node={}
 	self.box_node={}
 	self.text_node={}
-	self.node["start"]=box_node.create(gui.get_node("start"),nil)
-	self.box_node=self.node["start"]
+	self.node["tap_to_start"]=text_node.create(gui.get_node("tap_to_start"),nil)
+	self.text_node=self.node["tap_to_start"]
 end
 return G

@@ -25,3 +25,9 @@ gravity_y = 0.0
 [sprite]
 max_count = 256
 
+[gui]
+max_particle_count = 2048
+
+[particle_fx]
+max_particle_count = 2048
+
