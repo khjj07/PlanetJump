@@ -1,81 +1,97 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
-go.property("min_scale", 50)
-go.property("max_scale", 100)
-go.property("min_spawn_delay", 1)
-go.property("max_spawn_delay", 3)
-go.property("min_meteor_spead", 50)
-go.property("max_meteor_speed", 100)
+go.property("target", hash(""))
+go.property("min_scale", 200)
+go.property("max_scale", 300)
+go.property("min_distance", 0)
+go.property("max_distance", 100)
+go.property("min_distance", 0)
+go.property("max_speed", 2000)
+go.property("min_speed", 1000)
 
-local LEVEL=2;
+local OUTER_RANGE = 5000
+local INNER_RANGE = 500
+local DISTANCE_RANGE = 200
+local SPAWN_MIN = 3
+local SPAWN_MAX = 5
 local MAX_RETRY = 500
-local MIN_DEFAULT_RANGE=1500
-local MAX_DEFAULT_RANGE=2000
 
-function check_spawnable(self,new_meteor)
-	new_meteor.min_range=MIN_DEFAULT_RANGE
-	new_meteor.max_range=MAX_DEFAULT_RANGE
-	for _, meteor in pairs(self.meteor) do
-		--생성지점에 아무것도 없는 상태
+local function check_spawnable(self,new_meteor)
+	for _, planet in pairs(self.planet) do
+		local distance = vmath.length(new_meteor.position-planet)
+		if DISTANCE_RANGE > distance then
+			return false
+		end
 	end
 	return true
 end
 
-function random_position_in_range(self,center)
+local function random_position_in_range(self)
 	local pos = vmath.vector3()
-	pos=pos+center.position
+	pos=pos+self.center
 	local theta = math.pi/180*math.random(1,360)
-	local radius = math.random(MIN_DEFAULT_RANGE,MAX_DEFAULT_RANGE)*2
+	local radius = OUTER_RANGE+math.random(self.min_distance,self.max_distance)
 	pos.x = pos.x + math.sin(theta)*radius
 	pos.y = pos.y + math.cos(theta)*radius
 	return pos
 end
 
-function spawn(self,center)
+local function random_direction_in_range(self,from)
+	local pos = vmath.vector3()
+	pos=pos+self.center
+	local theta = math.pi/180*math.random(1,360)
+	local radius = INNER_RANGE*2+math.random(self.min_distance,self.max_distance)
+	pos.x = pos.x + math.sin(theta)*radius
+	pos.y = pos.y + math.cos(theta)*radius
+	return vmath.normalize(pos-from)
+end
+
+local function spawn(self,center)
 	local new_meteor={}
-	new_meteor.position = random_position_in_range(self,center)
+	new_meteor.position = random_position_in_range(self)
 	new_meteor.scale = math.random(self.min_scale,self.max_scale)/100
+	new_meteor.speed = math.random(self.min_speed,self.max_speed)
+	new_meteor.direction= random_direction_in_range(self,new_meteor.position)
 	local retry=0
 	while retry<MAX_RETRY and not check_spawnable(self,new_meteor) do
-		new_meteor.position = random_position_in_range(self,center) 
+		new_meteor.position = random_position_in_range(self) 
 		new_meteor.scale = math.random(self.min_scale,self.max_scale)/100
+		new_meteor.direction= random_direction_in_range(self,new_meteor.position)
 		retry=retry+1
 	end
 	if retry~=MAX_RETRY then
-		local instance = collectionfactory.create("#meteor")
-		new_meteor.instance = instance[hash("/meteor")]
-		table.insert(self.meteor, new_meteor)
+		local prop = {
+			direction = new_meteor.direction,speed=new_meteor.speed
+		}
+		local instance = factory.create("#meteor",new_meteor.position,nil,prop,new_meteor.scale)
+		new_meteor.instance = instance
 	end
 end
 
-function initialize(self, message_id, message, sender)
-	self.player_pos=vmath.vector3()
-	self.meteor={}
-	for i = 1, math.random(LEVEL,LEVEL+5) do
-		--local mouse_position = rendercam.screen_to_world_2d(action.screen_x,action.screen_y) --현재 마우스의 위치
-		--spawn(self,--카메라위치)
-	end
+local function spawn_routine(self,message_id, message, sender)
+	timer.delay(3, false, function()
+		spawn(self,self.center)
+		spawn_routine(self,message_id, message, sender)
+	end)
 end
 
-function remove_meteor(self, message_id, message, sender)
-	for p, meteor in pairs(self.meteor) do
-		if message.id == meteor.instance then
-			table.remove(self.meteor,p)
-			print("remove")
-			break
-		end
-	end
-	msg.post(sender, "dead_response")
+
+function set_center_position(self, message_id, message, sender)
+	self.center=message.position
 end
 
-function update(self, dt)
-	print(#self.meteor)
+function update_planet(self, message_id, message, sender)
+	self.planet=message
 end
 
 function init(self)
 	math.randomseed(os.time())
-	DefRX.observe(self, "game_start", initialize)
-	DefRX.observe(self, "spawn_meteor", spawn)
-	DefRX.observe(self, "remove_meteor", remove_meteor)
+	DefRX.create_stream("game_start")
+	DefRX.observe(self, "game_start", spawn_routine)
+	DefRX.create_stream("player")
+	DefRX.observe(self, "player", set_center_position)
+	DefRX.create_stream("planet")
+	DefRX.observe(self, "planet", update_planet)
+	self.planet={}
 end
 
 
@@ -83,7 +99,3 @@ end
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
 end
-
-
-
-

@@ -1,3 +1,11 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+local NEAR_DISTANCE = 4000
 function init(self)
+	DefRX.create_stream("player")
+	self.play=false
 	particlefx.play("#satellite_trail")
+end
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
 end

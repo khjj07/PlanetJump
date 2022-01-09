@@ -32,12 +32,12 @@ function init(self)
 	DefRX.observe(self, "gravity", apply_gravity_force)
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", initialize)
+	DefRX.create_stream("update_player")
 	self.vel=vmath.vector3()
 	self.gravity=vmath.vector3()
 	self.parent_planet=nil
 	self.state=STATE.float
 	msg.post(".", "acquire_input_focus")
-	
 end
 
 function update(self,dt)
@@ -53,6 +53,7 @@ function update(self,dt)
 	--debugging
 	draw_line(go.get_world_position(),go.get_world_position()+self.vel*dt*10,vmath.vector4(1,1,0,1))
 	go.set_position(pos)
+	DefRX.notify("player", {position=go.get_world_position()})
 end
 
 function on_message(self, message_id, message, sender)

@@ -7,9 +7,9 @@ go.property("max_distance", 100)
 go.property("min_rotate_speed", 10)
 go.property("max_rotate_speed", 40)
 
-local DEFAULT_RANGE = 2000
+local DEFAULT_RANGE = 1500
 local SPAWN_MIN = 3
-local SPAWN_MAX = 4
+local SPAWN_MAX = 5
 local MAX_RETRY = 500
 local INITIAL_PLANET = 
 {
@@ -146,6 +146,13 @@ function init(self)
 	self.target={INITIAL_PLANET}
 end
 
+function update(self,dt)
+	local new_table = {}
+	for _, planet in pairs(self.planet) do
+		table.insert(new_table, planet.position)
+	end
+	DefRX.notify("planet", new_table)
+end
 
 
 function on_message(self, message_id, message, sender)

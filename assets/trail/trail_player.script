@@ -1,26 +1,27 @@
 local trail_maker = require("hyper_trails.trail_maker")
+local DefRX= require "DefUtil.DefRX.DefRX"
+
 
 function init(self)
-	self.target=go.get_parent()
 	go.set_parent(".",nil)
+	self.pos=vmath.vector3()
+	DefRX.observe(self, "player", function(self, message_id, message, sender)
+		self.pos=message.position
+	end)
 end
 
 function update(self, dt)
 	trail_maker.queue_late_update()
-	
-	
 end
 
 local function late_update(self)
-	go.set_position(go.get_world_position(self.target))
+	go.set_position(self.pos)
 	msg.post("#trail_maker", "update")
 end
 
 function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
 	if message_id == hash("ray_cast_missed") then
 		late_update(self)
 	end
-	if message_id==hash("set_target") then
-		self.target=message.id
-	end	
 end

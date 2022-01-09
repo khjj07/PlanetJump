@@ -21,6 +21,8 @@ function check_planet(self, message_id, message, sender)
 		DefRX.notify("reset_planet",{id=go.get_id()})
 	end
 end
+
+
 local function spawn_setelliste(self)
 	local new_satellite = {}
 	local theta = math.random(1,360)
