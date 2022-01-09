@@ -62,6 +62,7 @@ function spawn(self,center)
 		}
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
+		msg.post(new_planet.instance , "range",{id=instance[hash("/range")]})
 		table.insert(self.planet, new_planet)
 	end
 end

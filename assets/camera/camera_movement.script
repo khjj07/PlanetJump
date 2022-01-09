@@ -15,9 +15,9 @@ function init(self)
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", function(self, message_id, message,sender)
 		for i = 1, 30 do
-			timer.delay(0.01*i, false, function(self,handle,time_elapsed)
+			timer.delay(0.02*i, false, function(self,handle,time_elapsed)
 				print(rendercam.get_ortho_scale()+0.01*i)
-				rendercam.set_ortho_scale(rendercam.get_ortho_scale()+0.01*i, go.get_id())
+				rendercam.set_ortho_scale(rendercam.get_ortho_scale()+0.015*i, go.get_id())
 			end)
 		end
 	end)

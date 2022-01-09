@@ -3,7 +3,7 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/resource/sprites/IMG_0277.png"
+  image: "/resource/sprites/IMG_0279.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

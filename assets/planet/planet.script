@@ -1,5 +1,5 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
-go.property("gravity_force", 7000)
+go.property("gravity_force", 4000)
 go.property("rotate_speed", 20)
 go.property("rotate_direction", 1)
 go.property("seed", 0)
@@ -11,7 +11,6 @@ go.property("max_satellite_speed", 10)
 go.property("min_satellite_distance", 500)
 go.property("max_satellite_distance", 600)
 go.property("satellite_rotate_direction", 1)
-
 local G=30000
 local MAX_DISTANCE = 12000
 local RESET_DISTANCE = 8000
@@ -85,6 +84,8 @@ function on_message(self, message_id, message, sender)
 			local rot = vmath.quat_rotation_z(math.pi/180*90*self.rotate_direction)
 			local force = direction*self.gravity_force/((distance^2)/G)+vmath.rotate(rot, direction)*self.rotate_speed/30*distance/400
 			DefRX.notify("gravity", {force=force,rotate_vel=vmath.rotate(rot, -direction)*self.rotate_speed})
+		elseif message.own_group==hash("ground") then
+			
 		end
 	end
 	if message_id==hash("dead_response") then
