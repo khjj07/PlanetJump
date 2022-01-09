@@ -12,6 +12,15 @@ function init(self)
 		go.cancel_animations(".", "position")
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
 	end)
+	DefRX.create_stream("game_start")
+	DefRX.observe(self, "game_start", function(self, message_id, message,sender)
+		for i = 1, 30 do
+			timer.delay(0.01*i, false, function(self,handle,time_elapsed)
+				print(rendercam.get_ortho_scale()+0.01*i)
+				rendercam.set_ortho_scale(rendercam.get_ortho_scale()+0.01*i, go.get_id())
+			end)
+		end
+	end)
 end
 function update(self,dt)
 	--rendercam.world_to_screen(pos, adjust, raw)

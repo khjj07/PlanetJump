@@ -8,7 +8,7 @@ go.property("min_rotate_speed", 10)
 go.property("max_rotate_speed", 40)
 
 local DEFAULT_RANGE = 1500
-local SPAWN_MIN = 3
+local SPAWN_MIN = 4
 local SPAWN_MAX = 5
 local MAX_RETRY = 500
 local INITIAL_PLANET = 
@@ -109,7 +109,6 @@ function remove_planet(self, message_id, message, sender)
 	for p, planet in pairs(self.planet) do
 		if message.id == planet.instance then
 			table.remove(self.planet,p)
-			print("remove")
 			break
 		end
 	end
@@ -122,9 +121,13 @@ function remove_planet(self, message_id, message, sender)
 	msg.post(sender, "dead_response")
 end
 
-function update(self, dt)
-	print(#self.planet)
-
+function reset_planet(self, message_id, message, sender)
+	for p, planet in pairs(self.planet) do
+		if message.id == planet.instance then
+			planet.used=false
+			break
+		end
+	end
 end
 
 function init(self)
@@ -135,6 +138,8 @@ function init(self)
 	DefRX.observe(self, "spawn_planet", spawn_with_new_target)
 	DefRX.create_stream("remove_planet")
 	DefRX.observe(self, "remove_planet", remove_planet)
+	DefRX.create_stream("reset_planet")
+	DefRX.observe(self, "reset_planet", reset_planet)
 	self.player_pos=vmath.vector3()
 	self.planet={}
 	self.target={INITIAL_PLANET}
