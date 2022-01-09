@@ -41,7 +41,7 @@ instances {
   id: "planet_spawner"
   prototype: "/assets/planet/spawner/planet_spawner.go"
   position {
-    x: 0.0
+    x: -8.0
     y: 0.0
     z: 0.0
   }

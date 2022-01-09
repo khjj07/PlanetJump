@@ -1,0 +1,21 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+go.property("force", vmath.vector())
+
+
+
+function init(self)
+	DefRX.create_stream("big_meteor")
+
+
+	
+	DefRX.observe(self, "target_update", spawn)
+	self.player_pos=vmath.vector3()
+	math.randomseed(os.time())
+end
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+	if on_message==hash("hit") then
+		go.delete()
+	end
+end

@@ -1,0 +1,46 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+go.property("force", vmath.vector())
+
+local G=30000
+local MAX_DISTANCE = 12000
+
+--
+function check_meteor(self, message_id, message, sender)
+	if vmath.length(message.position-go.get_world_position())>MAX_DISTANCE then
+		DefRX.notify("remove_meteor",{id=go.get_id()})
+	end
+end
+
+function init(self)
+	DefRX.create_stream("jump")
+	DefRX.observe(self, "jump", check_planet)
+	self.ids={"planet","range"}
+	if self.rotate_direction == 0 then
+		self.rotate_direction=-1
+	end
+	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
+end
+
+function update_destination(self)
+	self.destination=DESTINATION_LIST[self.dest_index]
+	self.dest_index=self.dest_index+1
+	if self.dest_index > #DESTINATION_LIST then --#은 리스트 갯수 --
+		self.dest_index=1
+	end
+end
+
+function init(self)
+	DefRX.create_stream("meteor")
+	DefRX.observe(self, "meteor", check_meteor)
+	self.vel=vmath.vector3()
+	self.speed=50
+	self.friction=0.1
+	update_destination(self)
+end
+--
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+	if on_message==hash("hit") then
+		go.delete()
+	end
+end
