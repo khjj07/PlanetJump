@@ -14,8 +14,8 @@ components {
   }
 }
 components {
-  id: "setellite"
-  component: "/assets/satellite/setellite.script"
+  id: "satellite"
+  component: "/assets/satellite/satellite.script"
   position {
     x: 0.0
     y: 0.0

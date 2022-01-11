@@ -1,12 +1,16 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 go.property("target", hash(""))
 go.property("min_scale", 200)
-go.property("max_scale", 300)
+go.property("middle_scale", 300)
+go.property("max_scale", 500)
 go.property("min_distance", 0)
 go.property("max_distance", 100)
 go.property("min_distance", 0)
 go.property("max_speed", 2000)
 go.property("min_speed", 1000)
+go.property("min_delay", 3)
+go.property("max_delay", 6)
+
 
 local OUTER_RANGE = 5000
 local INNER_RANGE = 500
@@ -14,6 +18,11 @@ local DISTANCE_RANGE = 200
 local SPAWN_MIN = 3
 local SPAWN_MAX = 5
 local MAX_RETRY = 500
+local TYPE={
+	strong=hash("strong"),
+	weak=hash("weak")
+}
+
 
 local function check_spawnable(self,new_meteor)
 	for _, planet in pairs(self.planet) do
@@ -44,11 +53,27 @@ local function random_direction_in_range(self,from)
 	pos.y = pos.y + math.cos(theta)*radius
 	return vmath.normalize(pos-from)
 end
+local function random_type()
+	local num = math.random(1,100)/100
+	if num <= 0.3 then
+		return TYPE.strong
+	else
+		return TYPE.weak
+	end
+end
+local function random_scale(self,type)
+	if type==TYPE.strong then
+		return math.random(self.middle_scale,self.max_scale)/100
+	else
+		return math.random(self.min_scale,self.middle_scale)/100
+	end
+end
 
 local function spawn(self,center)
 	local new_meteor={}
+	new_meteor.type = random_type()
 	new_meteor.position = random_position_in_range(self)
-	new_meteor.scale = math.random(self.min_scale,self.max_scale)/100
+	new_meteor.scale = random_scale(self,new_meteor.type)
 	new_meteor.speed = math.random(self.min_speed,self.max_speed)
 	new_meteor.direction= random_direction_in_range(self,new_meteor.position)
 	local retry=0
@@ -60,7 +85,7 @@ local function spawn(self,center)
 	end
 	if retry~=MAX_RETRY then
 		local prop = {
-			direction = new_meteor.direction,speed=new_meteor.speed
+			direction = new_meteor.direction,speed=new_meteor.speed,type=new_meteor.type
 		}
 		local instance = factory.create("#meteor",new_meteor.position,nil,prop,new_meteor.scale)
 		new_meteor.instance = instance
@@ -68,7 +93,7 @@ local function spawn(self,center)
 end
 
 local function spawn_routine(self,message_id, message, sender)
-	timer.delay(3, false, function()
+	timer.delay(math.random(self.min_delay,self.max_delay), false, function()
 		spawn(self,self.center)
 		spawn_routine(self,message_id, message, sender)
 	end)
@@ -87,10 +112,10 @@ function init(self)
 	math.randomseed(os.time())
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", spawn_routine)
-	DefRX.create_stream("player")
-	DefRX.observe(self, "player", set_center_position)
-	DefRX.create_stream("planet")
-	DefRX.observe(self, "planet", update_planet)
+	DefRX.create_stream("player_position")
+	DefRX.observe(self, "player_position", set_center_position)
+	DefRX.create_stream("planet_position")
+	DefRX.observe(self, "planet_position", update_planet)
 	self.planet={}
 end
 

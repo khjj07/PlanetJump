@@ -12,6 +12,7 @@ function init(self)
 	UI.init(self)
 	DefUI.create_button(self, "tap_to_start", self.node["tap_to_start"], {pressed = start})
 	msg.post(".", "acquire_input_focus")
+	
 end
 
 function on_input(self, action_id, action)

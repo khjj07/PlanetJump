@@ -5,7 +5,7 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 function init(self)
 	go.set_parent(".",nil)
 	self.pos=vmath.vector3()
-	DefRX.observe(self, "player", function(self, message_id, message, sender)
+	DefRX.observe(self, "player_position", function(self, message_id, message, sender)
 		self.pos=message.position
 	end)
 end

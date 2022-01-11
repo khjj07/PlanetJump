@@ -2,21 +2,31 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 local NEAR_DISTANCE = 4000
 go.property("speed", 0)
 go.property("direction", vmath.vector3())
+go.property("type", hash(""))
 local MAX_DISTANCE = 12000
+local TYPE={
+	strong=hash("strong"),
+	weak=hash("weak")
+}
 
 function check_meteor(self, message_id, message, sender)
 	local distance = vmath.length(message.position-go.get_world_position())
 	if MAX_DISTANCE<distance then
-		DefRX.cancel_observing(self, "player")
+		DefRX.cancel_observing(self, "player_position")
 		go.delete()
 	end
 end
 
 function init(self)
 	self.vel=self.speed*self.direction
-	DefRX.create_stream("player")
-	DefRX.observe(self, "player", check_meteor)
-	particlefx.play("#meteor_trail")
+	DefRX.create_stream("player_position")
+	DefRX.observe(self, "player_position", check_meteor)
+	if TYPE.strong==self.type then
+		particlefx.play("#strong_meteor_trail")
+	else
+		particlefx.play("#weak_meteor_trail")
+	end
+	
 end
 
 function update(self, dt)

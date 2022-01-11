@@ -1,5 +1,5 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
-go.property("gravity_force", 4000)
+go.property("gravity_force", 6500)
 go.property("rotate_speed", 20)
 go.property("rotate_direction", 1)
 go.property("seed", 0)
@@ -8,8 +8,8 @@ go.property("min_satellite_num", 0)
 go.property("max_satellite_num", 3)
 go.property("min_satellite_speed", 5)
 go.property("max_satellite_speed", 10)
-go.property("min_satellite_distance", 500)
-go.property("max_satellite_distance", 600)
+go.property("min_satellite_distance", 450)
+go.property("max_satellite_distance", 450)
 go.property("satellite_rotate_direction", 1)
 local G=30000
 local MAX_DISTANCE = 12000
@@ -21,7 +21,13 @@ function check_planet(self, message_id, message, sender)
 		DefRX.notify("reset_planet",{id=go.get_id()})
 	end
 end
-
+local function random_satellite_speed(self)
+	local speed = math.random(self.min_satellite_speed,self.max_satellite_speed)
+	while speed==self.rotate_speed do
+		speed = math.random(self.min_satellite_speed,self.max_satellite_speed)
+	end
+	return speed
+end
 
 local function spawn_setelliste(self)
 	local new_satellite = {}
@@ -29,7 +35,7 @@ local function spawn_setelliste(self)
 	local distance = math.random(self.min_satellite_distance,self.max_satellite_distance)
 	local x,y=math.sin(math.pi/180*theta)*distance,math.cos(math.pi/180*theta)*distance
 	new_satellite.position = vmath.vector3(x,y,0)
-	new_satellite.speed = math.random(self.min_satellite_speed,self.max_satellite_speed)
+	new_satellite.speed = random_satellite_speed(self)
 	new_satellite.direction = math.random(0,1)
 	local prop = {
 		[hash("/center")]={rotate_speed = new_satellite.speed,rotate_direction = new_satellite.direction,seed=math.random(0,500)},
@@ -37,7 +43,6 @@ local function spawn_setelliste(self)
 	local instance = collectionfactory.create("#satellite",go.get_world_position(),nil,prop)
 	go.set_scale(0.25,instance[hash("/satellite")])
 	go.set_position(new_satellite.position,instance[hash("/satellite")])
-	
 	table.insert(self.ids,instance[hash("/center")])
 	table.insert(self.ids,instance[hash("/satellite")])
 end

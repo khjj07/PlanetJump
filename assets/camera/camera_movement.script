@@ -1,10 +1,13 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 local rendercam = require "rendercam.rendercam"
+local PARTITION = 30
+go.property("initial_ortho_scale", 7)
+go.property("play_ortho_scale", 10)
 function init(self)
-	DefRX.create_stream("update_planet")
+	DefRX.create_stream("landing")
 	DefRX.create_stream("floating")
 	DefRX.create_stream("camera_view")
-	DefRX.observe(self, "update_planet", function(self, message_id, message,sender)
+	DefRX.observe(self, "landing", function(self, message_id, message,sender)
 		go.cancel_animations(".", "position")
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
 	end)
@@ -13,19 +16,16 @@ function init(self)
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
 	end)
 	DefRX.create_stream("game_start")
+	rendercam.set_ortho_scale(self.initial_ortho_scale)
 	DefRX.observe(self, "game_start", function(self, message_id, message,sender)
-		for i = 1, 30 do
-			timer.delay(0.02*i, false, function(self,handle,time_elapsed)
-				print(rendercam.get_ortho_scale()+0.01*i)
-				rendercam.set_ortho_scale(rendercam.get_ortho_scale()+0.015*i, go.get_id())
+		for i = PARTITION, 1,-1 do
+			timer.delay(0.02*(PARTITION-i), false, function(self,handle,time_elapsed)
+				rendercam.set_ortho_scale(self.initial_ortho_scale+(self.play_ortho_scale-self.initial_ortho_scale)/i,go.get_id())
+				print(rendercam.get_ortho_scale())
 			end)
 		end
 	end)
 end
-function update(self,dt)
-	--rendercam.world_to_screen(pos, adjust, raw)
-end
-
 
 
 function on_message(self, message_id, message, sender)

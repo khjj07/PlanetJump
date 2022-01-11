@@ -14,8 +14,23 @@ components {
   }
 }
 components {
-  id: "meteor_trail"
-  component: "/assets/effect/meteor_trail.particlefx"
+  id: "strong_meteor_trail"
+  component: "/assets/effect/strong_meteor_trail.particlefx"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+components {
+  id: "weak_meteor_trail"
+  component: "/assets/effect/weak_meteor_trail.particlefx"
   position {
     x: 0.0
     y: 0.0

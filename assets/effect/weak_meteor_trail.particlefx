@@ -87,7 +87,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 100.0
+      y: 200.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -178,8 +178,8 @@ emitters {
     points {
       x: 0.0
       y: 1.0
-      t_x: 1.0
-      t_y: 0.0
+      t_x: 0.6598522
+      t_y: -0.75139546
     }
     points {
       x: 1.0
@@ -192,9 +192,15 @@ emitters {
     key: PARTICLE_KEY_RED
     points {
       x: 0.0
-      y: 0.88212186
+      y: -1.0422244
       t_x: 0.17553549
       t_y: 0.9844731
+    }
+    points {
+      x: 0.8190311
+      y: 0.76484066
+      t_x: 0.62830156
+      t_y: 0.7779699
     }
     points {
       x: 1.0
@@ -213,7 +219,7 @@ emitters {
     }
     points {
       x: 1.0
-      y: 0.48686537
+      y: -0.0044429544
       t_x: 0.4492551
       t_y: -0.89340353
     }
@@ -222,7 +228,7 @@ emitters {
     key: PARTICLE_KEY_BLUE
     points {
       x: 0.0
-      y: 0.42985043
+      y: 1.1504606
       t_x: 1.0
       t_y: 0.0
     }
@@ -237,13 +243,13 @@ emitters {
     key: PARTICLE_KEY_ALPHA
     points {
       x: 0.0
-      y: -0.046124015
+      y: 0.01898296
       t_x: 0.8629119
       t_y: 0.5053544
     }
     points {
-      x: 0.023153942
-      y: -0.0023352301
+      x: 0.01
+      y: 0.040443487
       t_x: 0.7679984
       t_y: 0.6404518
     }
