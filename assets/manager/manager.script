@@ -1,0 +1,14 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+
+local function game_over(self, message_id, message, sender)
+	print("game_over")
+end
+
+function init(self)
+	DefRX.create_stream("game_over")
+	DefRX.observe(self, "game_over", game_over)
+end
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+end

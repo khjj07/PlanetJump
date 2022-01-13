@@ -19,7 +19,7 @@ components {
   }
   properties {
     id: "trail_width"
-    value: "10.0"
+    value: "20.0"
     type: PROPERTY_TYPE_NUMBER
   }
   properties {

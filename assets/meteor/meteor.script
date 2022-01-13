@@ -1,26 +1,32 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 local NEAR_DISTANCE = 4000
-go.property("speed", 0)
-go.property("direction", vmath.vector3())
-go.property("type", hash(""))
 local MAX_DISTANCE = 12000
 local TYPE={
 	strong=hash("strong"),
 	weak=hash("weak")
 }
+go.property("speed", 0)
+go.property("direction", vmath.vector3())
+go.property("type", hash(""))
+go.property("rotate_speed", 20)
+go.property("rotate_direction", 1)
 
 function check_meteor(self, message_id, message, sender)
 	local distance = vmath.length(message.position-go.get_world_position())
 	if MAX_DISTANCE<distance then
-		DefRX.cancel_observing(self, "player_position")
+		DefRX.cancel_all_observing(self)
 		go.delete()
 	end
 end
 
 function init(self)
+	if self.rotate_direction == 0 then
+		self.rotate_direction=-1
+	end
 	self.vel=self.speed*self.direction
 	DefRX.create_stream("player_position")
 	DefRX.observe(self, "player_position", check_meteor)
+	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
 	if TYPE.strong==self.type then
 		particlefx.play("#strong_meteor_trail")
 	else
@@ -35,6 +41,22 @@ function update(self, dt)
 	go.set_position(pos)
 end
 
+function explosion(self)
+	if TYPE.strong==self.type then
+		particlefx.play("#strong_explosion")
+		DefRX.notify("strong_hit")
+	else
+		particlefx.play("#weak_explosion")
+		DefRX.notify("weak_hit")
+	end
+end
+
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
+	if message_id==hash("trigger_response") and message.enter then
+		msg.post(message.other_id, "hit",{type=self.type,direction=self.direction})
+		explosion(self)
+		DefRX.cancel_all_observing(self)
+		go.delete()
+	end
 end

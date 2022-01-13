@@ -17,6 +17,31 @@ components {
     value: "7.0"
     type: PROPERTY_TYPE_NUMBER
   }
+  properties {
+    id: "fixedAspectRatio"
+    value: "false"
+    type: PROPERTY_TYPE_BOOLEAN
+  }
+  properties {
+    id: "aspectRatio"
+    value: "9.0, 16.0, 0.0"
+    type: PROPERTY_TYPE_VECTOR3
+  }
+  properties {
+    id: "useViewArea"
+    value: "false"
+    type: PROPERTY_TYPE_BOOLEAN
+  }
+  properties {
+    id: "fixedArea"
+    value: "true"
+    type: PROPERTY_TYPE_BOOLEAN
+  }
+  properties {
+    id: "fixedWidth"
+    value: "false"
+    type: PROPERTY_TYPE_BOOLEAN
+  }
 }
 components {
   id: "camera_movement"

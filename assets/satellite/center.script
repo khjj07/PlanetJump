@@ -1,4 +1,3 @@
-
 go.property("rotate_speed", 30)
 go.property("rotate_direction", 1)
 

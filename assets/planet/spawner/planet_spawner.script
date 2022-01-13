@@ -23,6 +23,9 @@ local INITIAL_PLANET =
 }
 function check_spawnable(self,new_planet)
 	new_planet.range = DEFAULT_RANGE
+	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE then
+		return false
+	end
 	for _, planet in pairs(self.planet) do
 		local distance = vmath.length(new_planet.position-planet.position)
 		if planet.range+new_planet.range > distance then
@@ -62,7 +65,6 @@ function spawn(self,center)
 		}
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
-		msg.post(new_planet.instance , "range",{id=instance[hash("/range")]})
 		table.insert(self.planet, new_planet)
 	end
 end
@@ -141,6 +143,10 @@ function init(self)
 	DefRX.observe(self, "remove_planet", remove_planet)
 	DefRX.create_stream("reset_planet")
 	DefRX.observe(self, "reset_planet", reset_planet)
+	DefRX.create_stream("player_position")
+	DefRX.observe(self, "player_position", function(self, message_id, message, sender)
+		self.player_pos=message.position
+	end)
 	self.player_pos=vmath.vector3()
 	self.planet={}
 	self.target={INITIAL_PLANET}

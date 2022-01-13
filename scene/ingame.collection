@@ -58,8 +58,8 @@ instances {
   }
 }
 instances {
-  id: "title"
-  prototype: "/assets/ui/title/title.go"
+  id: "meteor_spawner"
+  prototype: "/assets/meteor/spawner/meteor_spawner.go"
   position {
     x: 0.0
     y: 0.0
@@ -78,8 +78,8 @@ instances {
   }
 }
 instances {
-  id: "meteor_spawner"
-  prototype: "/assets/meteor/spawner/meteor_spawner.go"
+  id: "ingame"
+  prototype: "/assets/ui/ingame/ingame.go"
   position {
     x: 0.0
     y: 0.0

@@ -3,8 +3,13 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 
 
 function init(self)
-	go.set_parent(".",nil)
+	
 	self.pos=vmath.vector3()
+	self.play=false
+	DefRX.observe(self, "game_start",function(self, message_id, message, sender)
+		self.play=true
+		go.set_parent(".",nil,true)
+	end)
 	DefRX.observe(self, "player_position", function(self, message_id, message, sender)
 		self.pos=message.position
 	end)
@@ -15,8 +20,10 @@ function update(self, dt)
 end
 
 local function late_update(self)
-	go.set_position(self.pos)
-	msg.post("#trail_maker", "update")
+	if self.play then
+		go.set_position(self.pos)
+		msg.post("#trail_maker", "update")
+	end
 end
 
 function on_message(self, message_id, message, sender)

@@ -1,15 +1,16 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 go.property("target", hash(""))
-go.property("min_scale", 200)
-go.property("middle_scale", 300)
-go.property("max_scale", 500)
+go.property("weak_min_scale", 150)
+go.property("weak_max_scale", 200)
+go.property("strong_min_scale", 300)
+go.property("strong_max_scale", 500)
 go.property("min_distance", 0)
 go.property("max_distance", 100)
 go.property("min_distance", 0)
 go.property("max_speed", 2000)
 go.property("min_speed", 1000)
-go.property("min_delay", 3)
-go.property("max_delay", 6)
+go.property("min_delay", 1)
+go.property("max_delay", 3)
 
 
 local OUTER_RANGE = 5000
@@ -55,7 +56,7 @@ local function random_direction_in_range(self,from)
 end
 local function random_type()
 	local num = math.random(1,100)/100
-	if num <= 0.3 then
+	if num<=0.3 then
 		return TYPE.strong
 	else
 		return TYPE.weak
@@ -63,10 +64,27 @@ local function random_type()
 end
 local function random_scale(self,type)
 	if type==TYPE.strong then
-		return math.random(self.middle_scale,self.max_scale)/100
+		return math.random(self.strong_min_scale,self.strong_max_scale)/100
 	else
-		return math.random(self.min_scale,self.middle_scale)/100
+		return math.random(self.weak_min_scale,self.weak_max_scale)/100
 	end
+end
+local function random_direction_with_directional(self,direction)
+	local rot = vmath.quat_rotation_z(math.pi/180*math.random(-60,60))
+	local direction = vmath.normalize(vmath.rotate(rot, direction))
+	return direction
+end
+local function spawn_directly(self,message_id, message, sender)
+	local new_meteor={}
+	new_meteor.type = message.type
+	new_meteor.position = message.position
+	new_meteor.scale = random_scale(self,new_meteor.type)
+	new_meteor.speed = math.random(self.min_speed,self.max_speed)
+	new_meteor.direction= random_direction_with_directional(self,message.direction)
+	local prop = {
+		direction = new_meteor.direction,speed=new_meteor.speed,type=new_meteor.type
+	}
+	local instance = factory.create("#meteor",new_meteor.position,nil,prop,new_meteor.scale)
 end
 
 local function spawn(self,center)
@@ -76,19 +94,21 @@ local function spawn(self,center)
 	new_meteor.scale = random_scale(self,new_meteor.type)
 	new_meteor.speed = math.random(self.min_speed,self.max_speed)
 	new_meteor.direction= random_direction_in_range(self,new_meteor.position)
+	new_meteor.rotate_direction = math.random(0,1)
+	new_meteor.rotate_speed= math.random(0,60)
 	local retry=0
 	while retry<MAX_RETRY and not check_spawnable(self,new_meteor) do
 		new_meteor.position = random_position_in_range(self) 
-		new_meteor.scale = math.random(self.min_scale,self.max_scale)/100
+		new_meteor.scale = random_scale(self,new_meteor.type)
 		new_meteor.direction= random_direction_in_range(self,new_meteor.position)
 		retry=retry+1
 	end
 	if retry~=MAX_RETRY then
 		local prop = {
-			direction = new_meteor.direction,speed=new_meteor.speed,type=new_meteor.type
+			direction = new_meteor.direction,speed=new_meteor.speed,type=new_meteor.type,
+			rotate_direction=new_meteor.rotate_direction,rotate_speed=new_meteor.rotate_speed
 		}
 		local instance = factory.create("#meteor",new_meteor.position,nil,prop,new_meteor.scale)
-		new_meteor.instance = instance
 	end
 end
 
@@ -109,13 +129,17 @@ function update_planet(self, message_id, message, sender)
 end
 
 function init(self)
-	math.randomseed(os.time())
+	timer.delay(0.1, false, function()
+		math.randomseed(os.time())
+	end)
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", spawn_routine)
 	DefRX.create_stream("player_position")
 	DefRX.observe(self, "player_position", set_center_position)
 	DefRX.create_stream("planet_position")
 	DefRX.observe(self, "planet_position", update_planet)
+	DefRX.create_stream("spawn_meteor")
+	DefRX.observe(self, "spawn_meteor", spawn_directly)
 	self.planet={}
 end
 

@@ -1,5 +1,5 @@
 images {
-  image: "/resource/sprites/IMG_0275.png"
+  image: "/resource/player/player.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

@@ -1,10 +1,25 @@
+local DefRX= require "DefUtil.DefRX.DefRX"
+
+function pause_time(self, message_id, message)
+	msg.post(".", "set_time_step", {factor = 0, mode = 0})
+end
+
+function play_time(self, message_id, message)
+	msg.post(".", "set_time_step", {factor = 1, mode = 0})
+end
+
 function init(self)
 	self.current="#ingame"
 	print(msg.url())
 	msg.post(self.current, "load")
+	DefRX.create_stream("pause_time")
+	DefRX.observe(self, "pause_time",pause_time)
+	DefRX.create_stream("play_time")
+	DefRX.observe(self, "play_time",play_time)
 end
 
 function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
 	if message_id == hash("proxy_loaded") then
 		msg.post(sender, "init")
 		msg.post(sender, "enable")

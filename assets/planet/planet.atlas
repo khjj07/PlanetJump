@@ -1,9 +1,25 @@
 images {
-  image: "/resource/sprites/IMG_0271.png"
+  image: "/resource/planet/range.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/resource/sprites/IMG_0279.png"
+  image: "/resource/planet/ring.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/planet/planet1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/planet/planet2.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/planet/planet3.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/planet/planet4.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0
