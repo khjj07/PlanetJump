@@ -7,13 +7,15 @@ go.property("strong_max_scale", 500)
 go.property("min_distance", 0)
 go.property("max_distance", 100)
 go.property("min_distance", 0)
-go.property("max_speed", 2000)
 go.property("min_speed", 1000)
-go.property("min_delay", 1)
-go.property("max_delay", 3)
+go.property("max_speed", 2000)
+go.property("min_rotate_speed", 0)
+go.property("max_rotate_speed", 60)
+go.property("min_delay", 2)
+go.property("max_delay", 4)
+go.property("strong_type_rate", 0.3)
 
-
-local OUTER_RANGE = 5000
+local OUTER_RANGE = 6000
 local INNER_RANGE = 500
 local DISTANCE_RANGE = 200
 local SPAWN_MIN = 3
@@ -54,9 +56,9 @@ local function random_direction_in_range(self,from)
 	pos.y = pos.y + math.cos(theta)*radius
 	return vmath.normalize(pos-from)
 end
-local function random_type()
+local function random_type(self)
 	local num = math.random(1,100)/100
-	if num<=0.3 then
+	if num < self.strong_type_rate then
 		return TYPE.strong
 	else
 		return TYPE.weak
@@ -70,8 +72,8 @@ local function random_scale(self,type)
 	end
 end
 local function random_direction_with_directional(self,direction)
-	local rot = vmath.quat_rotation_z(math.pi/180*math.random(-60,60))
-	local direction = vmath.normalize(vmath.rotate(rot, direction))
+	local x,y = math.sin(math.random(1,360)),math.sin(math.random(1,360))
+	local direction = vmath.normalize(vmath.vector3(x,y,0))
 	return direction
 end
 local function spawn_directly(self,message_id, message, sender)
@@ -80,22 +82,25 @@ local function spawn_directly(self,message_id, message, sender)
 	new_meteor.position = message.position
 	new_meteor.scale = random_scale(self,new_meteor.type)
 	new_meteor.speed = math.random(self.min_speed,self.max_speed)
-	new_meteor.direction= random_direction_with_directional(self,message.direction)
+	new_meteor.direction= random_direction_with_directional()
+	new_meteor.rotate_direction = math.random(0,1)
+	new_meteor.rotate_speed= math.random(self.min_rotate_speed,self.max_rotate_speed)
 	local prop = {
-		direction = new_meteor.direction,speed=new_meteor.speed,type=new_meteor.type
+		direction = new_meteor.direction,speed=new_meteor.speed,type=new_meteor.type,
+		rotate_direction=new_meteor.rotate_direction,rotate_speed=new_meteor.rotate_speed
 	}
 	local instance = factory.create("#meteor",new_meteor.position,nil,prop,new_meteor.scale)
 end
 
 local function spawn(self,center)
 	local new_meteor={}
-	new_meteor.type = random_type()
+	new_meteor.type = random_type(self)
 	new_meteor.position = random_position_in_range(self)
 	new_meteor.scale = random_scale(self,new_meteor.type)
 	new_meteor.speed = math.random(self.min_speed,self.max_speed)
 	new_meteor.direction= random_direction_in_range(self,new_meteor.position)
 	new_meteor.rotate_direction = math.random(0,1)
-	new_meteor.rotate_speed= math.random(0,60)
+	new_meteor.rotate_speed= math.random(self.min_rotate_speed,self.max_rotate_speed)
 	local retry=0
 	while retry<MAX_RETRY and not check_spawnable(self,new_meteor) do
 		new_meteor.position = random_position_in_range(self) 

@@ -20,6 +20,13 @@ function show_option(self,action_id,action,button)
 	end)
 end
 
+function show_credits(self,action_id,action,button)
+	DefUI.hide(self, hash("title"))
+	DefRX.notify("move_cam", {position=vmath.vector3(-3000,0,0),duration=1,easing=go.EASING_INBACK})
+	
+end
+
+
 function show_pause_menu(self,action_id,action,button)
 	DefRX.notify("pause_time")
 	self.node["pause_menu_window"]:show()
@@ -42,6 +49,10 @@ function hide_option(self,action_id,action,button)
 	end)
 end
 
+function reload_scene(self,action_id,action,button)
+	msg.post(PROXY, "change_scene",{next="#ingame"})
+end
+
 local function hover(self,action_id,action,button)
 	self.hover=button
 	DefRX.notify("on_gui",{value=true})
@@ -54,31 +65,68 @@ function init(self)
 	self.hover=nil
 	DefUI.create_button(self, "tap_to_start", self.node["tap_to_start"], {pressed = start})
 	DefUI.create_button(self, "option_btn", self.node["option_btn"], {pressed = show_option})
+	DefUI.create_button(self, "developers_btn", self.node["developers_btn"], {pressed = show_credits})
 	DefUI.create_button(self, "option_window_exit_btn", self.node["option_window_exit_btn"], {pressed = hide_option})
 	DefUI.create_button(self, "pause_btn", self.node["pause_btn"], {pressed=show_pause_menu,hover=hover})
 	DefUI.create_button(self, "pause_menu_window_exit_btn", self.node["pause_menu_window_exit_btn"], {pressed = hide_pause_menu})
+	DefUI.create_button(self, "home_text", self.node["home_text"], {pressed = reload_scene})
+	--button
 	DefUI.create_slider(self, "bgm_btn", self.node["bgm_btn"], {}, 150, -150, 3, 0)
 	DefUI.create_slider(self, "sfx_btn", self.node["sfx_btn"], {}, 150, -150, 3, 0)
+	--slider
+	
+	--components
+
+	
+	
+	self.node["game_over_text"]:add_tag(hash("game_over"))
+	self.node["continue_text"]:add_tag(hash("game_over"))
+	self.node["home_text"]:add_tag(hash("game_over"))
+	self.node["option_btn"]:add_tag(hash("game_over"))
+
+	DefUI.hide(self, hash("game_over"))
+	
+	self.node["pause_btn"]:add_tag(hash("ingame"))
+	DefUI.hide(self, hash("ingame"))
+	
+	self.node["developers_btn"]:add_tag(hash("title"))
 	self.node["option_btn"]:add_tag(hash("title"))
 	self.node["tap_to_start"]:add_tag(hash("title"))
 	self.node["title"]:add_tag(hash("title"))
+	DefUI.show(self, hash("title"))
 	self.node["title"]:set_scale(vmath.vector3(0.01,0.01,0.01))
 	self.node["title"]:animate("scale", 4, go.EASING_OUTBACK, 1,0)
-	self.node["developers_btn"]:add_tag(hash("title"))
-	self.node["pause_btn"]:add_tag(hash("ingame"))
 	self.node["option_window"]:hide()
 	self.node["pause_menu_window"]:hide()
 	
+	--RX
+	DefRX.create_stream("game_over")
+	DefRX.observe(self, "game_over", function(self, message_id, message)
+		DefUI.hide(self, hash("ingame"))
+		DefUI.hide(self, hash("title"))
+		DefUI.show(self, hash("game_over"))
+	end)
 	
-	DefUI.hide(self, hash("ingame"))
 	msg.post(".", "acquire_input_focus")
 end
 
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+end
 function on_input(self, action_id, action)
 	DefUI.on_input(self, action_id, action)
 	if not self.hover then
 		DefRX.notify("on_gui",{value=false})
 	end
 	self.hover=nil
-
 end
+
+function final(self)
+	DefRX.cancel_all_observing(self)
+end
+
+
+
+
+
+	

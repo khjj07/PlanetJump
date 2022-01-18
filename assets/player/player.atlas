@@ -1,5 +1,9 @@
 images {
-  image: "/resource/player/player.png"
+  image: "/resource/player/player_idle.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/player/player_jump.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

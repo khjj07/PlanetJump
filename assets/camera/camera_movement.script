@@ -1,14 +1,18 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 local rendercam = require "rendercam.rendercam"
 local PARTITION = 50
-go.property("initial_ortho_scale", 3)
-go.property("play_ortho_scale", 8)
+go.property("initial_ortho_scale", 4)
+go.property("play_ortho_scale", 9)
+go.property("over_ortho_scale", 3)
 go.property("zoom", 5)
+go.property("initial_zoom_duration", 0.7)
+go.property("over_zoom_duration", 0.2)
 
 function init(self)
 	DefRX.create_stream("landing")
 	DefRX.create_stream("floating")
 	DefRX.create_stream("camera_view")
+	DefRX.create_stream("game_over")
 	DefRX.observe(self, "landing", function(self, message_id, message,sender)
 		go.cancel_animations(".", "position")
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
@@ -18,9 +22,9 @@ function init(self)
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
 	end)
 	DefRX.create_stream("game_start")
-	rendercam.set_ortho_scale(self.initial_ortho_scale)
+	self.zoom=self.initial_ortho_scale
 	DefRX.observe(self, "game_start", function(self, message_id, message,sender)
-		go.animate("#", "zoom", go.PLAYBACK_ONCE_FORWARD, self.play_ortho_scale, go.EASING_OUTBOUNCE, 0.3)
+		go.animate("#", "zoom", go.PLAYBACK_ONCE_FORWARD, self.play_ortho_scale, go.EASING_OUTBOUNCE, self.initial_zoom_duration)
 	end)
 	DefRX.create_stream("strong_hit")
 	DefRX.observe(self, "strong_hit", function(self, message_id, message,sender)
@@ -34,10 +38,19 @@ function init(self)
 	DefRX.observe(self, "move_cam", function(self, message_id, message,sender)
 		go.animate(".", "position", message.playback or go.PLAYBACK_ONCE_FORWARD,  go.get_position()+message.position, message.easing or go.EASING_LINEAR, message.duration or 1, message.delay or 0,message.func)
 	end)
+	DefRX.observe(self, "game_over", function(self, message_id, message,sender)
+		go.animate("#", "zoom", go.PLAYBACK_ONCE_FORWARD, self.over_ortho_scale, go.EASING_OUTBACK, self.over_zoom_duration)
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
+	end)
+end
+
+function final(self)
+	DefRX.cancel_all_observing(self)
 end
 
 function update(self, dt)
 	rendercam.set_ortho_scale(self.zoom)
+	DefRX.notify("camera_position", {position=go.get_world_position()})
 end
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)

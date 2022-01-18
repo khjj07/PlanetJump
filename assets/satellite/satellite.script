@@ -17,3 +17,7 @@ function on_message(self, message_id, message, sender)
 		go.delete()
 	end
 end
+
+function final(self)
+	DefRX.cancel_all_observing(self)
+end

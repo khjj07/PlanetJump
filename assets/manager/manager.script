@@ -9,6 +9,10 @@ function init(self)
 	DefRX.observe(self, "game_over", game_over)
 end
 
+function final(self)
+	DefRX.cancel_all_observing(self)
+end
+
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
 end

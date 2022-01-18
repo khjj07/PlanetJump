@@ -2,11 +2,12 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 local defgraph = require("defgraph.defgraph")
 local STATE={
 	float=hash("float"),
-	stand=hash("stand")
+	stand=hash("stand"),
+	dead=hash("dead")
 }
-local ROTATE_SCALING = 50
+local ROTATE_SCALING = 30
 
-go.property("jumpforce", 3000)
+go.property("jumpforce", 4000)
 go.property("play", false)
 
 local function draw_line(from, to,color)
@@ -21,10 +22,12 @@ local function jump(self)
 	self.vel=self.vel+jump_direction*self.jumpforce+self.rotate_vel
 	DefRX.notify("spawn_planet", {position=go.get_world_position()+jump_direction*self.jumpforce})
 	DefRX.notify("jump", {position=go.get_world_position()})
+	msg.post("#sprite", "play_animation",{id=hash("player_jump")})
 	timer.delay(0.3, false, function()
 		if self.state==STATE.stand then
 			self.state=STATE.float
 		end
+		msg.post("#sprite", "play_animation",{id=hash("player_idle")})
 	end)
 end
 
@@ -57,7 +60,10 @@ function apply_gravity_force(self, message_id, message, sender)
 end
 local function dead(self, message_id, message, sender)
 	DefRX.cancel_all_observing(self)
-	go.delete()
+	self.state=STATE.dead
+	self.vel=vmath.vector3()
+	particlefx.play("#player_dead")
+	go.delete_all(self.ids)
 end
 
 local function initialize(self, message_id, message, sender)
@@ -93,6 +99,7 @@ function init(self)
 	self.parent_planet=nil
 	self.state=STATE.float
 	self.on_gui=false
+	self.ids={"player","player_trail"}
 	msg.post(".", "acquire_input_focus")
 end
 
@@ -120,6 +127,9 @@ function on_message(self, message_id, message, sender)
 		if message.other_group==hash("planet") and self.state==STATE.float then
 			land(self,message)
 		end
+		if message.other_group==hash("satellite") and self.state==STATE.float then
+			
+		end
 	end
 	if message_id==hash("trigger_response") then
 		if message.enter and vmath.length(self.gravity)>0 then
@@ -130,8 +140,15 @@ function on_message(self, message_id, message, sender)
 		end
 	end
 	if message_id==hash("hit") then
-		DefRX.notify("game_over")
+		if self.state ~= STATE.dead then
+			DefRX.notify("game_over",{position=go.get_world_position()})
+			DefRX.notify("player_dead")
+		end
 	end	
+end
+
+function final(self)
+	DefRX.cancel_all_observing(self)
 end
 
 function on_input(self, action_id, action)

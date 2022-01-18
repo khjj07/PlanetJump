@@ -29,8 +29,10 @@ function init(self)
 	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
 	if TYPE.strong==self.type then
 		particlefx.play("#strong_meteor_trail")
+		self.damage=2
 	else
 		particlefx.play("#weak_meteor_trail")
+		self.damage=1
 	end
 	
 end
@@ -51,10 +53,14 @@ function explosion(self)
 	end
 end
 
+function final(self)
+	DefRX.cancel_all_observing(self)
+end
+
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
 	if message_id==hash("trigger_response") and message.enter then
-		msg.post(message.other_id, "hit",{type=self.type,direction=self.direction})
+		msg.post(message.other_id, "hit",{damage=self.damage,direction=self.direction})
 		explosion(self)
 		DefRX.cancel_all_observing(self)
 		go.delete()

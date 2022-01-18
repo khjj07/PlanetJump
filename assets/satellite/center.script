@@ -7,3 +7,4 @@ function init(self)
 	end
 	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
 end
+

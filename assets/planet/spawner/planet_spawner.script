@@ -4,10 +4,10 @@ go.property("min_scale", 200)
 go.property("max_scale", 300)
 go.property("min_distance", 0)
 go.property("max_distance", 100)
-go.property("min_rotate_speed", 10)
+go.property("min_rotate_speed", 20)
 go.property("max_rotate_speed", 40)
 
-local DEFAULT_RANGE = 1500
+local DEFAULT_RANGE = 1750
 local SPAWN_MIN = 3
 local SPAWN_MAX = 5
 local MAX_RETRY = 500
@@ -23,7 +23,7 @@ local INITIAL_PLANET =
 }
 function check_spawnable(self,new_planet)
 	new_planet.range = DEFAULT_RANGE
-	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE then
+	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE*1.5 then
 		return false
 	end
 	for _, planet in pairs(self.planet) do
