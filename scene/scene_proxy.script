@@ -10,7 +10,6 @@ end
 
 function init(self)
 	self.current="#ingame"
-	print(msg.url())
 	msg.post(self.current, "load")
 	DefRX.create_stream("pause_time")
 	DefRX.observe(self, "pause_time",pause_time)

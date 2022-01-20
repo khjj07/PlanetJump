@@ -1,17 +1,19 @@
-#define iterations 17
-#define formuparam 0.53
+#define iterations 15 //(각 크기의)별 갯수
+#define formuparam 0.7//형태 변수(별같이 보이게끔 해주는 변수)
+//범위 0.5~0.99(높을수록 갯수 적어짐)
 
-#define volsteps 17
-#define stepsize 0.15
+#define volsteps 34 // 크기 증가율에 따른 증가(반복) 횟수
+#define stepsize 0.1 //별 크기 증가율
 
-#define zoom   0.300
-#define tile   1.850
-#define speed  0.00001
+#define zoom   0.300 //확대율
+#define tile   1.850 //같은크기 별간의 거리
+#define speed  0.001 //재생속도
 
-#define brightness 0.0015
-#define darkmatter 0.600
-#define distfading 0.530
-#define saturation 0.350
+#define brightness 0.001 //별 반짝임
+#define darkmatter 2.0 //안개 같은 물체의 밝기(높을수록 밝아짐)
+#define distfading 0.630 //거리에 따른 별 하나하나의 fading(높을 수록 더 밝아짐)
+#define saturation 0.5 //채도
+#define opacity 0.02 //투명도
 
 varying mediump vec2 var_texcoord0;
 uniform lowp vec4 time; // <1>
@@ -19,8 +21,7 @@ uniform lowp vec4 time; // <1>
 void main()
 {
 	//get coords and direction
-	vec2 res = vec2(2.0, 1.0);
-	vec2 uv = var_texcoord0.xy * res.xy - 0.5;
+	vec2 uv = var_texcoord0.xy - 0.5;
 	vec3 dir = vec3(uv * zoom, 1.0);
 	float time = time.x * speed + 0.25; // <2>
 
@@ -63,5 +64,5 @@ void main()
 	}
 	// color adjust
 	v = mix(vec3(length(v)), v, saturation);
-	gl_FragColor = vec4(v * 0.01, 1.0); // <6>
+	gl_FragColor = vec4(v * 0.01, opacity); // <6>
 }

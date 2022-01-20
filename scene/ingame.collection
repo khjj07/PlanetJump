@@ -138,8 +138,8 @@ collection_instances {
   }
 }
 collection_instances {
-  id: "background2"
-  collection: "/assets/background/background2.collection"
+  id: "background"
+  collection: "/assets/background/background.collection"
   position {
     x: 0.0
     y: 0.0

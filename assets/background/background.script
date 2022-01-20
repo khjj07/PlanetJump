@@ -10,12 +10,6 @@ function init(self)
 		pos.z=go.get_position().z
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.3)
 	end)
-	self.t = 0 -- <1>
-end
-
-function update(self, dt)
-	self.t = self.t + dt -- <2>
-	--go.set("#model", "time", vmath.vector4(self.t, 0, 0, 0))
 end
 
 function on_message(self, message_id, message, sender)
