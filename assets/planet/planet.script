@@ -9,6 +9,12 @@ local IMG={
 	hash("planet4")
 }
 
+local BROKEN={
+	hash("broken1"),
+	hash("broken2"),
+	hash("broken3")
+}
+
 go.property("gravity_force", 6500)
 go.property("rotate_speed", 20)
 go.property("rotate_direction", 1)
@@ -28,7 +34,14 @@ function check_planet(self, message_id, message, sender)
 	elseif vmath.length(message.position-go.get_world_position())>RESET_DISTANCE then
 		DefRX.notify("reset_planet",{id=go.get_id()})
 	end
+	if not self.flag and self.landed then
+		self.flag=true
+		DefRX.notify("flag_up", {dist_vector=self.dist_vector})
+	end
 	self.landed=false
+	if self.combo_timer then
+		timer.cancel(self.combo_timer)
+	end
 end
 
 local function random_satellite_speed(self)
@@ -49,6 +62,7 @@ local function spawn_setelliste(self)
 	new_satellite.direction = math.random(0,1)
 	local prop = {
 		[hash("/center")]={rotate_speed = new_satellite.speed,rotate_direction = new_satellite.direction,seed=math.random(0,500)},
+		[hash("/satellite")]={seed=math.random(0,500)}
 	}
 	local instance = collectionfactory.create("#satellite",go.get_world_position(),nil,prop)
 	go.set_scale(0.25,instance[hash("/satellite")])
@@ -92,7 +106,7 @@ function init(self)
 	DefRX.create_stream("satellite_dead")
 	DefRX.observe(self, "satellite_dead", check_satellite)
 	if self.seed==0 then
-		self.seed=os.clock()
+		self.seed=os.time()
 	end
 	math.randomseed(self.seed)
 	random_planet()
@@ -108,6 +122,16 @@ function init(self)
 			spawn_setelliste(self)
 		end
 	end
+	msg.post("#broken", "disable")
+end
+
+local function broken(self)
+	msg.post("#broken", "enable")
+	if self.hp==2 then
+		msg.post("#broken", "play_animation",{id=hash("broken1")})
+	elseif self.hp==1 then
+		msg.post("#broken", "play_animation",{id=hash("broken2")})
+	end
 end
 
 
@@ -121,8 +145,22 @@ function on_message(self, message_id, message, sender)
 			local rot = vmath.quat_rotation_z(math.pi/180*90*self.rotate_direction)
 			local force = direction*self.gravity_force/((distance^2)/G)+vmath.rotate(rot, direction)*self.rotate_speed/30*distance/400
 			DefRX.notify("gravity", {force=force,rotate_vel=vmath.rotate(rot, -direction)*self.rotate_speed})
-		elseif message.own_group==hash("planet") and message.other_group==hash("player")  then
-			self.landed=true
+		end
+	end
+	if message_id==hash("contact_point_response") then
+		if message.own_group==hash("planet") and message.other_group==hash("player")  then
+			if not self.landed then
+				self.landed=true
+				if not self.flag then
+					DefRX.notify("add_combo")
+					self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
+						DefRX.notify("break_combo")
+					end)
+				else
+					DefRX.notify("break_combo")
+				end
+			end
+			self.dist_vector=message.distance*message.normal
 		end
 	end
 	if message_id==hash("dead_response") then
@@ -137,12 +175,17 @@ function on_message(self, message_id, message, sender)
 			DefRX.notify("spawn_meteor", {type=hash("weak"),position=go.get_world_position()})
 		end
 		if self.landed then
+			DefRX.notify("game_over",{position=go.get_world_position()})
 			DefRX.notify("player_dead")
 		end
 	end
+	if message_id==hash("flag") then
+		table.insert(self.ids,message.id)
+	end	
 	
 	if message_id==hash("hit") then
 		self.hp = self.hp-message.damage
+		broken(self)
 		if self.hp <= 0 then
 			msg.post(".", "break")
 		end

@@ -11,25 +11,38 @@ end
 
 
 function show_option(self,action_id,action,button)
-	DefUI.hide(self, hash("title"))
-	DefRX.notify("move_cam", {position=vmath.vector3(3000,0,0),duration=1,easing=go.EASING_INBACK})
+	DefUI.move(self, hash("title"), vmath.vector3(-850,0,0), go.EASING_INBACK, 1)
+	DefRX.notify("move_cam", {position=vmath.vector3(3000,0,0),duration=1,easing=gui.EASING_INBACK})
 	timer.delay(1, false, function()
 		self.node["option_window"]:show()
 		self.node["option_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
-		self.node["option_window"]:animate("scale", 1, go.EASING_OUTBACK, 1,0)
+		self.node["option_window"]:animate("scale", 1, gui.EASING_OUTBACK, 1,0)
 	end)
 end
 
 function show_credits(self,action_id,action,button)
-	DefUI.hide(self, hash("title"))
-	DefRX.notify("move_cam", {position=vmath.vector3(-3000,0,0),duration=1,easing=go.EASING_INBACK})
+	DefUI.move(self, hash("title"), vmath.vector3(850,0,0), go.EASING_INBACK, 1)
+	DefRX.notify("move_cam", {position=vmath.vector3(-3000,0,0),duration=1,easing=gui.EASING_INBACK})
 	
+	self.node["credits_window_exit_btn"]:show()
+	self.node["credits_window"]:set_position(vmath.vector3(360,640,0))
+	timer.delay(1, false, function()
+		self.node["credits_window"]:show()
+		self.node["credits_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
+		self.node["credits_window"]:animate("scale", 1, gui.EASING_OUTBACK, 1,0)
+	end)
 end
 
 
 function show_pause_menu(self,action_id,action,button)
-	DefRX.notify("pause_time")
 	self.node["pause_menu_window"]:show()
+	self.node["pause_menu_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
+	self.node["pause_menu_window"]:animate("scale", 1, gui.EASING_OUTBACK, 0.1,0,function()
+		DefRX.notify("pause_time")
+	end)
+	
+	
+	
 end
 
 function hide_pause_menu(self,action_id,action,button)
@@ -38,15 +51,22 @@ function hide_pause_menu(self,action_id,action,button)
 end
 
 function hide_option(self,action_id,action,button)
-	self.node["option_window"]:animate("scale", 0.01, go.EASING_OUTBACK, 0.2,0,function()
+	self.node["option_window"]:animate("scale", 0.01, gui.EASING_OUTBACK, 0.2,0,function()
 		self.node["option_window"]:hide()
-		DefRX.notify("move_cam", {position=vmath.vector3(-3000,0,0),duration=1,easing=go.EASING_OUTBACK})
+		DefRX.notify("move_cam", {position=vmath.vector3(-3000,0,0),duration=1,easing=gui.EASING_OUTBACK})
+		DefUI.move(self, hash("title"), vmath.vector3(850,0,0), gui.EASING_OUTBACK, 1)
+		
 	end)
-	timer.delay(1, false, function()
-		DefUI.show(self, hash("title"))
-		self.node["title"]:set_scale(vmath.vector3(0.01,0.01,0.01))
-		self.node["title"]:animate("scale", 4, go.EASING_OUTBACK, 1,0)
+end
+
+function hide_credits(self,action_id,action,button)
+	self.node["credits_window"]:animate("position", self.node["credits_window"]:get_position()+vmath.vector3(-850,0,0), gui.EASING_OUTBACK, 1,0,function()
+		self.node["credits_window"]:hide()
 	end)
+	DefRX.notify("move_cam", {position=vmath.vector3(3000,0,0),duration=1,easing=gui.EASING_OUTBACK})
+	DefUI.move(self, hash("title"), vmath.vector3(-850,0,0), gui.EASING_OUTBACK, 1)
+	self.node["credits_window_exit_btn"]:hide()
+
 end
 
 function reload_scene(self,action_id,action,button)
@@ -67,6 +87,7 @@ function init(self)
 	DefUI.create_button(self, "option_btn", self.node["option_btn"], {pressed = show_option})
 	DefUI.create_button(self, "developers_btn", self.node["developers_btn"], {pressed = show_credits})
 	DefUI.create_button(self, "option_window_exit_btn", self.node["option_window_exit_btn"], {pressed = hide_option})
+	DefUI.create_button(self, "credits_window_exit_btn", self.node["credits_window_exit_btn"], {pressed = hide_credits})
 	DefUI.create_button(self, "pause_btn", self.node["pause_btn"], {pressed=show_pause_menu,hover=hover})
 	DefUI.create_button(self, "pause_menu_window_exit_btn", self.node["pause_menu_window_exit_btn"], {pressed = hide_pause_menu})
 	DefUI.create_button(self, "home_text", self.node["home_text"], {pressed = reload_scene})
@@ -87,6 +108,7 @@ function init(self)
 	DefUI.hide(self, hash("game_over"))
 	
 	self.node["pause_btn"]:add_tag(hash("ingame"))
+	self.node["score"]:add_tag(hash("ingame"))
 	DefUI.hide(self, hash("ingame"))
 	
 	self.node["developers_btn"]:add_tag(hash("title"))
@@ -97,14 +119,30 @@ function init(self)
 	self.node["title"]:set_scale(vmath.vector3(0.01,0.01,0.01))
 	self.node["title"]:animate("scale", 4, go.EASING_OUTBACK, 1,0)
 	self.node["option_window"]:hide()
+	self.node["credits_window"]:hide()
 	self.node["pause_menu_window"]:hide()
-	
+	self.node["combo"]:hide()
 	--RX
 	DefRX.create_stream("game_over")
 	DefRX.observe(self, "game_over", function(self, message_id, message)
 		DefUI.hide(self, hash("ingame"))
 		DefUI.hide(self, hash("title"))
 		DefUI.show(self, hash("game_over"))
+	end)
+	DefRX.create_stream("score")
+	DefRX.observe(self, "score", function(self, message_id, message)
+		self.node["score"]:set_text(message.score)
+	end)
+
+	DefRX.create_stream("combo")
+	DefRX.observe(self, "combo", function(self, message_id, message)
+		if self.play then
+			self.node["combo"]:show()
+			self.node["combo"]:set_text(tostring(message.combo).." COMBO")
+			timer.delay(0.4, false, function()
+				self.node["combo"]:hide()
+			end)
+		end
 	end)
 	
 	msg.post(".", "acquire_input_focus")

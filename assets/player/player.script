@@ -16,11 +16,11 @@ local function draw_line(from, to,color)
 end
 local function jump(self)
 	local planet_pos = go.get_position(self.parent_planet)
+	self.flag_parent=self.parent_planet
 	self.parent_planet=nil
 	go.set_parent(".",self.parent_planet,true)
 	local jump_direction = vmath.normalize(go.get_world_position()-planet_pos)
 	self.vel=self.vel+jump_direction*self.jumpforce+self.rotate_vel
-	DefRX.notify("spawn_planet", {position=go.get_world_position()+jump_direction*self.jumpforce})
 	DefRX.notify("jump", {position=go.get_world_position()})
 	msg.post("#sprite", "play_animation",{id=hash("player_jump")})
 	timer.delay(0.3, false, function()
@@ -81,9 +81,18 @@ local function on_gui(self, message_id, message, sender)
 	self.on_gui=message.value
 end
 
+local function flag_up(self, message_id, message, sender)
+	local flag = factory.create("#flag",go.get_world_position()+message.dist_vector)
+	go.set_parent(flag,self.flag_parent,true)
+	msg.post(self.flag_parent, "flag",{id=flag})
+	self.flag_parent=nil
+end
+
 function init(self)
 	DefRX.create_stream("gravity")
 	DefRX.observe(self, "gravity", apply_gravity_force)
+	DefRX.create_stream("flag_up")
+	DefRX.observe(self, "flag_up", flag_up)
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", initialize)
 	DefRX.create_stream("player_dead")
@@ -108,9 +117,9 @@ function update(self,dt)
 		if vmath.length(self.vel)>0 and not self.rotation_fix then
 			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(self.vel))
 			go.set_rotation(rot)
+			DefRX.notify("floating", {position=go.get_position()})
+			DefRX.notify("spawn_planet", {position=go.get_world_position()})
 		end
-		DefRX.notify("floating", {position=go.get_position()})
-		DefRX.notify("spawn_planet", {position=go.get_world_position()})
 	end
 	local pos = go.get_position()+self.vel*dt
 	--debugging

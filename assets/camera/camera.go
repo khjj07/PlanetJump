@@ -19,12 +19,12 @@ components {
   }
   properties {
     id: "fixedAspectRatio"
-    value: "false"
+    value: "true"
     type: PROPERTY_TYPE_BOOLEAN
   }
   properties {
     id: "aspectRatio"
-    value: "9.0, 16.0, 0.0"
+    value: "720.0, 1280.0, 0.0"
     type: PROPERTY_TYPE_VECTOR3
   }
   properties {
@@ -34,12 +34,12 @@ components {
   }
   properties {
     id: "fixedArea"
-    value: "true"
+    value: "false"
     type: PROPERTY_TYPE_BOOLEAN
   }
   properties {
     id: "fixedWidth"
-    value: "false"
+    value: "true"
     type: PROPERTY_TYPE_BOOLEAN
   }
 }

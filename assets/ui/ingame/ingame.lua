@@ -25,5 +25,11 @@ function G.init(self)
 	self.node["sfx_btn"]=box_node.create(gui.get_node("sfx_btn"),self.node["sfx_gauge"])
 	self.node["setting"]=text_node.create(gui.get_node("setting"),self.node["option_window"])
 	self.node["option_window_exit_btn"]=box_node.create(gui.get_node("option_window_exit_btn"),self.node["option_window"])
+	self.node["credits_window"]=box_node.create(gui.get_node("credits_window"),nil)
+	self.node["credits"]=text_node.create(gui.get_node("credits"),self.node["credits_window"])
+	self.node["credits_window_exit_btn"]=box_node.create(gui.get_node("credits_window_exit_btn"),self.node["credits_window"])
+	self.node["members"]=text_node.create(gui.get_node("members"),self.node["credits_window"])
+	self.node["score"]=text_node.create(gui.get_node("score"),nil)
+	self.node["combo"]=text_node.create(gui.get_node("combo"),nil)
 end
 return G

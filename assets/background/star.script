@@ -1,9 +1,10 @@
 function init(self)
-	self.t = 0 -- <1>
+	--self.t=0
+	particlefx.play("#star_nest")
 end
 
 function update(self, dt)
-	self.t = self.t + dt -- <2>
-	go.set("#model", "time", vmath.vector4(self.t, 0, 0, 0))
-	print(self.t)
+	--self.t = self.t + dt -- <2>
+	--go.set("#model", "time", vmath.vector4(self.t, 0, 0, 0))
+	--print(self.t)
 end

@@ -1,12 +1,78 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
+local SCORE_DELAY = 1
+local FLAG_TO_SCORE = 
+{
+	{flag=10 ,score=5},
+	{flag=30 ,score=10},
+	{flag=50 ,score=15},
+	{flag=70 ,score=20},
+	{flag=90 ,score=25},
+	{flag=nil ,score=30},
+}
 
-local function game_over(self, message_id, message, sender)
-	print("game_over")
+local COMBO_TO_SCORE = 
+{
+	{combo=5 ,score=1},
+	{combo=10 ,score=2},
+	{combo=15 ,score=3},
+	{combo=20 ,score=4},
+	{combo=25 ,score=5},
+	{combo=30 ,score=6},
+}
+local function flag_increment(self)
+	for _, t in pairs(FLAG_TO_SCORE) do
+		if not t.flag or self.flag < t.flag then
+			return t.score
+		end
+	end
+	return 0
+end
+
+local function combo_increment(self)
+	for _, t in pairs(COMBO_TO_SCORE) do
+		if self.combo >= t.combo then
+			return t.score
+		end
+	end
+	return 0
 end
 
 function init(self)
+	self.score=0
+	self.flag=0
+	self.combo=0
 	DefRX.create_stream("game_over")
-	DefRX.observe(self, "game_over", game_over)
+	DefRX.observe(self, "game_over", function(self, message_id, message, sender)
+		timer.cancel(self.score_routine)
+	end)
+	DefRX.create_stream("game_start")
+	DefRX.observe(self, "game_start", function(self, message_id, message, sender)
+		self.score=0
+		self.flag=0
+		self.combo=0
+		self.score_routine=timer.delay(SCORE_DELAY, true, function()
+			self.score=self.score+flag_increment(self)
+			DefRX.notify("score",{score=self.score})
+		end)
+	end)
+	DefRX.create_stream("flag_up")
+	DefRX.observe(self, "flag_up", function(self, message_id, message, sender)
+		self.flag=self.flag+1
+		print("flag : "..self.flag)
+	end)
+
+	DefRX.create_stream("add_combo")
+	DefRX.observe(self, "add_combo", function(self, message_id, message, sender)
+		self.combo=self.combo+1
+		self.score=self.score+combo_increment(self)
+		DefRX.notify("combo", {combo=self.combo})
+	end)
+
+	DefRX.create_stream("break_combo")
+	DefRX.observe(self, "break_combo", function(self, message_id, message, sender)
+		self.combo=0
+		print("combo : "..self.combo)
+	end)
 end
 
 function final(self)

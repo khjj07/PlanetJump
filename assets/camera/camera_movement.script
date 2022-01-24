@@ -2,8 +2,8 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 local rendercam = require "rendercam.rendercam"
 local PARTITION = 50
 go.property("initial_ortho_scale", 4)
-go.property("play_ortho_scale", 9)
-go.property("over_ortho_scale", 3)
+go.property("play_ortho_scale", 10)
+go.property("over_ortho_scale", 1)
 go.property("zoom", 5)
 go.property("initial_zoom_duration", 0.7)
 go.property("over_zoom_duration", 0.2)

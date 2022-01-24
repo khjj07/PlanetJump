@@ -23,6 +23,7 @@ function on_message(self, message_id, message, sender)
 		msg.post(sender, "init")
 		msg.post(sender, "enable")
 		msg.post(sender, "acquire_input_focus")
+		msg.post(".", "set_time_step", {factor = 1, mode = 0})
 	end
 	if message_id == hash("proxy_unloaded") then
 		if self.current then

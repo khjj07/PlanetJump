@@ -10,7 +10,7 @@ go.property("max_rotate_speed", 40)
 local DEFAULT_RANGE = 1750
 local SPAWN_MIN = 3
 local SPAWN_MAX = 5
-local MAX_RETRY = 500
+local MAX_RETRY = 10
 local INITIAL_PLANET = 
 {
 	instance=hash("/initial_planet/planet"),
@@ -23,7 +23,7 @@ local INITIAL_PLANET =
 }
 function check_spawnable(self,new_planet)
 	new_planet.range = DEFAULT_RANGE
-	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE*1.5 then
+	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE*2 then
 		return false
 	end
 	for _, planet in pairs(self.planet) do
@@ -66,6 +66,7 @@ function spawn(self,center)
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
 		table.insert(self.planet, new_planet)
+		table.insert(self.position,new_planet.position)
 	end
 end
 
@@ -112,6 +113,7 @@ function remove_planet(self, message_id, message, sender)
 	for p, planet in pairs(self.planet) do
 		if message.id == planet.instance then
 			table.remove(self.planet,p)
+			table.remove(self.position,p)
 			break
 		end
 	end
@@ -150,14 +152,11 @@ function init(self)
 	self.player_pos=vmath.vector3()
 	self.planet={}
 	self.target={INITIAL_PLANET}
+	self.position = {}
 end
 
 function update(self,dt)
-	local new_table = {}
-	for _, planet in pairs(self.planet) do
-		table.insert(new_table, planet.position)
-	end
-	DefRX.notify("planet_position", new_table)
+	DefRX.notify("planet_position", self.position)
 end
 
 
