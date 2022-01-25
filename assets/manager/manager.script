@@ -19,6 +19,15 @@ local COMBO_TO_SCORE =
 	{combo=25 ,score=5},
 	{combo=30 ,score=6},
 }
+
+local LEVEL = 
+{
+
+
+}
+
+
+
 local function flag_increment(self)
 	for _, t in pairs(FLAG_TO_SCORE) do
 		if not t.flag or self.flag < t.flag then
@@ -58,7 +67,6 @@ function init(self)
 	DefRX.create_stream("flag_up")
 	DefRX.observe(self, "flag_up", function(self, message_id, message, sender)
 		self.flag=self.flag+1
-		print("flag : "..self.flag)
 	end)
 
 	DefRX.create_stream("add_combo")
@@ -71,7 +79,6 @@ function init(self)
 	DefRX.create_stream("break_combo")
 	DefRX.observe(self, "break_combo", function(self, message_id, message, sender)
 		self.combo=0
-		print("combo : "..self.combo)
 	end)
 end
 

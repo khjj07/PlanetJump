@@ -134,6 +134,7 @@ function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
 	if message_id==hash("contact_point_response") then
 		if message.other_group==hash("planet") and self.state==STATE.float then
+			DefRX.notify("spawn_planet", {position=go.get_world_position()})
 			land(self,message)
 		end
 		if message.other_group==hash("satellite") and self.state==STATE.float then

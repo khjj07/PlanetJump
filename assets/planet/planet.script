@@ -6,7 +6,21 @@ local IMG={
 	hash("planet1"),
 	hash("planet2"),
 	hash("planet3"),
-	hash("planet4")
+	hash("planet4"),
+	hash("planet5"),
+	hash("planet6"),
+	hash("planet7"),
+	hash("planet8")
+}
+local COLOR={
+	{vmath.vector3(255,217,144),vmath.vector3(209,157,206),vmath.vector3(137,130,254)},
+	{vmath.vector3(234,129,73)},
+	{vmath.vector3(147,130,255)},
+	{vmath.vector3(138,255,190),vmath.vector3(242,103,142),vmath.vector3(197,174,137)},
+	{vmath.vector3(255,202,227),vmath.vector3(74,174,191)},
+	{vmath.vector3(175,147,219),vmath.vector3(99,164,188),vmath.vector3(237,219,163)},
+	{vmath.vector3(203,140,120),vmath.vector3(162,214,174)},
+	{vmath.vector3(201,255,253),vmath.vector3(178,106,109)}
 }
 
 local BROKEN={
@@ -27,6 +41,8 @@ go.property("max_satellite_speed", 10)
 go.property("min_satellite_distance", 450)
 go.property("max_satellite_distance", 450)
 go.property("satellite_rotate_direction", 1)
+go.property("break_meteor_min", 2)
+go.property("break_meteor_max", 5)
 
 function check_planet(self, message_id, message, sender)
 	if vmath.length(message.position-go.get_world_position())>MAX_DISTANCE then
@@ -94,9 +110,9 @@ local function check_satellite(self, message_id, message, sender)
 		end
 	end
 end
-local function random_planet()
-	print(math.random(#IMG))
-	msg.post("#sprite", "play_animation",{id=hash("planet"..tostring(math.random(#IMG)))})
+local function random_planet(self)
+	self.planet_num=math.random(#IMG)
+	msg.post("#sprite", "play_animation",{id=hash("planet"..tostring(self.planet_num))})
 end
 function init(self)
 	DefRX.create_stream("jump")
@@ -109,7 +125,7 @@ function init(self)
 		self.seed=os.time()
 	end
 	math.randomseed(self.seed)
-	random_planet()
+	random_planet(self)
 	self.landed=false
 	self.hp=3
 	self.ids={"planet","range","ring"}
@@ -134,7 +150,11 @@ local function broken(self)
 	end
 end
 
-
+function planet_fragment(self)
+	local vec3 = COLOR[self.planet_num][math.random(#COLOR[self.planet_num])]/255
+	local color = vmath.vector4(vec3.x+0.2,vec3.y+0.2,vec3.z+0.2,1)
+	return color
+end
 
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
@@ -167,27 +187,33 @@ function on_message(self, message_id, message, sender)
 		DefRX.cancel_all_observing(self)
 		go.delete_all(self.ids)
 	end
-	if message_id==hash("break") then
-		DefRX.cancel_all_observing(self)
-		particlefx.play("#planet_explosion")
-		go.delete_all(self.ids)
-		for i = 1, math.random(0,3) do
-			DefRX.notify("spawn_meteor", {type=hash("weak"),position=go.get_world_position()})
-		end
-		if self.landed then
-			DefRX.notify("game_over",{position=go.get_world_position()})
-			DefRX.notify("player_dead")
-		end
-	end
 	if message_id==hash("flag") then
 		table.insert(self.ids,message.id)
 	end	
 	
-	if message_id==hash("hit") then
+	if message_id==hash("hit") and self.hp>0 then
 		self.hp = self.hp-message.damage
+		print("hp :"..self.hp)
 		broken(self)
+	
 		if self.hp <= 0 then
-			msg.post(".", "break")
+			DefRX.cancel_all_observing(self)
+			particlefx.play("#planet_explosion")
+			particlefx.set_constant("#planet_explosion", "fragment1", "tint", planet_fragment(self))
+			particlefx.set_constant("#planet_explosion", "fragment2", "tint", planet_fragment(self))
+			particlefx.set_constant("#planet_explosion", "fragment3", "tint", planet_fragment(self))
+			particlefx.set_constant("#planet_explosion", "fragment4", "tint", planet_fragment(self))
+			local num = math.random(self.break_meteor_min,self.break_meteor_max) 
+			for i = 1, num do
+				print("num :"..num)
+				DefRX.notify("spawn_meteor", {position=go.get_world_position(),delay=0.1})
+			end
+			
+			if self.landed then
+				DefRX.notify("game_over",{position=go.get_world_position()})
+				DefRX.notify("player_dead")
+			end
+			go.delete_all(self.ids)
 		end
 	end
 end

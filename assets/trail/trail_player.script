@@ -3,7 +3,6 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 
 
 function init(self)
-	
 	self.pos=vmath.vector3()
 	self.play=false
 	DefRX.observe(self, "game_start",function(self, message_id, message, sender)

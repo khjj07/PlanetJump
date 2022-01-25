@@ -12,7 +12,6 @@ function init(self)
 	local z = 0.5+math.random(0,100)/200
 	
 	self.color=vmath.vector4(x,y,z,1)
-	print(self.color)
 	go.set("#sprite", "tint", self.color)
 end
 
@@ -22,6 +21,11 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id==hash("hit") then
 		DefRX.notify("satellite_dead", {id=go.get_id()})
+		particlefx.play("#satellite_explosion")
+		particlefx.set_constant("#satellite_explosion", "fragment1", "tint",self.color)
+		particlefx.set_constant("#satellite_explosion", "fragment2", "tint",self.color)
+		particlefx.set_constant("#satellite_explosion", "fragment3", "tint",self.color)
+		particlefx.set_constant("#satellite_explosion", "fragment4", "tint",self.color)
 	end
 	if message_id==hash("dead_response") then
 		go.delete()

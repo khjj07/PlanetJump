@@ -155,6 +155,10 @@ function init(self)
 	self.position = {}
 end
 
+function final(self)
+	DefRX.cancel_all_observing(self)
+end
+
 function update(self,dt)
 	DefRX.notify("planet_position", self.position)
 end
