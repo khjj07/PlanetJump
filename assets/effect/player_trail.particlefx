@@ -14,20 +14,20 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/effect/particle.atlas"
-  animation: "circle_01"
+  tile_source: "/builtins/graphics/particle_blob.tilesource"
+  animation: "anim"
   material: "/builtins/materials/particlefx.material"
-  blend_mode: BLEND_MODE_ADD
+  blend_mode: BLEND_MODE_ADD_ALPHA
   particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
   inherit_velocity: 0.0
-  max_particle_count: 50
+  max_particle_count: 128
   type: EMITTER_TYPE_BOX
   start_delay: 0.0
   properties {
     key: EMITTER_KEY_SPAWN_RATE
     points {
       x: 0.0
-      y: 50.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -67,7 +67,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_LIFE_TIME
     points {
       x: 0.0
-      y: 1.0
+      y: 1.5
       t_x: 1.0
       t_y: 0.0
     }
@@ -127,7 +127,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_ALPHA
     points {
       x: 0.0
-      y: 1.0
+      y: 30.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -177,13 +177,19 @@ emitters {
     key: PARTICLE_KEY_SCALE
     points {
       x: 0.0
-      y: 1.0
-      t_x: 1.0
-      t_y: 0.0
+      y: 1.844501
+      t_x: 0.24102056
+      t_y: -0.97052
+    }
+    points {
+      x: 0.4579618
+      y: 0.7710205
+      t_x: 0.51237875
+      t_y: -0.8587596
     }
     points {
       x: 1.0
-      y: 0.20245317
+      y: 0.5443286
       t_x: 1.0
       t_y: 0.0
     }
@@ -219,27 +225,27 @@ emitters {
     key: PARTICLE_KEY_ALPHA
     points {
       x: 0.0
-      y: -0.046124015
-      t_x: 0.8629119
-      t_y: 0.5053544
+      y: 3.330709E-4
+      t_x: 1.0
+      t_y: 0.0
     }
     points {
-      x: 0.023153942
-      y: -0.0023352301
-      t_x: 0.7679984
-      t_y: 0.6404518
+      x: 0.01
+      y: 0.20305221
+      t_x: 0.2914353
+      t_y: 0.95659053
     }
     points {
-      x: 0.7560701
-      y: 0.083689004
-      t_x: 0.93225133
-      t_y: -0.36181128
+      x: 0.08244414
+      y: 0.9718782
+      t_x: 0.93925816
+      t_y: -0.3432115
     }
     points {
       x: 1.0
-      y: -0.005483551
-      t_x: 0.9914234
-      t_y: -0.13068885
+      y: 0.10583211
+      t_x: 0.9692194
+      t_y: 0.24619867
     }
   }
   particle_properties {

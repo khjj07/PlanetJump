@@ -3,7 +3,7 @@ local rendercam = require "rendercam.rendercam"
 local PARTITION = 50
 go.property("initial_ortho_scale", 4)
 go.property("play_ortho_scale", 10)
-go.property("over_ortho_scale", 1)
+go.property("over_ortho_scale", 5)
 go.property("zoom", 5)
 go.property("initial_zoom_duration", 0.7)
 go.property("over_zoom_duration", 0.2)
@@ -34,13 +34,20 @@ function init(self)
 	DefRX.observe(self, "weak_hit", function(self, message_id, message,sender)
 		rendercam.shake(100, 0.3, go.get_id())
 	end)
+	DefRX.create_stream("add_combo")
+	DefRX.observe(self, "add_combo", function(self, message_id, message,sender)
+		rendercam.shake(300, 0.3, go.get_id())
+	end)
+	
 	DefRX.create_stream("move_cam")
 	DefRX.observe(self, "move_cam", function(self, message_id, message,sender)
 		go.animate(".", "position", message.playback or go.PLAYBACK_ONCE_FORWARD,  go.get_position()+message.position, message.easing or go.EASING_LINEAR, message.duration or 1, message.delay or 0,message.func)
 	end)
 	DefRX.observe(self, "game_over", function(self, message_id, message,sender)
 		go.animate("#", "zoom", go.PLAYBACK_ONCE_FORWARD, self.over_ortho_scale, go.EASING_OUTBACK, self.over_zoom_duration)
-		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
+		if message.position then
+			go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.position, go.EASING_OUTBACK, 0.5)
+		end
 	end)
 end
 

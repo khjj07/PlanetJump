@@ -1,5 +1,0 @@
-function init(self)
-	go.animate(".","scale", go.PLAYBACK_LOOP_FORWARD, 1.5, go.EASING_INOUTCUBIC, 2)
-	go.set("#sprite", "tint.w", 0.1)
-	go.animate("#sprite","tint.w", go.PLAYBACK_LOOP_PINGPONG, 0.0001, go.EASING_LINEAR, 4)
-end

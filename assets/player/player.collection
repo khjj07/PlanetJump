@@ -3,7 +3,7 @@ instances {
   id: "player"
   prototype: "/assets/player/player.go"
   children: "floor"
-  children: "player_trail"
+  children: "sight"
   position {
     x: 0.0
     y: 0.0
@@ -22,12 +22,12 @@ instances {
   }
 }
 instances {
-  id: "player_trail"
-  prototype: "/assets/trail/player_trail.go"
+  id: "sight"
+  prototype: "/assets/player/sight/sight.go"
   position {
     x: 0.0
     y: 0.0
-    z: 0.0
+    z: 0.1
   }
   rotation {
     x: 0.0
@@ -36,8 +36,8 @@ instances {
     w: 1.0
   }
   scale3 {
-    x: 10.0
-    y: 10.0
+    x: 1000.0
+    y: 1000.0
     z: 1.0
   }
 }

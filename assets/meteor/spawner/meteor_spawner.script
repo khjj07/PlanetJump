@@ -8,24 +8,41 @@ go.property("min_distance", 0)
 go.property("max_distance", 100)
 go.property("min_distance", 0)
 go.property("min_speed", 1000)
-go.property("max_speed", 2000)
+go.property("max_speed", 3000)
 go.property("min_rotate_speed", 0)
 go.property("max_rotate_speed", 60)
-go.property("min_delay", 2)
-go.property("max_delay", 4)
+go.property("min_delay", 2000)
+go.property("max_delay", 4000)
 go.property("strong_type_rate", 0.3)
 
 local OUTER_RANGE = 6000
 local INNER_RANGE = 500
 local DISTANCE_RANGE = 200
-local SPAWN_MIN = 3
-local SPAWN_MAX = 5
 local MAX_RETRY = 500
 local TYPE={
 	strong=hash("strong"),
 	weak=hash("weak")
 }
 
+local LEVEL = 
+{
+	{min_speed=1000,max_speed=2100,min_delay=3000,max_delay=4000},
+	{min_speed=1000,max_speed=2200,min_delay=2750,max_delay=3900},
+	{min_speed=1000,max_speed=2300,min_delay=2500,max_delay=3600},
+	{min_speed=1000,max_speed=2400,min_delay=2250,max_delay=3300},
+	{min_speed=1000,max_speed=2500,min_delay=2000,max_delay=3000},
+	{min_speed=1000,max_speed=2600,min_delay=1750,max_delay=2700},
+	{min_speed=1000,max_speed=2700,min_delay=1500,max_delay=2400},
+	{min_speed=1000,max_speed=2800,min_delay=1250,max_delay=2100},
+	{min_speed=1000,max_speed=2900,min_delay=1000,max_delay=1800},
+	{min_speed=1000,max_speed=3000,min_delay=500,max_delay=1250}
+}
+local function set_level(self,message_id, message, sender)
+	self.min_speed = LEVEL[message.level].min_speed
+	self.max_speed = LEVEL[message.level].max_speed
+	self.min_delay = LEVEL[message.level].min_delay
+	self.max_delay = LEVEL[message.level].max_delay
+end
 
 local function check_spawnable(self,new_meteor)
 	for _, planet in pairs(self.planet) do
@@ -127,7 +144,7 @@ local function spawn(self,center)
 end
 
 local function spawn_routine(self,message_id, message, sender)
-	timer.delay(math.random(self.min_delay,self.max_delay), false, function()
+	timer.delay(math.random(self.min_delay,self.max_delay)/1000, false, function()
 		spawn(self,self.center)
 		spawn_routine(self,message_id, message, sender)
 	end)
@@ -154,6 +171,8 @@ function init(self)
 	DefRX.observe(self, "planet_position", update_planet)
 	DefRX.create_stream("spawn_meteor")
 	DefRX.observe(self, "spawn_meteor", spawn_meteor_directly)
+	DefRX.create_stream("level")
+	DefRX.observe(self, "level", set_level)
 	self.planet={}
 end
 

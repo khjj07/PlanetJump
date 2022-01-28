@@ -4,7 +4,7 @@ go.property("min_scale", 200)
 go.property("max_scale", 300)
 go.property("min_distance", 0)
 go.property("max_distance", 100)
-go.property("min_rotate_speed", 20)
+go.property("min_rotate_speed", 30)
 go.property("max_rotate_speed", 40)
 
 local DEFAULT_RANGE = 1750
@@ -21,9 +21,23 @@ local INITIAL_PLANET =
 	range=DEFAULT_RANGE,
 	used=true
 }
+function check_spawnable_initial(self,new_planet)
+	new_planet.range = DEFAULT_RANGE
+	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE then
+		return false
+	end
+	for _, planet in pairs(self.planet) do
+		local distance = vmath.length(new_planet.position-planet.position)
+		if planet.range+new_planet.range > distance then
+			return false
+		end
+	end
+	return true
+end
+
 function check_spawnable(self,new_planet)
 	new_planet.range = DEFAULT_RANGE
-	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE*2 then
+	if  vmath.length(new_planet.position-self.player_pos) < DEFAULT_RANGE*3.5 then
 		return false
 	end
 	for _, planet in pairs(self.planet) do
@@ -43,6 +57,30 @@ function random_position_in_range(self,center)
 	pos.x = pos.x + math.sin(theta)*radius
 	pos.y = pos.y + math.cos(theta)*radius
 	return pos
+end
+
+function spawn_initial(self,center)
+	local new_planet={}
+	new_planet.position = random_position_in_range(self,center)
+	new_planet.rotate_speed = math.random(self.min_rotate_speed,self.max_rotate_speed) 
+	new_planet.rotate_direction = math.random(0,1)
+	new_planet.scale = math.random(self.min_scale,self.max_scale)/100
+	local retry=0
+	while retry<MAX_RETRY and not check_spawnable_initial(self,new_planet) do
+		new_planet.position = random_position_in_range(self,center) 
+		new_planet.scale = math.random(self.min_scale,self.max_scale)/100
+		retry=retry+1
+	end
+	if retry~=MAX_RETRY then
+		local prop = {
+			[hash("/planet")]={rotate_speed = new_planet.rotate_speed,rotate_direction = new_planet.rotate_direction,seed=math.random(0,500),play=true},
+			[hash("/range")]={seed=math.random(0,500)}
+		}
+		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
+		new_planet.instance = instance[hash("/planet")]
+		table.insert(self.planet, new_planet)
+		table.insert(self.position,new_planet.position)
+	end
 end
 
 
@@ -74,7 +112,7 @@ end
 local function initialize(self, message_id, message, sender)
 	table.insert(self.planet, INITIAL_PLANET)
 	for i = 1, math.random(SPAWN_MIN,SPAWN_MAX) do
-		spawn(self,INITIAL_PLANET)
+		spawn_initial(self,INITIAL_PLANET)
 	end
 	for _, planet in pairs(self.planet) do
 		if not planet.used then

@@ -1,10 +1,10 @@
+go.property("twinkle", 1)
 function init(self)
 	--self.t=0
 	particlefx.play("#star_nest")
+	go.animate("#", "twinkle", go.PLAYBACK_LOOP_PINGPONG, 2, go.EASING_INBOUNCE, 3)
 end
 
 function update(self, dt)
-	--self.t = self.t + dt -- <2>
-	--go.set("#model", "time", vmath.vector4(self.t, 0, 0, 0))
-	--print(self.t)
+	particlefx.set_constant("#star_nest", "blue_star", "tint", vmath.vector4(1,1,1,self.twinkle))
 end

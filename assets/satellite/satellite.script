@@ -2,10 +2,14 @@ local DefRX= require "DefUtil.DefRX.DefRX"
 local NEAR_DISTANCE = 4000
 
 go.property("seed", 0)
+go.property("min_scale", 3)
+go.property("max_scale", 8)
 
+
+	
 function init(self)
 	self.play=false
-	math.randomseed(self.seed)
+	math.randomseed(self.seed*os.clock())
 	particlefx.play("#satellite_trail")
 	local x = 0.5+math.random(0,100)/200
 	local y = 0.5+math.random(0,100)/200
@@ -13,11 +17,16 @@ function init(self)
 	
 	self.color=vmath.vector4(x,y,z,1)
 	go.set("#sprite", "tint", self.color)
+	particlefx.set_constant("#satellite_trail", "emitter","tint", self.color)
+	local scale = math.random(self.min_scale,self.max_scale)/10
+	print("scale :"..scale)
+	go.set_scale(scale)
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id==hash("trigger_response") and message.other_group==hash("player") then
 		msg.post(message.other_id, "hit")
+		msg.post(".", "hit")
 	end
 	if message_id==hash("hit") then
 		DefRX.notify("satellite_dead", {id=go.get_id()})

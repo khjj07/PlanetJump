@@ -28,6 +28,51 @@ components {
     w: 1.0
   }
 }
+components {
+  id: "player_jump"
+  component: "/assets/effect/player_jump.particlefx"
+  position {
+    x: 0.0
+    y: -300.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+components {
+  id: "player_land"
+  component: "/assets/effect/player_land.particlefx"
+  position {
+    x: 0.0
+    y: -300.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+components {
+  id: "player_trail"
+  component: "/assets/effect/player_trail.particlefx"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
 embedded_components {
   id: "sprite"
   type: "sprite"

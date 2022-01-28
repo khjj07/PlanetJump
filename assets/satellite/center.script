@@ -1,6 +1,7 @@
 go.property("rotate_speed", 30)
 go.property("rotate_direction", 1)
 
+
 function init(self)
 	if self.rotate_direction == 0 then
 		self.rotate_direction=-1

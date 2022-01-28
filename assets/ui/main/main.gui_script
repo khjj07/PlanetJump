@@ -1,0 +1,258 @@
+local DefUI= require "DefUtil.DefUI.DefUI"
+local DefRX= require "DefUtil.DefRX.DefRX"
+local UI = require "assets.ui.main.main"
+local PROXY = msg.url("main:/scene_proxy")
+local CAM_MOVE_OFFSET=3000
+local MAXPOINT=6
+function start(self,action_id,action,button)
+	if button==self.pressed_button then
+		DefRX.notify("game_start")
+		self.node["title/window"]:hide()
+		self.play=true
+		self.node["ingame/window"]:show()
+		self.node["ingame/combo"]:hide()
+		self.node["ingame/score"]:set_text(0)
+		self.node["ingame/flag"]:set_text(0)
+	end
+end
+
+
+function show_option(self,action_id,action,button)
+	if button==self.pressed_button then
+		self.node["title/window"]:animate("position.x", -850, gui.EASING_INBACK, 1,0)
+		DefRX.notify("move_cam", {position=vmath.vector3(CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_INBACK})
+		timer.delay(1, false, function()
+			self.node["title/window"]:hide()
+			self.node["option/window"]:show()
+			self.node["option/option_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
+			self.node["option/option_window"]:animate("scale", 1, gui.EASING_OUTBACK, 1,0)
+		end)
+	end
+	
+end
+
+function show_credits(self,action_id,action,button)
+
+	if button==self.pressed_button then
+		self.node["title/window"]:animate("position.x", 850, gui.EASING_INBACK, 1,0)
+		DefRX.notify("move_cam", {position=vmath.vector3(-CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_INBACK})
+		timer.delay(1, false, function()
+			self.node["credit/window"]:show()
+			self.node["title/window"]:hide()
+			self.node["credit/credits_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
+			self.node["credit/credits_window"]:animate("scale", 1, gui.EASING_OUTBACK, 1,0)
+		end)
+	end
+end
+
+
+function show_pause_menu(self,action_id,action,button)
+	if button==self.pressed_button then
+		self.node["pause/window"]:show()
+		self.node["pause/pause_menu_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
+		self.node["pause/pause_menu_window"]:animate("scale", 1, gui.EASING_OUTBACK, 0.1,0,function()
+			DefRX.notify("pause_time")
+		end)
+	end
+end
+
+function hide_pause_menu(self,action_id,action,button)
+	if button==self.pressed_button then
+		DefRX.notify("play_time")
+		self.node["pause/window"]:hide()
+	end
+end
+
+function hide_option(self,action_id,action,button)
+	if button==self.pressed_button then
+		self.node["option/option_window"]:animate("scale", 0.01, gui.EASING_OUTBACK, 0.2,0,function()
+		self.node["option/window"]:hide()
+		self.node["title/window"]:show()
+		DefRX.notify("move_cam", {position=vmath.vector3(-CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_OUTBACK})
+			self.node["title/window"]:animate("position.x", 0, gui.EASING_OUTBACK, 1,0)
+		end)
+	end
+end
+
+function hide_credits(self,action_id,action,button)
+	if button==self.pressed_button then
+		self.node["credit/window"]:animate("position.x", -850, gui.EASING_OUTBACK, 1,0,function()
+			self.node["credit/window"]:hide()
+			self.node["credit/window"]:set_position(vmath.vector3())
+		end)
+		timer.delay(0.1, false, function()
+			self.node["title/window"]:show()
+			DefRX.notify("move_cam", {position=vmath.vector3(CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_OUTBACK})
+			self.node["title/window"]:animate("position.x", 0, gui.EASING_OUTBACK, 1,0)
+		end)
+	end
+end
+
+function reload_scene(self,action_id,action,button)
+	if button==self.pressed_button then
+		msg.post(PROXY, "change_scene",{next="#ingame"})
+	end
+end
+
+local function hover(self,action_id,action,button)
+	--pprint(button)
+	self.hover=button
+	DefRX.notify("on_gui",{value=true})
+end
+
+local function button_pressed(self,action_id,action,button)
+	self.pressed_button=button
+	self.pressed_button_scale=button:get_scale()
+	button:set_scale(button:get_scale()*0.8)
+end
+
+local function flag_positioning(self,flag)
+	local pos = self.node["ingame/flag_icon"]:get_position()
+	if flag<10 then
+		pos.x=620
+	elseif flag<100 then
+		pos.x=590
+	else
+		pos.x=560
+	end
+	self.node["ingame/flag_icon"]:set_position(pos)
+end
+
+
+
+function init(self)
+	DefUI.init(self)
+	UI.init(self)
+	self.play=false
+	self.hover=nil
+	DefUI.create_button(self, "tap_to_start", self.node["title/tap_to_start"], {released = start,pressed=button_pressed})--
+	DefUI.create_button(self, "option_btn", self.node["title/option_btn"], {released = show_option,pressed=button_pressed})--
+	DefUI.create_button(self, "developers_btn", self.node["title/developers_btn"], {released = show_credits,pressed=button_pressed})--
+	DefUI.create_button(self, "option_window_exit_btn", self.node["option/option_window_exit_btn"], {released = hide_option,pressed=button_pressed})
+	DefUI.create_button(self, "credits_window_exit_btn", self.node["credit/credits_window_exit_btn"], {released = hide_credits,pressed=button_pressed})
+	DefUI.create_button(self, "pause_btn", self.node["ingame/pause_btn"], {released=show_pause_menu,hover=hover,pressed=button_pressed})
+	DefUI.create_button(self, "pause_menu_window_exit_btn", self.node["pause/pause_menu_window_exit_btn"], {released = hide_pause_menu,pressed=button_pressed})
+	DefUI.create_button(self, "home_btn", self.node["game_over/home_btn"], {released = reload_scene,pressed=button_pressed})
+	--button
+	DefUI.create_slider(self, "bgm_btn", self.node["option/bgm_btn"], {}, 150, -150, 3, 0)
+	DefUI.create_slider(self, "sfx_btn", self.node["option/sfx_btn"], {}, 150, -150, 3, 0)
+	--slider
+
+	
+	--components
+	
+	self.node["ingame/window"]:hide()
+	self.node["game_over/window"]:hide()
+	self.node["option/window"]:hide()
+	self.node["credit/window"]:hide()
+	self.node["pause/window"]:hide()
+	self.node["title/window"]:show()
+	
+
+	self.node["credit/window"]:set_position(vmath.vector3())
+	self.node["ingame/window"]:set_position(vmath.vector3())
+	self.node["title/window"]:set_position(vmath.vector3())
+	self.node["game_over/window"]:set_position(vmath.vector3())
+	self.node["option/window"]:set_position(vmath.vector3())
+	self.node["pause/window"]:set_position(vmath.vector3())
+	
+	self.node["title/title"]:set_scale(vmath.vector3(0.01,0.01,0.01))
+	self.node["title/title"]:animate("scale", vmath.vector3(0.5,0.5,1), gui.EASING_OUTBACK, 1,0,function()
+		self.node["title/title"]:animate("scale.x",0.550,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		self.node["title/title"]:animate("scale.y",0.450,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		self.node["title/title"]:animate("position.y",self.node["title/title"]:get_position().y-50,gui.EASING_INBACK,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+	end)
+	self.node["title/tap_to_start"]:animate("scale",1.1,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+	self.node["title/tap_to_start"]:animate("rotation.z",5,gui.EASING_INELASTIC,1.5,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+	gui.play_particlefx(gui.get_node("title/twinkle"))
+	
+	--RX
+	DefRX.create_stream("game_over")
+	DefRX.observe(self, "game_over", function(self, message_id, message)
+		timer.delay(1, false, function()
+			self.node["title/window"]:hide()
+			self.node["ingame/window"]:hide()
+			self.node["game_over/window"]:show()
+		end)
+	end)
+	
+	DefRX.create_stream("final_score")
+	DefRX.observe(self, "final_score", function(self, message_id, message)
+		local score=0
+		local flag=0
+		self.score_counter = timer.delay(0.00001, true, function()
+			if score>=message.score then
+				self.node["game_over/score"]:set_text(message.score)
+				timer.cancel(self.score_counter)
+			end
+			self.node["game_over/score"]:set_text(math.floor(score))
+			score=score+message.score/100
+		end)
+
+		self.flag_counter = timer.delay(0.00001, true, function()
+			if flag>=message.flag then
+				self.node["game_over/flag"]:set_text(message.flag)
+				timer.cancel(self.flag_counter)
+			end
+			self.node["game_over/flag"]:set_text(math.floor(flag))
+			flag=flag+message.flag/10
+		end)
+
+		self.node["game_over/max_combo"]:set_text(message.max_combo)
+	end)
+	
+	
+	DefRX.create_stream("score")
+	DefRX.observe(self, "score", function(self, message_id, message)
+		self.node["ingame/score"]:set_text(message.score)
+		self.node["ingame/score"]:animate("scale", 4, gui.EASING_INBOUNCE, 0.2,0,nil,gui.PLAYBACK_ONCE_PINGPONG)
+	end)
+
+	DefRX.create_stream("combo")
+	DefRX.observe(self, "combo", function(self, message_id, message)
+		if self.play then
+			self.node["ingame/combo"]:show()
+			self.node["ingame/combo"]:set_scale(vmath.vector3(0.1,0.1,0))
+			self.node["ingame/combo"]:animate("scale", 2, gui.EASING_OUTBACK, 0.7,0, function()
+				self.node["ingame/combo"]:hide()
+			end,gui.PLAYBACK_ONCE_PINGPONG)
+			self.node["ingame/combo"]:set_text(tostring(message.combo).." COMBO")
+		end
+	end)
+	DefRX.create_stream("level")
+	DefRX.observe(self, "level", function(self, message_id, message, sender)
+		self.node["ingame/flag"]:set_text(message.flag)
+		flag_positioning(self,message.flag)
+	end)
+	
+	
+	msg.post(".", "acquire_input_focus")
+end
+
+function on_message(self, message_id, message, sender)
+	DefRX.on_message(self, message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+	DefUI.on_input(self, action_id, action)
+	if not self.hover then
+		DefRX.notify("on_gui",{value=false})
+	end
+	self.hover=nil
+	if self.pressed_button and not self.pressed_button:pick_node(action.x,action.y) then
+		self.pressed_button:set_scale(self.pressed_button_scale)
+		self.pressed_button=nil
+		self.pressed_button_scale=nil
+	end
+	
+end
+
+function final(self)
+	DefRX.cancel_all_observing(self)
+end
+
+
+
+
+
+	

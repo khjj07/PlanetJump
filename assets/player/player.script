@@ -1,5 +1,4 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
-local defgraph = require("defgraph.defgraph")
 local STATE={
 	float=hash("float"),
 	stand=hash("stand"),
@@ -7,7 +6,7 @@ local STATE={
 }
 local ROTATE_SCALING = 30
 
-go.property("jumpforce", 4000)
+go.property("jumpforce", 4800)
 go.property("play", false)
 
 local function draw_line(from, to,color)
@@ -20,14 +19,22 @@ local function jump(self)
 	self.parent_planet=nil
 	go.set_parent(".",self.parent_planet,true)
 	local jump_direction = vmath.normalize(go.get_world_position()-planet_pos)
-	self.vel=self.vel+jump_direction*self.jumpforce+self.rotate_vel
+	self.vel=self.vel+jump_direction*self.jumpforce--+self.rotate_vel
 	DefRX.notify("jump", {position=go.get_world_position()})
 	msg.post("#sprite", "play_animation",{id=hash("player_jump")})
+	particlefx.play("#player_jump")
 	timer.delay(0.3, false, function()
 		if self.state==STATE.stand then
 			self.state=STATE.float
 		end
 		msg.post("#sprite", "play_animation",{id=hash("player_idle")})
+	end)
+
+	self.asphyxiation_timer = timer.delay(1, false, function()
+		print(33333)
+		if self.state==STATE.float then
+			DefRX.notify("asphyxiation")
+		end
 	end)
 end
 
@@ -37,25 +44,29 @@ local function land(self,message)
 	self.gravity=vmath.vector3()
 	self.vel=vmath.vector3()
 	self.parent_planet=message.other_id
-	local planet_pos = go.get_position(self.parent_planet)
-	local normal = vmath.normalize(go.get_position()-planet_pos)
+	if self.asphyxiation_timer then
+		timer.cancel(self.asphyxiation_timer)
+		self.asphyxiation_timer=nil
+	end
+	DefRX.notify("breathing")
+	local planet_pos = go.get_world_position(self.parent_planet)
+	local normal = vmath.normalize(go.get_world_position()-planet_pos)
 	local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
 	go.set_position(go.get_position()+message.distance*normal)
 	go.set_rotation(rot)
 	go.set_parent(".",self.parent_planet,true)
 	DefRX.notify("landing", {position=planet_pos})
+	particlefx.play("#player_land")
 end
 
 function apply_gravity_force(self, message_id, message, sender)
 	if self.state == STATE.float then
 		self.vel=self.vel+message.force
 	end
-	self.rotate_vel = message.rotate_vel*ROTATE_SCALING
-	--debugging
 	if self.parent_planet then
 		local planet_pos = go.get_position(self.parent_planet)
 		local jump_direction = vmath.normalize(go.get_world_position()-planet_pos)
-		draw_line(go.get_world_position(), go.get_world_position()+jump_direction*self.jumpforce+self.rotate_vel)
+		--draw_line(go.get_world_position(), go.get_world_position()+jump_direction)
 	end
 end
 local function dead(self, message_id, message, sender)
@@ -68,6 +79,7 @@ end
 
 local function initialize(self, message_id, message, sender)
 	self.play=true
+	particlefx.play("#player_trail")
 end
 
 local function pause_time(self, message_id, message, sender)
@@ -108,8 +120,9 @@ function init(self)
 	self.parent_planet=nil
 	self.state=STATE.float
 	self.on_gui=false
-	self.ids={"player","player_trail"}
+	self.ids={"player","sight"}
 	msg.post(".", "acquire_input_focus")
+	
 end
 
 function update(self,dt)
@@ -123,7 +136,13 @@ function update(self,dt)
 	end
 	local pos = go.get_position()+self.vel*dt
 	--debugging
-	draw_line(go.get_world_position(),go.get_world_position()+self.vel*dt*10,vmath.vector4(1,1,0,1))
+	--[[for i = 1, 360,10 do
+		local x=math.sin(math.pi/180*i)*1750*3.5
+		local y=math.cos(math.pi/180*i)*1750*3.5
+		draw_line(go.get_world_position(),go.get_world_position()+vmath.vector3(x,y,0),vmath.vector4(1,1,0,1))
+	end
+	--]]
+	--draw_line(go.get_world_position(),go.get_world_position()+self.vel*dt*10,vmath.vector4(1,1,0,1))
 	go.set_position(pos)
 	if self.play then
 		DefRX.notify("player_position", {position=go.get_world_position()})
