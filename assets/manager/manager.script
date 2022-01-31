@@ -30,6 +30,8 @@ function init(self)
 	self.combo=0
 	self.max_combo=0
 	self.level=1
+	self.bgm=true
+	self.sfx=true
 	DefRX.create_stream("game_over")
 	DefRX.observe(self, "game_over", function(self, message_id, message, sender)
 		DefRX.notify("final_score",{score=self.score,flag=self.flag,max_combo=self.max_combo})
@@ -38,7 +40,8 @@ function init(self)
 	DefRX.observe(self, "game_start", function(self, message_id, message, sender)
 		self.score=0
 		self.flag=0
-		self.combo=1
+		self.combo=0
+		self.max_combo=0
 	end)
 	DefRX.create_stream("flag_up")
 	DefRX.observe(self, "flag_up", function(self, message_id, message, sender)
@@ -54,23 +57,36 @@ function init(self)
 		if self.combo> self.max_combo then
 			self.max_combo=self.combo
 		end
-		DefRX.notify("combo", {combo=self.combo-1})
+		DefRX.notify("combo", {combo=self.combo})
 	end)
 
 	DefRX.create_stream("break_combo")
 	DefRX.observe(self, "break_combo", function(self, message_id, message, sender)
-		self.combo=1
+		if self.combo >0 then
+			self.combo=0
+			DefRX.notify("combo_break")
+		end
 	end)
 
 
 	DefRX.create_stream("add_score")
 	DefRX.observe(self, "add_score", function(self, message_id, message, sender)
-		self.score=self.score+DEFAULT_SCORE*self.combo
+		self.score=self.score+DEFAULT_SCORE*(self.combo+1)
 		DefRX.notify("score",{score=self.score})
 	end)
 
+	DefRX.create_stream("set_sound")
+	DefRX.observe(self, "set_sound", function(self, message_id, message, sender)
+		self.bgm=message.bgm
+		self.sfx=message.sfx
+		DefRX.notify("change_sound", {bgm=self.bgm,sfx=self.sfx})
+	end)
 
-
+	DefRX.create_stream("scene_loaded")
+	DefRX.observe(self, "scene_loaded", function(self, message_id, message, sender)
+		DefRX.notify("change_sound", {bgm=self.bgm,sfx=self.sfx})
+	end)
+	
 end
 
 function final(self)

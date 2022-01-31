@@ -174,7 +174,7 @@ function reset_planet(self, message_id, message, sender)
 end
 
 function init(self)
-	math.randomseed(os.time())
+	math.randomseed(os.clock())
 	DefRX.create_stream("game_start")
 	DefRX.observe(self, "game_start", initialize)
 	DefRX.create_stream("spawn_planet")

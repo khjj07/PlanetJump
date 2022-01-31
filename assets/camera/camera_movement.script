@@ -1,8 +1,8 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 local rendercam = require "rendercam.rendercam"
 local PARTITION = 50
-go.property("initial_ortho_scale", 4)
-go.property("play_ortho_scale", 10)
+go.property("initial_ortho_scale", 3)
+go.property("play_ortho_scale", 7)
 go.property("over_ortho_scale", 5)
 go.property("zoom", 5)
 go.property("initial_zoom_duration", 0.7)
@@ -24,7 +24,7 @@ function init(self)
 	DefRX.create_stream("game_start")
 	self.zoom=self.initial_ortho_scale
 	DefRX.observe(self, "game_start", function(self, message_id, message,sender)
-		go.animate("#", "zoom", go.PLAYBACK_ONCE_FORWARD, self.play_ortho_scale, go.EASING_OUTBOUNCE, self.initial_zoom_duration)
+		go.animate("#", "zoom", go.PLAYBACK_ONCE_FORWARD, self.play_ortho_scale, go.EASING_INBACK, self.initial_zoom_duration)
 	end)
 	DefRX.create_stream("strong_hit")
 	DefRX.observe(self, "strong_hit", function(self, message_id, message,sender)
@@ -34,10 +34,11 @@ function init(self)
 	DefRX.observe(self, "weak_hit", function(self, message_id, message,sender)
 		rendercam.shake(100, 0.3, go.get_id())
 	end)
-	DefRX.create_stream("add_combo")
-	DefRX.observe(self, "add_combo", function(self, message_id, message,sender)
-		rendercam.shake(300, 0.3, go.get_id())
+	DefRX.create_stream("cancel_shaking")
+	DefRX.observe(self, "cancel_shaking", function(self, message_id, message,sender)
+		rendercam.stop_shaking(go.get_id())
 	end)
+	
 	
 	DefRX.create_stream("move_cam")
 	DefRX.observe(self, "move_cam", function(self, message_id, message,sender)

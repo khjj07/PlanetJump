@@ -1,5 +1,5 @@
 emitters {
-  id: "emitter"
+  id: "tail"
   mode: PLAY_MODE_LOOP
   duration: 0.1
   space: EMISSION_SPACE_WORLD
@@ -14,8 +14,8 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/builtins/graphics/particle_blob.tilesource"
-  animation: "anim"
+  tile_source: "/assets/effect/particle.atlas"
+  animation: "star_06"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ADD_ALPHA
   particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
@@ -225,13 +225,13 @@ emitters {
     key: PARTICLE_KEY_ALPHA
     points {
       x: 0.0
-      y: 3.330709E-4
+      y: -0.3863708
       t_x: 1.0
       t_y: 0.0
     }
     points {
-      x: 0.01
-      y: 0.20305221
+      x: 0.05405063
+      y: -0.0057678903
       t_x: 0.2914353
       t_y: 0.95659053
     }

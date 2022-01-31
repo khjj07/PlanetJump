@@ -5,9 +5,10 @@ local STATE={
 	dead=hash("dead")
 }
 local ROTATE_SCALING = 30
-
+local HEX = {0,1,2,3,4,5,6,7,8,9,"A","B","C","D","E","F"}
 go.property("jumpforce", 4800)
 go.property("play", false)
+
 
 local function draw_line(from, to,color)
 	color=color or vmath.vector4(1,0,0,1)
@@ -30,8 +31,7 @@ local function jump(self)
 		msg.post("#sprite", "play_animation",{id=hash("player_idle")})
 	end)
 
-	self.asphyxiation_timer = timer.delay(1, false, function()
-		print(33333)
+	self.asphyxiation_timer = timer.delay(0.4, false, function()
 		if self.state==STATE.float then
 			DefRX.notify("asphyxiation")
 		end
@@ -51,9 +51,13 @@ local function land(self,message)
 	DefRX.notify("breathing")
 	local planet_pos = go.get_world_position(self.parent_planet)
 	local normal = vmath.normalize(go.get_world_position()-planet_pos)
-	local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
+	if normal ~=vmath.vector3(-1,0,0) then
+		local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
+		go.set_rotation(rot)
+	else
+		go.set_rotation(vmath.quat_rotation_z(-math.pi))
+	end
 	go.set_position(go.get_position()+message.distance*normal)
-	go.set_rotation(rot)
 	go.set_parent(".",self.parent_planet,true)
 	DefRX.notify("landing", {position=planet_pos})
 	particlefx.play("#player_land")
@@ -80,6 +84,7 @@ end
 local function initialize(self, message_id, message, sender)
 	self.play=true
 	particlefx.play("#player_trail")
+	
 end
 
 local function pause_time(self, message_id, message, sender)
@@ -94,7 +99,7 @@ local function on_gui(self, message_id, message, sender)
 end
 
 local function flag_up(self, message_id, message, sender)
-	local flag = factory.create("#flag",go.get_world_position()+message.dist_vector)
+	local flag = factory.create("#flag",go.get_world_position()+message.dist_vector+vmath.vector3(0,0,0.3))
 	go.set_parent(flag,self.flag_parent,true)
 	msg.post(self.flag_parent, "flag",{id=flag})
 	self.flag_parent=nil
@@ -115,6 +120,8 @@ function init(self)
 	DefRX.observe(self, "play_time",play_time)
 	DefRX.create_stream("on_gui")
 	DefRX.observe(self, "on_gui",on_gui)
+	DefRX.create_stream("break_combo")
+	
 	self.vel=vmath.vector3()
 	self.gravity=vmath.vector3()
 	self.parent_planet=nil
@@ -122,14 +129,19 @@ function init(self)
 	self.on_gui=false
 	self.ids={"player","sight"}
 	msg.post(".", "acquire_input_focus")
-	
+	math.randomseed(os.time())
 end
 
 function update(self,dt)
 	if self.state == STATE.float then
 		if vmath.length(self.vel)>0 and not self.rotation_fix then
-			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(self.vel))
-			go.set_rotation(rot)
+			local normal = vmath.normalize(self.vel)
+			if normal ~=vmath.vector3(-1,0,0) then
+				local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
+				go.set_rotation(rot)
+			else
+				go.set_rotation(vmath.quat_rotation_z(-math.pi))
+			end
 			DefRX.notify("floating", {position=go.get_position()})
 			DefRX.notify("spawn_planet", {position=go.get_world_position()})
 		end

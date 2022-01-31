@@ -1,14 +1,14 @@
 local INITIAL_SCALE=1000
 local MIN_SCALE=50
-local REDUCED_DURATION=2.5
+local REDUCED_DURATION=3
 local RECOVERY_DURATION=1
 local DefRX= require "DefUtil.DefRX.DefRX"
 function init(self)
 	DefRX.create_stream("asphyxiation")
 	DefRX.observe(self, "asphyxiation", function(self, message_id, message)
 		go.cancel_animations(".", "scale")
-		go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD,MIN_SCALE, go.EASING_LINEAR, REDUCED_DURATION)
-		self.dead_timer = timer.delay(REDUCED_DURATION+1, false, function()
+		go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD,MIN_SCALE, go.EASING_OUTCIRC, REDUCED_DURATION)
+		self.dead_timer = timer.delay(REDUCED_DURATION+0.4, false, function()
 			DefRX.notify("game_over")
 			DefRX.notify("player_dead")
 		end)

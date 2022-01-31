@@ -8,9 +8,7 @@ local IMG={
 	hash("planet3"),
 	hash("planet4"),
 	hash("planet5"),
-	hash("planet6"),
-	hash("planet7"),
-	hash("planet8")
+	hash("planet6")
 }
 local COLOR={
 	{vmath.vector3(255,217,144),vmath.vector3(209,157,206),vmath.vector3(137,130,254)},
@@ -86,6 +84,7 @@ local function spawn_setelliste(self)
 end
 
 local function initialize(self, message_id, message, sender)
+	self.play=true
 	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
 end
 local function satellite_rate()
@@ -171,7 +170,7 @@ function on_message(self, message_id, message, sender)
 		if message.own_group==hash("planet") and message.other_group==hash("player")  then
 			if not self.landed then
 				self.landed=true
-				if not self.flag then
+				if not self.flag and self.play then
 					DefRX.notify("add_score")
 					DefRX.notify("add_combo")
 					self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
