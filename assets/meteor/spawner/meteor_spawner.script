@@ -26,7 +26,7 @@ local TYPE={
 
 local LEVEL = 
 {
-	{min_speed=1000,max_speed=2100,min_delay=3000,max_delay=4000},
+	{min_speed=1000,max_speed=2100,min_delay=2250,max_delay=3300},
 	{min_speed=1000,max_speed=2200,min_delay=2750,max_delay=3900},
 	{min_speed=1000,max_speed=2300,min_delay=2500,max_delay=3600},
 	{min_speed=1000,max_speed=2400,min_delay=2250,max_delay=3300},
@@ -151,6 +151,7 @@ local function spawn_routine(self,message_id, message, sender)
 end
 
 
+
 function set_center_position(self, message_id, message, sender)
 	self.center=message.position
 end
@@ -164,7 +165,10 @@ function init(self)
 		math.randomseed(os.time())
 	end)
 	DefRX.create_stream("game_start")
-	DefRX.observe(self, "game_start", spawn_routine)
+	DefRX.observe(self, "game_start", function(self, message_id, message, sender)
+		spawn_routine(self,message_id, message, sender)
+		spawn_routine(self,message_id, message, sender)
+	end)
 	DefRX.create_stream("player_position")
 	DefRX.observe(self, "player_position", set_center_position)
 	DefRX.create_stream("planet_position")

@@ -1,7 +1,7 @@
 local DefRX= require "DefUtil.DefRX.DefRX"
 local G=30000
-local MAX_DISTANCE = 12000
-local RESET_DISTANCE = 8000
+local MAX_DISTANCE = 8000
+local RESET_DISTANCE = 5000
 local IMG={
 	hash("planet1"),
 	hash("planet2"),

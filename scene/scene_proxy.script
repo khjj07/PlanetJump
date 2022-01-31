@@ -46,12 +46,8 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == hash("proxy_unloaded") then
 		if self.current then
-			msg.post(self.current, "load")
+			msg.post(self.current, "async_load")
 		end
-	end
-	if message_id == hash("reload_scene") then
-		msg.post(self.current, "unload")
-		self.current=message.next
 	end
 	if message_id == hash("change_scene") then
 		msg.post(self.current, "disable")
