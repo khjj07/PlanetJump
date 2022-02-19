@@ -1,0 +1,4 @@
+function init(self)
+	local node = gui.get_node("text")
+	gui.animate(node, "color", 1, gui.EASING_INSINE, 0.5)
+end

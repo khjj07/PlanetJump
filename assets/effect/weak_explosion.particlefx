@@ -565,7 +565,7 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "fragment1"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ALPHA
@@ -794,7 +794,7 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "fragment2"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ALPHA
@@ -1023,7 +1023,7 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "fragment3"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ALPHA
@@ -1252,7 +1252,7 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "fragment4"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ALPHA

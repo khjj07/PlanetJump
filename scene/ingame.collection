@@ -4,7 +4,7 @@ instances {
   prototype: "/assets/camera/camera.go"
   position {
     x: 0.0
-    y: 0.0
+    y: 600.0
     z: 0.0
   }
   rotation {
@@ -112,7 +112,7 @@ collection_instances {
   collection: "/assets/player/player.collection"
   position {
     x: 0.0
-    y: 621.0
+    y: 600.0
     z: 0.0
   }
   rotation {

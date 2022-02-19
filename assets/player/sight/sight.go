@@ -16,7 +16,7 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/assets/player/player.atlas\"\n"
+  data: "tile_set: \"/assets/space.atlas\"\n"
   "default_animation: \"sight_filter\"\n"
   "material: \"/assets/player/sight/sight.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"

@@ -14,7 +14,7 @@ emitters {
     z: 0.7627187
     w: 0.64673036
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "star_05"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD_ALPHA
@@ -336,7 +336,7 @@ emitters {
     z: 0.7627187
     w: 0.64673036
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "smoke_07"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD
@@ -598,7 +598,7 @@ emitters {
     z: 0.7627187
     w: 0.64673036
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "star_05"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD_ALPHA
@@ -920,7 +920,7 @@ emitters {
     z: 0.7627187
     w: 0.64673036
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "smoke_07"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD
@@ -1182,7 +1182,7 @@ emitters {
     z: 0.8517695
     w: 0.52391666
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "star_05"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD_ALPHA

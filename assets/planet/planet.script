@@ -8,17 +8,19 @@ local IMG={
 	hash("planet3"),
 	hash("planet4"),
 	hash("planet5"),
-	hash("planet6")
+	hash("planet6"),
+	hash("planet7"),
+	hash("planet8")
 }
 local COLOR={
-	{vmath.vector3(255,217,144),vmath.vector3(209,157,206),vmath.vector3(137,130,254)},
+	{vmath.vector3(209,157,206),vmath.vector3(255,217,144),vmath.vector3(137,130,254)},
 	{vmath.vector3(234,129,73)},
 	{vmath.vector3(147,130,255)},
-	{vmath.vector3(138,255,190),vmath.vector3(242,103,142),vmath.vector3(197,174,137)},
+	{vmath.vector3(197,174,137),vmath.vector3(242,103,142),vmath.vector3(138,255,190)},
 	{vmath.vector3(255,202,227),vmath.vector3(74,174,191)},
-	{vmath.vector3(175,147,219),vmath.vector3(99,164,188),vmath.vector3(237,219,163)},
-	{vmath.vector3(203,140,120),vmath.vector3(162,214,174)},
-	{vmath.vector3(201,255,253),vmath.vector3(178,106,109)}
+	{vmath.vector3(192,123,123),vmath.vector3(185,249,246)},--재조정 필요
+	{vmath.vector3(54,114,74)},
+	{vmath.vector3(212,119,204)}
 }
 
 local BROKEN={
@@ -41,9 +43,10 @@ go.property("break_meteor_min", 2)
 go.property("break_meteor_max", 5)
 
 function check_planet(self, message_id, message, sender)
-	if vmath.length(message.position-go.get_world_position())>MAX_DISTANCE then
+	self.distance=vmath.length(message.position-go.get_world_position())
+	if self.distance>MAX_DISTANCE then
 		DefRX.notify("remove_planet",{id=go.get_id()})
-	elseif vmath.length(message.position-go.get_world_position())>RESET_DISTANCE then
+	elseif self.distance>RESET_DISTANCE then
 		DefRX.notify("reset_planet",{id=go.get_id()})
 	end
 	if not self.flag and self.landed then
@@ -136,6 +139,8 @@ function init(self)
 		for i = 1, satellite_rate() do
 			spawn_setelliste(self)
 		end
+	else
+		DefRX.notify("title_color", {color = planet_color(self)})
 	end
 	msg.post("#broken", "disable")
 end
@@ -155,6 +160,11 @@ function planet_fragment(self)
 	return color
 end
 
+function planet_color(self)
+	local vec3 = COLOR[self.planet_num][1]/255
+	local color = vmath.vector4(vec3.x,vec3.y,vec3.z,1)
+	return color
+end
 function on_message(self, message_id, message, sender)
 	DefRX.on_message(self, message_id, message, sender)
 	if message_id==hash("collision_response") and message.other_group==hash("player") then
@@ -197,6 +207,13 @@ function on_message(self, message_id, message, sender)
 		broken(self)
 	
 		if self.hp <= 0 then
+			local gain = 2000
+			if 	self.distance then
+				gain = gain/self.distance
+			else
+				gain = 2
+			end
+			DefRX.notify("play_sfx", {sound="#explosion_planet",gain=gain})
 			DefRX.cancel_all_observing(self)
 			particlefx.play("#planet_explosion")
 			particlefx.set_constant("#planet_explosion", "fragment1", "tint", planet_fragment(self))

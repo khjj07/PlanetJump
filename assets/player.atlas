@@ -1,0 +1,27 @@
+images {
+  image: "/resource/player/player1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/player/player2.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/player/player3.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/player/player4.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/player/player5.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/resource/player/player6.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0

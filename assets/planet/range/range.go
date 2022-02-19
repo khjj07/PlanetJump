@@ -31,7 +31,7 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/assets/planet/planet.atlas\"\n"
+  data: "tile_set: \"/assets/space.atlas\"\n"
   "default_animation: \"range\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"

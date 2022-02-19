@@ -13,11 +13,16 @@ update_frequency = 60
 [android]
 input_method = HiddenInputField
 immersive_mode = 1
+app_icon_36x36 = /resource/icon.png
+push_field_title = Planuts!
+package = com.planuts.todo
 
 [project]
-title = PlanetJump
-dependencies#0 = https://github.com/khjj07/DefUtil/archive/refs/tags/1.4.2.zip
+title = Planuts!
+dependencies#0 = https://github.com/khjj07/DefUtil/archive/refs/tags/1.4.5.zip
 dependencies#1 = https://github.com/rgrams/rendercam/archive/1.0.3.zip
+dependencies#2 = https://github.com/y444/defold-color-lib/archive/master.zip
+dependencies#3 = https://github.com/subsoap/defsave/archive/master.zip
 
 [physics]
 gravity_y = 0.0
@@ -32,4 +37,12 @@ max_particlefx_count = 128
 [particle_fx]
 max_particle_count = 4096
 max_count = 512
+
+[graphics]
+texture_profiles = /assets/low_qaulity.texture_profiles
+
+[sound]
+max_sound_buffers = 128
+max_sound_sources = 64
+max_component_count = 128
 

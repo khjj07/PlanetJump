@@ -14,7 +14,7 @@ emitters {
     z: -0.38268343
     w: 0.9238795
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "spark_06"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ALPHA

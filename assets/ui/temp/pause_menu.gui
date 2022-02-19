@@ -4,12 +4,8 @@ fonts {
   font: "/assets/ui/Astro.font"
 }
 textures {
-  name: "icon"
-  texture: "/assets/ui/icon.atlas"
-}
-textures {
   name: "ui"
-  texture: "/assets/ui/ui.atlas"
+  texture: "/assets/ui.atlas"
 }
 background_color {
   x: 0.0
@@ -277,7 +273,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/forward"
+  texture: "ui/forward"
   id: "resume_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -387,7 +383,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/home"
+  texture: "ui/home"
   id: "home_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -497,7 +493,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/musicOn"
+  texture: "ui/musicOn"
   id: "bgm_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -607,7 +603,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/audioOn"
+  texture: "ui/audioOn"
   id: "sfx_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

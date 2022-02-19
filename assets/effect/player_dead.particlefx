@@ -14,7 +14,7 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/effect/particle.atlas"
+  tile_source: "/assets/particle.atlas"
   animation: "light_03"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ADD
@@ -97,7 +97,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_RED
     points {
       x: 0.0
-      y: 0.5
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -107,7 +107,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_GREEN
     points {
       x: 0.0
-      y: 0.5
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -338,7 +338,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_RED
     points {
       x: 0.0
-      y: 0.7
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -348,7 +348,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_GREEN
     points {
       x: 0.0
-      y: 0.7
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }

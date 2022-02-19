@@ -22,13 +22,12 @@ local function jump(self)
 	local jump_direction = vmath.normalize(go.get_world_position()-planet_pos)
 	self.vel=self.vel+jump_direction*self.jumpforce--+self.rotate_vel
 	DefRX.notify("jump", {position=go.get_world_position()})
-	msg.post("#sprite", "play_animation",{id=hash("player_jump")})
+	sound.play("#jump")
 	particlefx.play("#player_jump")
 	timer.delay(0.3, false, function()
 		if self.state==STATE.stand then
 			self.state=STATE.float
 		end
-		msg.post("#sprite", "play_animation",{id=hash("player_idle")})
 	end)
 
 	self.asphyxiation_timer = timer.delay(0.4, false, function()
@@ -51,11 +50,11 @@ local function land(self,message)
 	DefRX.notify("breathing")
 	local planet_pos = go.get_world_position(self.parent_planet)
 	local normal = vmath.normalize(go.get_world_position()-planet_pos)
-	if normal ~=vmath.vector3(-1,0,0) then
+	if vmath.length(normal+vmath.vector3(0,-1,0)) > 0.1  then
 		local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
 		go.set_rotation(rot)
 	else
-		go.set_rotation(vmath.quat_rotation_z(-math.pi))
+		go.set_rotation(vmath.quat_rotation_z(0))
 	end
 	go.set_position(go.get_position()+message.distance*normal)
 	go.set_parent(".",self.parent_planet,true)
@@ -78,13 +77,22 @@ local function dead(self, message_id, message, sender)
 	self.state=STATE.dead
 	self.vel=vmath.vector3()
 	particlefx.play("#player_dead")
+	particlefx.set_constant("#player_dead","emitter","tint",self.trail_color)
+	particlefx.set_constant("#player_dead","emitter1","tint",self.trail_color)
 	go.delete_all(self.ids)
+end
+
+function trail_loaded(self, url, result)
+	local trail = factory.create(self.trail_shape,vmath.vector3(),nil,{color=self.trail_color},1)
+	go.set_parent(trail,".")
+	table.insert(self.ids, trail)
 end
 
 local function initialize(self, message_id, message, sender)
 	self.play=true
-	particlefx.play("#player_trail")
-	
+	print(self.trail_shape)
+	factory.load(self.trail_shape,trail_loaded)
+	--msg.post("#player_trail", "play_animation",{id=self.trail_shape})
 end
 
 local function pause_time(self, message_id, message, sender)
@@ -99,7 +107,7 @@ local function on_gui(self, message_id, message, sender)
 end
 
 local function flag_up(self, message_id, message, sender)
-	local flag = factory.create("#flag",go.get_world_position()+message.dist_vector+vmath.vector3(0,0,0.3))
+	local flag = factory.create("#flag",go.get_world_position()+message.dist_vector+vmath.vector3(0,0,0.3),nil,{color=self.trail_color})
 	go.set_parent(flag,self.flag_parent,true)
 	msg.post(self.flag_parent, "flag",{id=flag})
 	self.flag_parent=nil
@@ -120,15 +128,31 @@ function init(self)
 	DefRX.observe(self, "play_time",play_time)
 	DefRX.create_stream("on_gui")
 	DefRX.observe(self, "on_gui",on_gui)
-	DefRX.create_stream("break_combo")
+	DefRX.create_stream("trail_color")
+	DefRX.observe(self, "trail_color",function(self, message_id, message, sender)
+		self.trail_color = message.color
+	end)
+	DefRX.create_stream("trail_shape")
+	DefRX.observe(self, "trail_shape",function(self, message_id, message, sender)
+		self.trail_shape = message.shape
+	end)
+	DefRX.create_stream("player_skin")
+	DefRX.observe(self, "player_skin",function(self, message_id, message, sender)
+		msg.post("#sprite", "play_animation",{id=hash(message.id)})
+	end)
 	
+	DefRX.create_stream("player_controll_enable")
+	DefRX.observe(self, "player_controll_enable",function(self, message_id, message, sender)
+		msg.post(".", "acquire_input_focus")
+	end)
+	self.skin=1
 	self.vel=vmath.vector3()
 	self.gravity=vmath.vector3()
 	self.parent_planet=nil
 	self.state=STATE.float
 	self.on_gui=false
 	self.ids={"player","sight"}
-	msg.post(".", "acquire_input_focus")
+	msg.post("#sprite", "play_animation",{id=hash("player"..self.skin)})
 	math.randomseed(os.time())
 end
 
@@ -136,7 +160,7 @@ function update(self,dt)
 	if self.state == STATE.float then
 		if vmath.length(self.vel)>0 and not self.rotation_fix then
 			local normal = vmath.normalize(self.vel)
-			if normal ~=vmath.vector3(-1,0,0) then
+			if vmath.length(normal+vmath.vector3(0,-1,0)) > 0.1  then
 				local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
 				go.set_rotation(rot)
 			else
@@ -174,6 +198,7 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id==hash("trigger_response") then
 		if message.enter and vmath.length(self.gravity)>0 then
+			
 			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(self.gravity))
 			go.animate(".", "rotation",go.PLAYBACK_ONCE_FORWARD, rot, go.EASING_LINEAR, 0.1)
 		elseif not message.enter then

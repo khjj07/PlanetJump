@@ -8,12 +8,8 @@ fonts {
   font: "/assets/ui/Shark.font"
 }
 textures {
-  name: "icon"
-  texture: "/assets/ui/icon.atlas"
-}
-textures {
-  name: "flag"
-  texture: "/assets/player/flag/flag.atlas"
+  name: "ui"
+  texture: "/assets/ui.atlas"
 }
 background_color {
   x: 0.0
@@ -234,7 +230,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/pause"
+  texture: "ui/pause"
   id: "pause_btn"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_TOP
@@ -289,7 +285,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "flag/flag"
+  texture: "ui/flag"
   id: "flag_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

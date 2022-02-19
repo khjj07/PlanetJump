@@ -1,0 +1,5 @@
+go.property("color", vmath.vector4())
+function init(self)
+	particlefx.play("#trail")
+	particlefx.set_constant("#trail", "tail", "tint", self.color)
+end

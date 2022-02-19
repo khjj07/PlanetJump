@@ -4,12 +4,8 @@ fonts {
   font: "/assets/ui/Astro.font"
 }
 textures {
-  name: "icon"
-  texture: "/assets/ui/icon.atlas"
-}
-textures {
   name: "ui"
-  texture: "/assets/ui/ui.atlas"
+  texture: "/assets/ui.atlas"
 }
 background_color {
   x: 0.0
@@ -97,8 +93,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -122,14 +118,14 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.8
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }
 nodes {
   position {
     x: 0.0
-    y: 190.0
+    y: 150.0
     z: 0.0
     w: 1.0
   }
@@ -152,8 +148,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -181,7 +177,7 @@ nodes {
   line_break: false
   parent: "option_window"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -215,14 +211,14 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/cross"
+  texture: "ui/cross"
   id: "option_window_exit_btn"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -230,7 +226,7 @@ nodes {
   adjust_mode: ADJUST_MODE_FIT
   parent: "option_window"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   slice9 {
     x: 0.0
     y: 0.0
@@ -247,7 +243,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: -40.0
+    y: -100.0
     z: 0.0
     w: 1.0
   }
@@ -270,8 +266,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -285,7 +281,7 @@ nodes {
   adjust_mode: ADJUST_MODE_FIT
   parent: "option_window"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   slice9 {
     x: 0.0
     y: 0.0
@@ -325,8 +321,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -355,7 +351,7 @@ nodes {
   parent: "ads_remove_btn"
   layer: ""
   inherit_alpha: true
-  alpha: 1.0
+  alpha: 0.8
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -365,7 +361,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: -120.0
+    y: -180.0
     z: 0.0
     w: 1.0
   }
@@ -388,8 +384,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -403,7 +399,7 @@ nodes {
   adjust_mode: ADJUST_MODE_FIT
   parent: "option_window"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   slice9 {
     x: 0.0
     y: 0.0
@@ -443,8 +439,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -474,70 +470,7 @@ nodes {
   parent: "restore_purchase_btn"
   layer: ""
   inherit_alpha: true
-  alpha: 1.0
-  outline_alpha: 1.0
-  shadow_alpha: 1.0
-  template_node_child: false
-  text_leading: 1.0
-  text_tracking: 0.0
-}
-nodes {
-  position {
-    x: 0.0
-    y: -196.0
-    z: 0.0
-    w: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-  size {
-    x: 200.0
-    y: 100.0
-    z: 0.0
-    w: 1.0
-  }
-  color {
-    x: 0.6
-    y: 0.7019608
-    z: 1.0
-    w: 1.0
-  }
-  type: TYPE_TEXT
-  blend_mode: BLEND_MODE_ALPHA
-  text: "privacy policy"
-  font: "Astro"
-  id: "privacy_policy"
-  xanchor: XANCHOR_NONE
-  yanchor: YANCHOR_NONE
-  pivot: PIVOT_CENTER
-  outline {
-    x: 0.6
-    y: 0.7019608
-    z: 1.0
-    w: 1.0
-  }
-  shadow {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-  adjust_mode: ADJUST_MODE_FIT
-  line_break: false
-  parent: "option_window"
-  layer: ""
-  inherit_alpha: false
-  alpha: 1.0
+  alpha: 0.8
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -547,7 +480,7 @@ nodes {
 nodes {
   position {
     x: -80.0
-    y: 70.0
+    y: 40.0
     z: 0.0
     w: 1.0
   }
@@ -570,8 +503,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -585,7 +518,7 @@ nodes {
   adjust_mode: ADJUST_MODE_FIT
   parent: "option_window"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   slice9 {
     x: 0.0
     y: 0.0
@@ -625,14 +558,14 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/musicOn"
+  texture: "ui/musicOn"
   id: "bgm_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -657,7 +590,7 @@ nodes {
 nodes {
   position {
     x: 80.0
-    y: 68.0
+    y: 40.0
     z: 0.0
     w: 1.0
   }
@@ -680,8 +613,8 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -695,7 +628,7 @@ nodes {
   adjust_mode: ADJUST_MODE_FIT
   parent: "option_window"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   slice9 {
     x: 0.0
     y: 0.0
@@ -735,14 +668,14 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.6
-    y: 0.7019608
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "icon/audioOn"
+  texture: "ui/audioOn"
   id: "sfx_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

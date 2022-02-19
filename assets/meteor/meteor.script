@@ -12,8 +12,8 @@ go.property("rotate_speed", 20)
 go.property("rotate_direction", 1)
 
 function check_meteor(self, message_id, message, sender)
-	local distance = vmath.length(message.position-go.get_world_position())
-	if MAX_DISTANCE<distance then
+	self.distance = vmath.length(message.position-go.get_world_position())
+	if MAX_DISTANCE<self.distance then
 		DefRX.cancel_all_observing(self)
 		go.delete()
 	end
@@ -44,13 +44,21 @@ function update(self, dt)
 end
 
 function explosion(self)
+	local gain = 1500
 	if TYPE.strong==self.type then
 		particlefx.play("#strong_explosion")
 		DefRX.notify("strong_hit")
+		gain=gain*1.5
 	else
 		particlefx.play("#weak_explosion")
 		DefRX.notify("weak_hit")
 	end
+	if self.distance then
+		gain = gain/self.distance
+	else
+		gain=0
+	end
+	DefRX.notify("play_sfx", {sound="#explosion_meteor",gain=gain})
 end
 
 function final(self)

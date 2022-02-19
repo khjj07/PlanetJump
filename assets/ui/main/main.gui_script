@@ -1,14 +1,42 @@
 local DefUI= require "DefUtil.DefUI.DefUI"
 local DefRX= require "DefUtil.DefRX.DefRX"
+local defsave = require("defsave.defsave")
 local UI = require "assets.ui.main.main"
 local PROXY = msg.url("main:/scene_proxy")
 local CAM_MOVE_OFFSET=3000
 local MAXPOINT=6
 local PURPLE = vmath.vector4(0.6,0.4,0.6,1)
+local store = require "assets.ui.store.store" 
+local color = require("color-lib.color")
+local COMBO_BREAK_SOUND = {
+	"#combo_break1",
+	"#combo_break2",
+	"#combo_break3"
+}
+
+local function move_y(node,y,delay)
+	node:animate("position.y", y, gui.EASING_INBACK, 0.7,delay)
+end
+
+local function scale_btn(node,scale,delay)
+	node:animate("scale", scale, gui.EASING_INBACK, 0.7,delay)
+end
+
 function start(self,action_id,action,button)
-	if button==self.pressed_button then
-		DefRX.notify("game_start")
-		timer.delay(0.3, false, function()
+	if button.flag then
+		msg.post(".", "release_input_focus")
+		move_y(self.node["title/title"],1500,0.1)
+		scale_btn(self.node["title/option_btn"],0.01,0.1)
+		scale_btn(self.node["title/medal_btn"],0.01,0.2)
+		scale_btn(self.node["title/credit_btn"],0.01,0.1)
+		scale_btn(self.node["title/leader_board_btn"],0.01,0.2)
+		scale_btn(self.node["title/store_btn"],0.01,0.2)
+		scale_btn(self.node["title/tap_to_start"],0.01,0)
+		timer.delay(0.2, false, function()
+			DefRX.notify("game_start")
+			sound.play("#game_start")
+		end)
+		timer.delay(1, false, function()
 			self.node["title/window"]:hide()
 			self.play=true
 			self.node["ingame/window"]:show()
@@ -17,53 +45,68 @@ function start(self,action_id,action,button)
 			self.node["ingame/combo_break2"]:hide()
 			self.node["ingame/score"]:set_text(0)
 			self.node["ingame/flag"]:set_text(0)
-			
+			msg.post(".", "acquire_input_focus")
+			sound.play("#bgm")
 		end)
 	end
 end
 
 function show_store(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#slide_in",{delay=0.1})
 		self.node["title/window"]:animate("position.y", 1500, gui.EASING_INBACK, 1,0)
 		DefRX.notify("move_cam", {position=vmath.vector3(0,-CAM_MOVE_OFFSET,0),duration=1,easing=gui.EASING_INBACK})
 		self.node["store/window"]:show()
 		self.node["store/window"]:set_position(vmath.vector3(0,-1500,0))
 		msg.post(".", "release_input_focus")
+		self.node["store/trail_tab"]:hide()
 		self.node["store/window"]:animate("position.y", 0, gui.EASING_OUTBACK, 1,0.8,function()
 			msg.post(".", "acquire_input_focus")
 		end)
+		self.node["store/planet"]:change_texture("planet"..math.random(1,8))
+		button:set_scale(button.original_scale)
 	end
+
+	
 end
 
 function show_option(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#slide_in",{delay=0.1})
 		self.node["title/window"]:animate("position.x", -850, gui.EASING_INBACK, 1,0)
+		msg.post(".", "release_input_focus")
 		DefRX.notify("move_cam", {position=vmath.vector3(CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_INBACK})
 		timer.delay(1, false, function()
 			self.node["title/window"]:hide()
 			self.node["option/window"]:show()
 			self.node["option/option_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
 			self.node["option/option_window"]:animate("scale", 1, gui.EASING_OUTBACK, 1,0)
+			msg.post(".", "acquire_input_focus")
 		end)
+		button:set_scale(button.original_scale)
 	end
 end
 
 function show_credits(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#slide_in",{delay=0.1})
 		self.node["title/window"]:animate("position.x", 850, gui.EASING_INBACK, 1,0)
+		msg.post(".", "release_input_focus")
 		DefRX.notify("move_cam", {position=vmath.vector3(-CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_INBACK})
 		timer.delay(1, false, function()
 			self.node["credit/window"]:show()
 			self.node["title/window"]:hide()
 			self.node["credit/credits_window"]:set_scale(vmath.vector3(0.01,0.01,0.01))
 			self.node["credit/credits_window"]:animate("scale", 1, gui.EASING_OUTBACK, 1,0)
+			msg.post(".", "acquire_input_focus")
 		end)
+		button:set_scale(button.original_scale)
 	end
 end
 
 
 function show_pause_menu(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
 		DefRX.notify("cancel_shaking")
 		self.node["ingame/pause_btn"].enabled=false
 		self.node["pause/window"]:show()
@@ -75,56 +118,75 @@ function show_pause_menu(self,action_id,action,button)
 end
 
 function hide_pause_menu(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
 		self.node["ingame/pause_btn"].enabled=true
 		DefRX.notify("play_time")
 		self.node["pause/window"]:hide()
+		button:set_scale(button.original_scale)
 	end
+
 end
 
 function hide_option(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#slide_out")
+		msg.post(".", "release_input_focus")
 		self.node["option/option_window"]:animate("scale", 0.01, gui.EASING_OUTBACK, 0.2,0,function()
-		self.node["option/window"]:hide()
-		self.node["title/window"]:show()
-		DefRX.notify("move_cam", {position=vmath.vector3(-CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_OUTBACK})
-			self.node["title/window"]:animate("position.x", 0, gui.EASING_OUTBACK, 1,0)
+			self.node["option/window"]:hide()
+			self.node["title/window"]:show()
+			DefRX.notify("move_cam", {position=vmath.vector3(-CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_OUTBACK})
+			self.node["title/window"]:animate("position.x", 0, gui.EASING_OUTBACK, 1,0,function()
+				msg.post(".", "acquire_input_focus")
+			end)
 		end)
+		button:set_scale(button.original_scale)
 	end
 end
 
 function hide_credits(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#slide_out")
+		msg.post(".", "release_input_focus")
 		self.node["credit/window"]:animate("position.x", -850, gui.EASING_OUTBACK, 1,0,function()
 			self.node["credit/window"]:hide()
 			self.node["credit/window"]:set_position(vmath.vector3())
+			msg.post(".", "acquire_input_focus")
 		end)
 		timer.delay(0.1, false, function()
 			self.node["title/window"]:show()
 			DefRX.notify("move_cam", {position=vmath.vector3(CAM_MOVE_OFFSET,0,0),duration=1,easing=gui.EASING_OUTBACK})
 			self.node["title/window"]:animate("position.x", 0, gui.EASING_OUTBACK, 1,0)
+			
 		end)
+		button:set_scale(button.original_scale)
+		button.mute=true
 	end
 end
 
 function hide_store(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#slide_out")
+		msg.post(".", "release_input_focus")
 		self.node["store/window"]:animate("position.y", -1500, gui.EASING_OUTBACK, 1,0,function()
 			self.node["store/window"]:hide()
 			self.node["store/window"]:set_position(vmath.vector3())
+			msg.post(".", "acquire_input_focus")
 		end)
 		timer.delay(0.1, false, function()
 			self.node["title/window"]:show()
 			DefRX.notify("move_cam", {position=vmath.vector3(0,CAM_MOVE_OFFSET,0),duration=1,easing=gui.EASING_OUTBACK})
 			self.node["title/window"]:animate("position.y", 0, gui.EASING_OUTBACK, 1,0)
 		end)
+		button:set_scale(button.original_scale)
 	end
 end
 
 function reload_scene(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
+		sound.play("#button_touch")
 		msg.post(PROXY, "change_scene",{next="#ingame"})
 	end
+
 end
 
 local function hover(self,action_id,action,button)
@@ -134,22 +196,23 @@ local function hover(self,action_id,action,button)
 end
 
 local function button_pressed(self,action_id,action,button)
-	self.pressed_button=button
-	self.pressed_button_scale=button:get_scale()
-	button:set_scale(button:get_scale()*0.8)
+	button:set_scale(button.original_scale*0.8)
+	button.flag=true
 end
 
 local function change_bgm_state(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
 		self.bgm = not self.bgm
 		DefRX.notify("set_sound",{sfx=self.sfx,bgm=self.bgm})
+		button:set_scale(button.original_scale)
 	end
 end
 
 local function change_sfx_state(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
 		self.sfx = not self.sfx
 		DefRX.notify("set_sound",{sfx=self.sfx,bgm=self.bgm})
+		button:set_scale(button.original_scale)
 	end
 end
 
@@ -166,20 +229,34 @@ local function show_privacy_policy(self,action_id,action,button)
 end
 
 local function previous_skin(self,action_id,action,button)
-	if button==self.pressed_button then
-	msg.post(".", "release_input_focus")
-		self.node["store/planet"]:animate("rotation.z",self.node["store/planet"]:get_rotation().z+120,gui.EASING_OUTQUINT,0.5,0,function()
+	if button.flag then
+		msg.post(".", "release_input_focus")
+		sound.play("#swipe",{delay=0.05})
+		self.node["store/center"]:animate("rotation.z",self.node["store/center"]:get_rotation().z+60,gui.EASING_OUTQUINT,0.5)
+		self.node["store/planet"]:animate("rotation.z",self.node["store/planet"]:get_rotation().z+60,gui.EASING_OUTQUINT,0.5,0.02,function()
 			msg.post(".", "acquire_input_focus")
+			self.node["store/center"]:set_rotation(vmath.vector3())
+			self.skin_cursor=self.skin_cursor+1
+			skin_apply(self)
 		end)
+		button.mute=true
+		sound.play("#pick")
 	end
 end
 
 local function next_skin(self,action_id,action,button)
-	if button==self.pressed_button then
+	if button.flag then
 		msg.post(".", "release_input_focus")
-		self.node["store/planet"]:animate("rotation.z",self.node["store/planet"]:get_rotation().z-120,gui.EASING_OUTQUINT,0.5,0,function()
+		sound.play("#swipe",{delay=0.05})
+		self.node["store/center"]:animate("rotation.z",self.node["store/center"]:get_rotation().z-60,gui.EASING_OUTQUINT,0.5)
+		self.node["store/planet"]:animate("rotation.z",self.node["store/planet"]:get_rotation().z-60,gui.EASING_OUTQUINT,0.5,0.02,function()
 			msg.post(".", "acquire_input_focus")
+			self.node["store/center"]:set_rotation(vmath.vector3())
+			self.skin_cursor=self.skin_cursor-1
+			skin_apply(self)
 		end)
+		button.mute=true
+		sound.play("#pick")
 	end
 end
 
@@ -201,8 +278,104 @@ local function neon_effect(node)
 	node:animate("color.z",1,gui.EASING_INOUTBOUNCE,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 end
 
+local function button_initialize(button,delay)
+	button:set_scale(vmath.vector3(0.01,0.01,0.01))
+	button:animate("scale", 1, gui.EASING_OUTBACK, 1,delay)
+	sound.play("#blob",{delay=delay*0.7})
+end
+local function color_tab_pressing(self,action_id,action,button)
+	if button==self.pressed_tab then
+		if button.pressed_position then
+			self.node["store/color_content"]:set_position(self.node["store/color_content"].initial_position+(vmath.vector3(0,action.screen_y,0)-button.pressed_position))
+		end
+		if self.node["store/color_content"]:get_position().y<0 then
+			self.node["store/color_content"]:animate("position",vmath.vector3(0,0,0),gui.EASING_LINEAR,0.1,0,nil,gui.PLAYBACK_ONCE_FORWARD)
+		end
+		if self.node["store/color_content"]:get_position().y>700 then
+			self.node["store/color_content"]:animate("position",vmath.vector3(0,700,0),gui.EASING_LINEAR,0.1,0,nil,gui.PLAYBACK_ONCE_FORWARD)
+		end
+	end
+end
+
+local function color_tab_pressed(self,action_id,action,button)
+	self.pressed_tab=button
+	self.node["store/color_content"].initial_position=self.node["store/color_content"]:get_position()
+	button.pressed_position=vmath.vector3(0,action.screen_y,0)
+end
+local function color_tab_released(self,action_id,action,button)
+	self.pressed_tab=nil
+end
+
+local function trail_tab_pressing(self,action_id,action,button)
+	if button==self.pressed_tab then
+		if button.pressed_position then
+			self.node["store/trail_content"]:set_position(self.node["store/trail_content"].initial_position+(vmath.vector3(0,action.screen_y,0)-button.pressed_position))
+		end
+		if self.node["store/trail_content"]:get_position().y<0 then
+			self.node["store/trail_content"]:animate("position",vmath.vector3(0,0,0),gui.EASING_LINEAR,0.1,0,nil,gui.PLAYBACK_ONCE_FORWARD)
+		end
+		if self.node["store/trail_content"]:get_position().y>250 then
+			self.node["store/trail_content"]:animate("position",vmath.vector3(0,250,0),gui.EASING_LINEAR,0.1,0,nil,gui.PLAYBACK_ONCE_FORWARD)
+		end
+	end
+end
+
+local function trail_tab_pressed(self,action_id,action,button)
+	self.pressed_tab=button
+	self.node["store/trail_content"].initial_position=self.node["store/trail_content"]:get_position()
+	button.pressed_position=vmath.vector3(0,action.screen_y,0)
+end
+local function trail_tab_released(self,action_id,action,button)
+	self.pressed_tab=nil
+end
+
+
+
+local function show_color_tab(self,action_id,action,button)
+	if button==self.pressed_button then
+		self.node["store/color_tab"]:show()
+		self.node["store/trail_tab"]:hide()
+		self.node["store/trail_tab_btn"]:set_color(color.set("#999999ff"))
+		button:set_color(vmath.vector3(1,1,1,0.8))
+		sound.play("#button_touch")
+	end
+end
+
+local function show_trail_tab(self,action_id,action,button)
+	if button==self.pressed_button then
+		self.node["store/color_tab"]:hide()
+		self.node["store/trail_tab"]:show()
+		self.node["store/color_tab_btn"]:set_color(color.set("#999999ff"))
+		button:set_color(vmath.vector3(1,1,1,0.8))
+		sound.play("#button_touch")
+	end
+end
+
+local function tab_btn_pressed(self,action_id,action,button)
+	self.pressed_button=button
+	--self.pressed_button_scale=button:get_scale()
+end
+
+local function purchase_released(self,action_id,action,button)
+	if button.flag then
+		if self.skin_data[self.skin_cursor].own then
+			DefRX.notify("request_equip", {num=self.skin_cursor})
+			sound.play("#equip")
+		else
+			DefRX.notify("request_purchase", {num=self.skin_cursor})
+		end
+		--self.node["store/planet"]:set_scale(self.node["store/planet"].original_scale)
+	end
+	button.mute=true
+end
+
+local function purchase_pressed(self,action_id,action,button)
+	--self.node["store/planet"]:set_scale(self.node["store/planet"].original_scale*0.8)
+	button.flag=true
+end
 
 function init(self)
+	math.randomseed(os.clock())
 	DefUI.init(self)
 	UI.init(self)
 	self.play=false
@@ -223,10 +396,15 @@ function init(self)
 	DefUI.create_button(self, "pause_sfx_btn", self.node["pause/sfx_btn"], {released = change_sfx_state,pressed=button_pressed})
 	DefUI.create_button(self, "request_ads_remove", self.node["option/ads_remove_btn"], {released = request_ads_remove,pressed=button_pressed})
 	DefUI.create_button(self, "restore_purchase_btn", self.node["option/restore_purchase_btn"], {released = request_restore_purchase,pressed=button_pressed})
-	DefUI.create_button(self, "privacy_policy", self.node["option/privacy_policy"], {released = show_privacy_policy,pressed=button_pressed})
 	DefUI.create_button(self, "next_btn", self.node["store/next_btn"], {released = previous_skin,pressed=button_pressed})
 	DefUI.create_button(self, "previous_btn", self.node["store/previous_btn"], {released = next_skin,pressed=button_pressed})
 	DefUI.create_button(self, "store_home_btn", self.node["store/home_btn"], {released = hide_store,pressed=button_pressed})
+	DefUI.create_button(self, "color_tab_btn", self.node["store/color_tab_btn"], {released = show_color_tab,pressed=tab_btn_pressed})
+	DefUI.create_button(self, "trail_tab_btn", self.node["store/trail_tab_btn"], {released = show_trail_tab,pressed=tab_btn_pressed})
+	DefUI.create_button(self, "color_tab", self.node["store/color_tab"], {released = color_tab_released,pressed=color_tab_pressed,pressing=color_tab_pressing})
+	DefUI.create_button(self, "trail_tab", self.node["store/trail_tab"], {released = trail_tab_released,pressed=trail_tab_pressed,pressing=trail_tab_pressing})
+	DefUI.create_button(self, "tap_to_buy", self.node["store/tap_to_buy"], {released = purchase_released,pressed=purchase_pressed})
+	--DefUI.create_button(self, "planet", self.node["store/planet"])
 	
 	
 	
@@ -244,7 +422,7 @@ function init(self)
 	self.node["store/window"]:hide()
 	self.node["title/window"]:show()
 	
-	
+	store_init(self)
 
 	self.node["credit/window"]:set_position(vmath.vector3())
 	self.node["ingame/window"]:set_position(vmath.vector3())
@@ -255,30 +433,34 @@ function init(self)
 	
 	self.node["title/title"]:set_scale(vmath.vector3(0.01,0.01,0.01))
 	self.node["title/title"]:animate("scale", vmath.vector3(0.5,0.5,1), gui.EASING_OUTBACK, 1,0,function()
-		self.node["title/title"]:animate("scale.x",0.550,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
-		self.node["title/title"]:animate("scale.y",0.450,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
-		self.node["title/title"]:animate("position.y",self.node["title/title"]:get_position().y-50,gui.EASING_INBACK,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		--self.node["title/title"]:animate("scale.x",0.550,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		--self.node["title/title"]:animate("scale.y",0.450,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		--self.node["title/title"]:animate("position.y",self.node["title/title"]:get_position().y-50,gui.EASING_INBACK,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 	end)
-	self.node["title/tap_to_start"]:animate("scale",1.1,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+	self.node["title/tap_to_start"]:animate("scale",self.node["title/tap_to_start"]:get_scale()*1.1,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 	self.node["title/tap_to_start"]:animate("rotation.z",5,gui.EASING_INELASTIC,1.5,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 	gui.play_particlefx(gui.get_node("title/twinkle"))
-
+	button_initialize(self.node["title/option_btn"],0.1)
+	button_initialize(self.node["title/credit_btn"],0.1)
+	button_initialize(self.node["title/medal_btn"],0.2)
+	button_initialize(self.node["title/leader_board_btn"],0.2)
+	button_initialize(self.node["title/store_btn"],0.4)
 	
-	neon_effect(self.node["title/option_btn"])
-	neon_effect(self.node["title/credit_btn"])
-	neon_effect(self.node["title/store_btn"])
-	neon_effect(self.node["option/setting"])
-	neon_effect(self.node["option/bgm_icon"])
-	neon_effect(self.node["option/sfx_icon"])
-	neon_effect(self.node["option/bgm_btn"])
-	neon_effect(self.node["option/sfx_btn"])
-	neon_effect(self.node["option/option_window_exit_btn"])
-	neon_effect(self.node["option/option_window"])
+	--neon_effect(self.node["title/option_btn"])
+	--neon_effect(self.node["title/credit_btn"])
+	--neon_effect(self.node["title/store_btn"])
+	--neon_effect(self.node["option/setting"])
+	--neon_effect(self.node["option/bgm_icon"])
+	--neon_effect(self.node["option/sfx_icon"])
+	--neon_effect(self.node["option/bgm_btn"])
+	--neon_effect(self.node["option/sfx_btn"])
+	--neon_effect(self.node["option/option_window_exit_btn"])
+	--neon_effect(self.node["option/option_window"])
 	neon_effect(self.node["option/remove_text"])
 	neon_effect(self.node["option/ads_remove_btn"])
-	neon_effect(self.node["option/restore_purchase_btn"])
-	neon_effect(self.node["option/restore_purchase_text"])
-	neon_effect(self.node["option/privacy_policy"])
+	--neon_effect(self.node["option/restore_purchase_btn"])
+	--neon_effect(self.node["option/restore_purchase_text"])
+	--neon_effect(self.node["option/privacy_policy"])
 	--neon_effect(self.node["store/next_btn"])
 	--neon_effect(self.node["store/previous_btn"])
 	--neon_effect(self.node["pause/pause_menu_window"])
@@ -289,6 +471,7 @@ function init(self)
 	--RX
 	DefRX.create_stream("game_over")
 	DefRX.observe(self, "game_over", function(self, message_id, message)
+		sound.stop("#bgm")
 		timer.delay(1, false, function()
 			self.node["title/window"]:hide()
 			self.node["ingame/window"]:hide()
@@ -301,12 +484,20 @@ function init(self)
 	DefRX.observe(self, "final_score", function(self, message_id, message)
 		local score=0
 		local flag=0
+		timer.delay(1, false, function()
+			if message.score>0 then
+				sound.play("#final_score")
+			end
+		end)
+		self.node["game_over/best_score"]:set_text(message.best_score)
 		self.score_counter = timer.delay(0.00001, true, function()
 			if score>=message.score then
 				self.node["game_over/score"]:set_text(message.score)
 				timer.cancel(self.score_counter)
+				sound.stop("#final_score")
+			else
+				self.node["game_over/score"]:set_text(math.floor(score))
 			end
-			self.node["game_over/score"]:set_text(math.floor(score))
 			score=score+message.score/100
 		end)
 
@@ -314,8 +505,9 @@ function init(self)
 			if flag>=message.flag then
 				self.node["game_over/flag"]:set_text(message.flag)
 				timer.cancel(self.flag_counter)
+			else
+				self.node["game_over/flag"]:set_text(math.floor(flag))
 			end
-			self.node["game_over/flag"]:set_text(math.floor(flag))
 			flag=flag+message.flag/10
 		end)
 
@@ -372,6 +564,7 @@ function init(self)
 	DefRX.create_stream("combo_break")
 	DefRX.observe(self, "combo_break", function(self, message_id, message, sender)
 		if self.play then
+			sound.play(COMBO_BREAK_SOUND[math.random(#COMBO_BREAK_SOUND)])
 			self.node["ingame/combo"]:show()
 			self.node["ingame/combo"]:set_scale(vmath.vector3(0.1,0.1,0))
 			self.node["ingame/combo"]:animate("scale", 2, gui.EASING_OUTBACK, 0.7,0, function()
@@ -400,7 +593,26 @@ function init(self)
 			gui.play_particlefx(gui.get_node("ingame/break"))
 		end
 	end)
-	msg.post(".", "acquire_input_focus")
+	DefRX.create_stream("title_color")
+	DefRX.observe(self, "title_color", function(self, message_id, message, sender)
+		self.node["title/title"]:set_color(message.color)
+	end)
+	DefRX.create_stream("get_flag")
+	DefRX.observe(self, "get_flag", function(self, message_id, message, sender)
+		local pos = self.node["title/flag_icon"]:get_position()
+		pos.x=600
+		local offset = string.len(tostring(message.flag))*15
+		pos.x=pos.x-offset
+		self.node["title/flag_icon"]:set_position(pos)
+		self.node["store/flag_icon"]:set_position(pos)
+		self.node["title/flag"]:set_text(message.flag)
+		self.node["store/flag"]:set_text(message.flag)
+	end)
+	
+	DefRX.notify("request_data",{name="flag"})
+	timer.delay(1, false, function()
+		msg.post(".", "acquire_input_focus")
+	end)
 end
 
 function on_message(self, message_id, message, sender)
@@ -408,20 +620,20 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
+	
 	DefUI.on_input(self, action_id, action)
 	if not self.hover then
 		DefRX.notify("on_gui",{value=false})
 	end
 	self.hover=nil
-	if self.pressed_button and not self.pressed_button:pick_node(action.x,action.y) then
-		self.pressed_button:set_scale(self.pressed_button_scale)
-		self.pressed_button=nil
-		self.pressed_button_scale=nil
-	end
-	if self.pressed_button and action.released then
-		self.pressed_button:set_scale(self.pressed_button_scale)
-		self.pressed_button=nil
-		self.pressed_button_scale=nil
+	if action.released then
+		for _, btn in pairs(self.button) do
+			btn:set_scale(btn.original_scale)
+			if btn.flag and not btn.mute then
+				sound.play("#button_touch")
+			end
+			btn.flag=false
+		end
 	end
 end
 

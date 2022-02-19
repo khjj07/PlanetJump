@@ -1,5 +1,5 @@
-local INITIAL_SCALE=1000
-local MIN_SCALE=50
+local INITIAL_SCALE=2000
+local MIN_SCALE=200
 local REDUCED_DURATION=3
 local RECOVERY_DURATION=1
 local DefRX= require "DefUtil.DefRX.DefRX"
@@ -21,6 +21,7 @@ function init(self)
 		end
 		go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD,INITIAL_SCALE, go.EASING_LINEAR, RECOVERY_DURATION)
 	end)
+	go.set_scale(INITIAL_SCALE)
 end
 
 

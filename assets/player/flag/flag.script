@@ -1,0 +1,5 @@
+go.property("color", vmath.vector4())
+
+function init(self)
+	go.set("#sprite", "tint", self.color)
+end
