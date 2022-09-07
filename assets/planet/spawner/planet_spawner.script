@@ -1,4 +1,4 @@
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 go.property("target", hash(""))
 go.property("min_scale", 200)
 go.property("max_scale", 300)
@@ -178,16 +178,16 @@ end
 
 function init(self)
 	math.randomseed(os.clock())
-	DefRX.create_stream("game_start")
-	DefRX.observe(self, "game_start", initialize)
-	DefRX.create_stream("spawn_planet")
-	DefRX.observe(self, "spawn_planet", spawn_with_new_target)
-	DefRX.create_stream("remove_planet")
-	DefRX.observe(self, "remove_planet", remove_planet)
-	DefRX.create_stream("reset_planet")
-	DefRX.observe(self, "reset_planet", reset_planet)
-	DefRX.create_stream("player_position")
-	DefRX.observe(self, "player_position", function(self, message_id, message, sender)
+	defrx.create_stream("game_start")
+	defrx.observe(self, "game_start", initialize)
+	defrx.create_stream("spawn_planet")
+	defrx.observe(self, "spawn_planet", spawn_with_new_target)
+	defrx.create_stream("remove_planet")
+	defrx.observe(self, "remove_planet", remove_planet)
+	defrx.create_stream("reset_planet")
+	defrx.observe(self, "reset_planet", reset_planet)
+	defrx.create_stream("player_position")
+	defrx.observe(self, "player_position", function(self, message_id, message, sender)
 		self.player_pos=message.position
 	end)
 	self.player_pos=vmath.vector3()
@@ -197,15 +197,15 @@ function init(self)
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
 end
 
 function update(self,dt)
-	DefRX.notify("planet_position", self.position)
+	defrx.notify("planet_position", self.position)
 	print("planet :"..#self.planet)
 end
 
 
 function on_message(self, message_id, message, sender)
-	DefRX.on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
 end

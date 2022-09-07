@@ -1,4 +1,4 @@
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 
 function pause_time(self, message_id, message)
 	msg.post(".", "set_time_step", {factor = 0, mode = 0})
@@ -11,14 +11,14 @@ end
 function init(self)
 	self.current="#ingame"
 	msg.post("#splash", "async_load")
-	DefRX.create_stream("pause_time")
-	DefRX.observe(self, "pause_time",pause_time)
-	DefRX.create_stream("play_time")
-	DefRX.observe(self, "play_time",play_time)
+	defrx.create_stream("pause_time")
+	defrx.observe(self, "pause_time",pause_time)
+	defrx.create_stream("play_time")
+	defrx.observe(self, "play_time",play_time)
 end
 
 function on_message(self, message_id, message, sender)
-	DefRX.on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
 	if message_id == hash("proxy_loaded") then
 		if sender.fragment == hash("splash") then -- <4>
 			msg.post("#splash", "enable") -- <5>
@@ -35,14 +35,14 @@ function on_message(self, message_id, message, sender)
 				msg.post(sender, "init")
 				msg.post(sender, "enable") -- <12>
 				msg.post(sender, "acquire_input_focus")
-				DefRX.notify("scene_loaded")
+				defrx.notify("scene_loaded")
 			end)
 			self.menu_loading_started_time=nil
 		else
 			msg.post(sender, "init")
 			msg.post(sender, "enable")
 			msg.post(sender, "acquire_input_focus")
-			DefRX.notify("scene_loaded")
+			defrx.notify("scene_loaded")
 		end
 		msg.post(".", "set_time_step", {factor = 1, mode = 0})
 	end
@@ -60,6 +60,6 @@ function on_message(self, message_id, message, sender)
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
 end
 

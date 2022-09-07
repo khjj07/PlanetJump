@@ -2,19 +2,19 @@ local INITIAL_SCALE=2000
 local MIN_SCALE=200
 local REDUCED_DURATION=3
 local RECOVERY_DURATION=1
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 function init(self)
-	DefRX.create_stream("asphyxiation")
-	DefRX.observe(self, "asphyxiation", function(self, message_id, message)
+	defrx.create_stream("asphyxiation")
+	defrx.observe(self, "asphyxiation", function(self, message_id, message)
 		go.cancel_animations(".", "scale")
 		go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD,MIN_SCALE, go.EASING_OUTCIRC, REDUCED_DURATION)
 		self.dead_timer = timer.delay(REDUCED_DURATION+0.4, false, function()
-			DefRX.notify("game_over")
-			DefRX.notify("player_dead")
+			defrx.notify("game_over")
+			defrx.notify("player_dead")
 		end)
 	end)
-	DefRX.create_stream("breathing")
-	DefRX.observe(self, "breathing", function(self, message_id, message)
+	defrx.create_stream("breathing")
+	defrx.observe(self, "breathing", function(self, message_id, message)
 		go.cancel_animations(".", "scale")
 		if self.dead_timer then
 			timer.cancel(self.dead_timer)
@@ -26,9 +26,9 @@ end
 
 
 function on_message(self, message_id, message, sender)
-	DefRX.on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
 end

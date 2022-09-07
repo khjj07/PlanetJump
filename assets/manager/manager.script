@@ -1,4 +1,4 @@
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 local defsave = require("defsave.defsave")
 local SCORE_DELAY = 1
 local DEFAULT_SCORE = 10
@@ -35,8 +35,6 @@ end
 
 
 function init(self)
-	
-	
 	self.score=0
 	self.flag=0
 	self.combo=0
@@ -45,34 +43,34 @@ function init(self)
 	self.bgm=true
 	self.sfx=true
 
-	DefRX.create_stream("game_over")
-	DefRX.observe(self, "game_over", function(self, message_id, message, sender)
+	defrx.create_stream("game_over")
+	defrx.observe(self, "game_over", function(self, message_id, message, sender)
 		local best_score = defsave.get("basic", "best_score")
 		if best_score < self.score then
 			defsave.set("basic", "best_score", self.score)
 		end
 		defsave.set("basic", "flag", defsave.get("basic", "flag") + self.flag)
 		defsave.save("basic", true)
-		DefRX.notify("final_score",{score=self.score,flag=self.flag,max_combo=self.max_combo,best_score=defsave.get("basic", "best_score")})
-		DefRX.notify("play_sfx", {sound="#game_over",gain=1})
+		defrx.notify("final_score",{score=self.score,flag=self.flag,max_combo=self.max_combo,best_score=defsave.get("basic", "best_score")})
+		defrx.notify("play_sfx", {sound="#game_over",gain=1})
 	end)
-	DefRX.create_stream("game_start")
-	DefRX.observe(self, "game_start", function(self, message_id, message, sender)
+	defrx.create_stream("game_start")
+	defrx.observe(self, "game_start", function(self, message_id, message, sender)
 		self.score=0
 		self.flag=0
 		self.combo=0
 		self.max_combo=0
 	end)
-	DefRX.create_stream("flag_up")
-	DefRX.observe(self, "flag_up", function(self, message_id, message, sender)
+	defrx.create_stream("flag_up")
+	defrx.observe(self, "flag_up", function(self, message_id, message, sender)
 		self.flag=self.flag+1
 		self.level=get_level(self)
 		print("level : "..self.level)
-		DefRX.notify("level",{level=self.level,flag=self.flag})
+		defrx.notify("level",{level=self.level,flag=self.flag})
 	end)
 
-	DefRX.create_stream("add_combo")
-	DefRX.observe(self, "add_combo", function(self, message_id, message, sender)
+	defrx.create_stream("add_combo")
+	defrx.observe(self, "add_combo", function(self, message_id, message, sender)
 		self.combo=self.combo+1
 		if self.combo> self.max_combo then
 			self.max_combo=self.combo
@@ -82,26 +80,26 @@ function init(self)
 			num=30
 		end
 		sound.play("#combo"..num)
-		DefRX.notify("combo", {combo=self.combo})
+		defrx.notify("combo", {combo=self.combo})
 	end)
 
-	DefRX.create_stream("break_combo")
-	DefRX.observe(self, "break_combo", function(self, message_id, message, sender)
+	defrx.create_stream("break_combo")
+	defrx.observe(self, "break_combo", function(self, message_id, message, sender)
 		if self.combo >0 then
 			self.combo=0
-			DefRX.notify("combo_break")
+			defrx.notify("combo_break")
 		end
 	end)
 
 
-	DefRX.create_stream("add_score")
-	DefRX.observe(self, "add_score", function(self, message_id, message, sender)
+	defrx.create_stream("add_score")
+	defrx.observe(self, "add_score", function(self, message_id, message, sender)
 		self.score=self.score+DEFAULT_SCORE*(self.combo+1)
-		DefRX.notify("score",{score=self.score})
+		defrx.notify("score",{score=self.score})
 	end)
 
-	DefRX.create_stream("set_sound")
-	DefRX.observe(self, "set_sound", function(self, message_id, message, sender)
+	defrx.create_stream("set_sound")
+	defrx.observe(self, "set_sound", function(self, message_id, message, sender)
 		self.bgm=message.bgm
 		self.sfx=message.sfx
 		if self.sfx then
@@ -114,12 +112,12 @@ function init(self)
 		else
 			sound.set_group_gain(hash("bgm"), 0)
 		end
-		DefRX.notify("change_sound", {bgm=self.bgm,sfx=self.sfx})
+		defrx.notify("change_sound", {bgm=self.bgm,sfx=self.sfx})
 	end)
 
-	DefRX.create_stream("scene_loaded")
-	DefRX.observe(self, "scene_loaded", function(self, message_id, message, sender)
-		DefRX.notify("change_sound", {bgm=self.bgm,sfx=self.sfx})
+	defrx.create_stream("scene_loaded")
+	defrx.observe(self, "scene_loaded", function(self, message_id, message, sender)
+		defrx.notify("change_sound", {bgm=self.bgm,sfx=self.sfx})
 		defsave.set_appname("planuts")
 		defsave.default_data = require("assets.manager.default_data")
 		defsave.load("basic")
@@ -134,49 +132,48 @@ function init(self)
 			skin.own=defsave.get("store", "own")[skin.name]
 			skin.equip=defsave.get("store", "equip")[skin.name]
 			if defsave.get("store", "equip")[skin.name] then
-				DefRX.notify("player_skin", {id=skin.name})
-				DefRX.notify("set_skin_cursor",{num=_})
+				defrx.notify("player_skin", {id=skin.name})
+				defrx.notify("set_skin_cursor",{num=_})
 			end
 		end
 		timer.delay(0.1, false, function()
-			DefRX.notify("trail_initialize",{color={i=defsave.get("color", "i"),j=defsave.get("color", "j")},shape={i=defsave.get("shape", "i"),j=defsave.get("shape", "j")}})
+			defrx.notify("trail_initialize",{color={i=defsave.get("color", "i"),j=defsave.get("color", "j")},shape={i=defsave.get("shape", "i"),j=defsave.get("shape", "j")}})
 		end)
 
-		DefRX.notify("skin_data", self.skin_data)
+		defrx.notify("skin_data", self.skin_data)
 		
 	end)
 
-	DefRX.create_stream("play_sfx")
-	DefRX.observe(self, "play_sfx", function(self, message_id, message, sender)
+	defrx.create_stream("play_sfx")
+	defrx.observe(self, "play_sfx", function(self, message_id, message, sender)
 		sound.play(message.sound,{gain=message.gain})
 	end)
 	
-	DefRX.create_stream("trail_color")
-	DefRX.observe(self, "trail_color", function(self, message_id, message, sender)
+	defrx.create_stream("trail_color")
+	defrx.observe(self, "trail_color", function(self, message_id, message, sender)
 		defsave.set("color", "i",message.i)
 		defsave.set("color", "j",message.j)
 		defsave.save("color")
 	end)
 	
-	DefRX.create_stream("trail_shape")
-	DefRX.observe(self, "trail_shape", function(self, message_id, message, sender)
+	defrx.create_stream("trail_shape")
+	defrx.observe(self, "trail_shape", function(self, message_id, message, sender)
 		defsave.set("shape", "i",message.i)
 		defsave.set("shape", "j",message.j)
 		defsave.save("shape")
 	end)
 	
-	DefRX.create_stream("request_data")
-	DefRX.observe(self, "request_data", function(self, message_id, message, sender)
+	defrx.create_stream("request_data")
+	defrx.observe(self, "request_data", function(self, message_id, message, sender)
 		if message.name=="flag" then
-			DefRX.notify("get_flag",{flag = defsave.get("basic", "flag")})
+			defrx.notify("get_flag",{flag = defsave.get("basic", "flag")})
 		end	
 	end)
 
-	DefRX.create_stream("request_purchase")
-	DefRX.observe(self, "request_purchase", function(self, message_id, message, sender)
+	defrx.create_stream("request_purchase")
+	defrx.observe(self, "request_purchase", function(self, message_id, message, sender)
 		if defsave.get("basic", "flag")>=self.skin_data[message.num].price then
 			defsave.set("basic", "flag",defsave.get("basic", "flag")-self.skin_data[message.num].price)
-
 			self.skin_data[message.num].own=true
 			local own={}
 			for _, data in pairs(self.skin_data) do
@@ -185,7 +182,7 @@ function init(self)
 			defsave.set("store", "own",own)
 			defsave.save("store", true)
 			defsave.save("basic", true)
-			DefRX.notify("get_flag",{flag = defsave.get("basic", "flag")})
+			defrx.notify("get_flag",{flag = defsave.get("basic", "flag")})
 			self.skin_data={}
 			for _, skin in pairs(SKIN) do
 				table.insert(self.skin_data, skin)
@@ -194,22 +191,22 @@ function init(self)
 				skin.own=defsave.get("store", "own")[skin.name]
 				skin.equip=defsave.get("store", "equip")[skin.name]
 			end
-			DefRX.notify("skin_data", self.skin_data)
+			defrx.notify("skin_data", self.skin_data)
 			sound.play("#purchase")
 		else
 			sound.play("#purchase_fail")
 		end
 	end)
 	
-	DefRX.create_stream("request_equip")
-	DefRX.observe(self, "request_equip", function(self, message_id, message, sender)
+	defrx.create_stream("request_equip")
+	defrx.observe(self, "request_equip", function(self, message_id, message, sender)
 		local equip={}
 		for _, data in pairs(self.skin_data) do
 			if _ ~=message.num then
 				equip[data.name]=false
 			else
 				equip[data.name]=true
-				DefRX.notify("player_skin", {id=data.name})
+				defrx.notify("player_skin", {id=data.name})
 			end
 		end
 		defsave.set("store", "equip",equip)
@@ -222,10 +219,8 @@ function init(self)
 			skin.own=defsave.get("store", "own")[skin.name]
 			skin.equip=defsave.get("store", "equip")[skin.name]
 		end
-		DefRX.notify("skin_data", self.skin_data)
-		
+		defrx.notify("skin_data", self.skin_data)
 	end)
-	
 end
 
 function update(self,dt)
@@ -233,10 +228,10 @@ function update(self,dt)
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
 	defsave.save_all(true)
 end
 
 function on_message(self, message_id, message, sender)
-	DefRX.on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
 end

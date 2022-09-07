@@ -12,6 +12,11 @@ components {
     z: 0.0
     w: 1.0
   }
+  properties {
+    id: "debug"
+    value: "true"
+    type: PROPERTY_TYPE_BOOLEAN
+  }
 }
 components {
   id: "player_dead"

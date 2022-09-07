@@ -1,4 +1,4 @@
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 local NEAR_DISTANCE = 4000
 
 go.property("seed", 0)
@@ -29,7 +29,7 @@ function on_message(self, message_id, message, sender)
 		msg.post(".", "hit")
 	end
 	if message_id==hash("hit") then
-		DefRX.notify("satellite_dead", {id=go.get_id()})
+		defrx.notify("satellite_dead", {id=go.get_id()})
 		particlefx.play("#satellite_explosion")
 		particlefx.set_constant("#satellite_explosion", "fragment1", "tint",self.color)
 		particlefx.set_constant("#satellite_explosion", "fragment2", "tint",self.color)
@@ -42,5 +42,5 @@ function on_message(self, message_id, message, sender)
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
 end

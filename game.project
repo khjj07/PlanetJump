@@ -19,10 +19,11 @@ package = com.planuts.todo
 
 [project]
 title = Planuts!
-dependencies#0 = https://github.com/khjj07/DefUtil/archive/refs/tags/1.4.5.zip
+dependencies#0 = https://github.com/khjj07/defui/archive/refs/tags/1.1.7.zip
 dependencies#1 = https://github.com/rgrams/rendercam/archive/1.0.3.zip
 dependencies#2 = https://github.com/y444/defold-color-lib/archive/master.zip
 dependencies#3 = https://github.com/subsoap/defsave/archive/master.zip
+dependencies#4 = https://github.com/khjj07/defrx/archive/refs/tags/1.0.3.zip
 
 [physics]
 gravity_y = 0.0
@@ -37,6 +38,7 @@ max_particlefx_count = 128
 [particle_fx]
 max_particle_count = 4096
 max_count = 512
+max_emitter_count = 256
 
 [graphics]
 texture_profiles = /assets/low_qaulity.texture_profiles

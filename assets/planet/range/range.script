@@ -2,7 +2,6 @@ go.property("seed", 0)
 function init(self)
 	math.randomseed(self.seed)
 	particlefx.play("#gravity")
-	print(2222)
 	--go.animate("#sprite", "tint.w", go.PLAYBACK_LOOP_PINGPONG, 0.7,  go.EASING_LINEAR, math.random(100,120)/100, math.random(0,100)/100)
 	--go.animate(".", "scale", go.PLAYBACK_LOOP_PINGPONG, go.get_scale()*math.random(101,105)/100, go.EASING_LINEAR, math.random(100,120)/100, math.random(0,100)/100)
 end

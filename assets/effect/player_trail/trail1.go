@@ -3,7 +3,7 @@ components {
   component: "/assets/effect/player_trail/trail1.particlefx"
   position {
     x: 0.0
-    y: 0.0
+    y: -300.0
     z: 0.0
   }
   rotation {

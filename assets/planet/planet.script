@@ -1,4 +1,4 @@
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 local G=30000
 local MAX_DISTANCE = 8000
 local RESET_DISTANCE = 5000
@@ -45,13 +45,13 @@ go.property("break_meteor_max", 5)
 function check_planet(self, message_id, message, sender)
 	self.distance=vmath.length(message.position-go.get_world_position())
 	if self.distance>MAX_DISTANCE then
-		DefRX.notify("remove_planet",{id=go.get_id()})
+		defrx.notify("remove_planet",{id=go.get_id()})
 	elseif self.distance>RESET_DISTANCE then
-		DefRX.notify("reset_planet",{id=go.get_id()})
+		defrx.notify("reset_planet",{id=go.get_id()})
 	end
 	if not self.flag and self.landed then
 		self.flag=true
-		DefRX.notify("flag_up", {dist_vector=self.dist_vector})
+		defrx.notify("flag_up", {dist_vector=self.dist_vector})
 	end
 	self.landed=false
 	if self.combo_timer then
@@ -117,12 +117,12 @@ local function random_planet(self)
 	msg.post("#sprite", "play_animation",{id=hash("planet"..tostring(self.planet_num))})
 end
 function init(self)
-	DefRX.create_stream("jump")
-	DefRX.observe(self, "jump", check_planet)
-	DefRX.create_stream("game_start")
-	DefRX.observe(self, "game_start", initialize)
-	DefRX.create_stream("satellite_dead")
-	DefRX.observe(self, "satellite_dead", check_satellite)
+	defrx.create_stream("jump")
+	defrx.observe(self, "jump", check_planet)
+	defrx.create_stream("game_start")
+	defrx.observe(self, "game_start", initialize)
+	defrx.create_stream("satellite_dead")
+	defrx.observe(self, "satellite_dead", check_satellite)
 	if self.seed==0 then
 		self.seed=os.time()
 	end
@@ -140,7 +140,7 @@ function init(self)
 			spawn_setelliste(self)
 		end
 	else
-		DefRX.notify("title_color", {color = planet_color(self)})
+		defrx.notify("title_color", {color = planet_color(self)})
 	end
 	msg.post("#broken", "disable")
 end
@@ -166,14 +166,14 @@ function planet_color(self)
 	return color
 end
 function on_message(self, message_id, message, sender)
-	DefRX.on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
 	if message_id==hash("collision_response") and message.other_group==hash("player") then
 		if message.own_group==hash("gravity_area") then
 			local distance = vmath.length(go.get_world_position()-go.get_world_position(message.other_id))
 			local direction =vmath.normalize(go.get_world_position()-go.get_world_position(message.other_id))
 			local rot = vmath.quat_rotation_z(math.pi/180*90*self.rotate_direction)
 			local force = direction*self.gravity_force/((distance^2)/G)+vmath.rotate(rot, direction)*self.rotate_speed/30*distance/400
-			DefRX.notify("gravity", {force=force})
+			defrx.notify("gravity", {force=force})
 		end
 	end
 	if message_id==hash("contact_point_response") then
@@ -181,20 +181,20 @@ function on_message(self, message_id, message, sender)
 			if not self.landed then
 				self.landed=true
 				if not self.flag and self.play then
-					DefRX.notify("add_score")
-					DefRX.notify("add_combo")
+					defrx.notify("add_score")
+					defrx.notify("add_combo")
 					self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
-						DefRX.notify("break_combo")
+						defrx.notify("break_combo")
 					end)
 				else
-					DefRX.notify("break_combo")
+					defrx.notify("break_combo")
 				end
 			end
 			self.dist_vector=message.distance*message.normal
 		end
 	end
 	if message_id==hash("dead_response") then
-		DefRX.cancel_all_observing(self)
+		defrx.cancel_all_observing(self)
 		go.delete_all(self.ids)
 	end
 	if message_id==hash("flag") then
@@ -213,8 +213,8 @@ function on_message(self, message_id, message, sender)
 			else
 				gain = 2
 			end
-			DefRX.notify("play_sfx", {sound="#explosion_planet",gain=gain})
-			DefRX.cancel_all_observing(self)
+			defrx.notify("play_sfx", {sound="#explosion_planet",gain=gain})
+			defrx.cancel_all_observing(self)
 			particlefx.play("#planet_explosion")
 			particlefx.set_constant("#planet_explosion", "fragment1", "tint", planet_fragment(self))
 			particlefx.set_constant("#planet_explosion", "fragment2", "tint", planet_fragment(self))
@@ -223,12 +223,12 @@ function on_message(self, message_id, message, sender)
 			local num = math.random(self.break_meteor_min,self.break_meteor_max) 
 			for i = 1, num do
 				print("num :"..num)
-				DefRX.notify("spawn_meteor", {position=go.get_world_position(),delay=0.1})
+				defrx.notify("spawn_meteor", {position=go.get_world_position(),delay=0.1})
 			end
 			
 			if self.landed then
-				DefRX.notify("game_over",{position=go.get_world_position()})
-				DefRX.notify("player_dead")
+				defrx.notify("game_over",{position=go.get_world_position()})
+				defrx.notify("player_dead")
 			end
 			go.delete_all(self.ids)
 		end
@@ -236,5 +236,5 @@ function on_message(self, message_id, message, sender)
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
 end

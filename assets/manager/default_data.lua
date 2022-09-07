@@ -1,7 +1,4 @@
 return {
-
-
-
 	basic = {
 		best_score=0,
 		flag=1000000

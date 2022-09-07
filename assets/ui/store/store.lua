@@ -1,8 +1,8 @@
 local S = {}
 local color = require("color-lib.color")
-local DefUI= require "DefUtil.DefUI.DefUI"
-local DefRX= require "DefUtil.DefRX.DefRX"
-local box = require "DefUtil.DefUI.module.box_node"
+local defui= require "defui.defui"
+local defrx= require "defrx.defrx"
+local box = require "defui.module.node"
 local COLOR = {
 	"#7dff01",
 	"#02ff00",
@@ -114,7 +114,7 @@ local function color_pick(self,action_id,action,button)
 		self.node["ingame/flag_icon"]:set_color(self.trail_color)
 		self.node["game_over/flag_icon"]:set_color(self.trail_color)
 		self.node["store/flag_icon"]:set_color(self.trail_color)
-		DefRX.notify("trail_color",{color=self.trail_color,i=button.i,j=button.j})
+		defrx.notify("trail_color",{color=self.trail_color,i=button.i,j=button.j})
 		sound.play("#equip")
 	end
 end
@@ -125,7 +125,7 @@ local function trail_pick(self,action_id,action,button)
 	if self.node["store/clip1"]:pick_node(action.x,action.y,0) and self.pressed_button==button then
 		self.trail_shape=button.prop
 		self.node["store/trail_picker"]:set_parent(button)
-		DefRX.notify("trail_shape",{shape=self.trail_shape,i=button.i,j=button.j})
+		defrx.notify("trail_shape",{shape=self.trail_shape,i=button.i,j=button.j})
 		sound.play("#equip")
 	end
 end
@@ -143,16 +143,16 @@ function store_init(self)
 		local color2 =box.create(clone["store/color2"], slot2)
 		local color3 =box.create(clone["store/color3"], slot3)
 		local color4 =box.create(clone["store/color4"], slot4)
-		DefUI.create_button(self, "slot"..i.."_1", slot1, {pressed=button_pressed,released=color_pick})
+		defui.create_button(self, "slot"..i.."_1", slot1, {pressed=button_pressed,released=color_pick})
 		self.button["slot"..i.."_1"].i=i
 		self.button["slot"..i.."_1"].j=1
-		DefUI.create_button(self, "slot"..i.."_2", slot2, {pressed=button_pressed,released=color_pick})
+		defui.create_button(self, "slot"..i.."_2", slot2, {pressed=button_pressed,released=color_pick})
 		self.button["slot"..i.."_2"].i=i
 		self.button["slot"..i.."_2"].j=2
-		DefUI.create_button(self, "slot"..i.."_3", slot3, {pressed=button_pressed,released=color_pick})
+		defui.create_button(self, "slot"..i.."_3", slot3, {pressed=button_pressed,released=color_pick})
 		self.button["slot"..i.."_3"].i=i
 		self.button["slot"..i.."_3"].j=3
-		DefUI.create_button(self, "slot"..i.."_4", slot4, {pressed=button_pressed,released=color_pick})
+		defui.create_button(self, "slot"..i.."_4", slot4, {pressed=button_pressed,released=color_pick})
 		self.button["slot"..i.."_4"].i=i
 		self.button["slot"..i.."_4"].j=4
 
@@ -185,16 +185,16 @@ function store_init(self)
 		local trail2 =box.create(clone["store/trail2"], slot2)
 		local trail3 =box.create(clone["store/trail3"], slot3)
 		local trail4 =box.create(clone["store/trail4"], slot4)
-		DefUI.create_button(self, "trail_slot"..i.."_1", slot1, {pressed=button_pressed,released=trail_pick})
+		defui.create_button(self, "trail_slot"..i.."_1", slot1, {pressed=button_pressed,released=trail_pick})
 		self.button["trail_slot"..i.."_1"].i=i
 		self.button["trail_slot"..i.."_1"].j=1
-		DefUI.create_button(self, "trail_slot"..i.."_2", slot2, {pressed=button_pressed,released=trail_pick})
+		defui.create_button(self, "trail_slot"..i.."_2", slot2, {pressed=button_pressed,released=trail_pick})
 		self.button["trail_slot"..i.."_2"].i=i
 		self.button["trail_slot"..i.."_2"].j=2
-		DefUI.create_button(self, "trail_slot"..i.."_3", slot3, {pressed=button_pressed,released=trail_pick})
+		defui.create_button(self, "trail_slot"..i.."_3", slot3, {pressed=button_pressed,released=trail_pick})
 		self.button["trail_slot"..i.."_3"].i=i
 		self.button["trail_slot"..i.."_3"].j=3
-		DefUI.create_button(self, "trail_slot"..i.."_4", slot4, {pressed=button_pressed,released=trail_pick})
+		defui.create_button(self, "trail_slot"..i.."_4", slot4, {pressed=button_pressed,released=trail_pick})
 		self.button["trail_slot"..i.."_4"].i=i
 		self.button["trail_slot"..i.."_4"].j=4
 		if TRAIL[i] then
@@ -220,17 +220,17 @@ function store_init(self)
 	self.node["store/line_trail"]:set_position(vmath.vector3(0,1000,0))
 	self.skin_cursor=1
 	self.equiped=1
-	DefRX.create_stream("skin_data")
-	DefRX.observe(self, "skin_data", function(self, message_id, message, sender)
+	defrx.create_stream("skin_data")
+	defrx.observe(self, "skin_data", function(self, message_id, message, sender)
 		self.skin_data=message
 		skin_apply(self)
 	end)
-	DefRX.create_stream("set_skin_cursor")
-	DefRX.observe(self, "set_skin_cursor", function(self, message_id, message, sender)
+	defrx.create_stream("set_skin_cursor")
+	defrx.observe(self, "set_skin_cursor", function(self, message_id, message, sender)
 		self.skin_cursor=message.num
 	end)
-	DefRX.create_stream("trail_initialize")
-	DefRX.observe(self, "trail_initialize", function(self, message_id, message, sender)
+	defrx.create_stream("trail_initialize")
+	defrx.observe(self, "trail_initialize", function(self, message_id, message, sender)
 		local color = "slot"..message.color.i.."_"..message.color.j
 		local shape = "trail_slot"..message.shape.i.."_"..message.shape.j
 		self.node["store/color_picker"]:set_parent(self.button[color])
@@ -241,8 +241,8 @@ function store_init(self)
 		self.node["game_over/flag_icon"]:set_color(self.trail_color)
 		self.node["store/flag_icon"]:set_color(self.trail_color)
 		self.trail_shape=self.button[shape].prop
-		DefRX.notify("trail_color",{color=self.trail_color,i=message.color.i,j=message.color.j})
-		DefRX.notify("trail_shape",{shape=self.trail_shape,i=message.shape.i,j=message.shape.j})
+		defrx.notify("trail_color",{color=self.trail_color,i=message.color.i,j=message.color.j})
+		defrx.notify("trail_shape",{shape=self.trail_shape,i=message.shape.i,j=message.shape.j})
 	end)
 	
 	

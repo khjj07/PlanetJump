@@ -1,6 +1,7 @@
-local DefRX= require "DefUtil.DefRX.DefRX"
+local defrx= require "defrx.defrx"
 local NEAR_DISTANCE = 4000
 local MAX_DISTANCE = 12000
+local DEFAULT_RANGE=1750
 local TYPE={
 	strong=hash("strong"),
 	weak=hash("weak")
@@ -14,9 +15,21 @@ go.property("rotate_direction", 1)
 function check_meteor(self, message_id, message, sender)
 	self.distance = vmath.length(message.position-go.get_world_position())
 	if MAX_DISTANCE<self.distance then
-		DefRX.cancel_all_observing(self)
+		defrx.cancel_all_observing(self)
 		go.delete()
 	end
+end
+
+function alert_routine(self, message_id, message, sender)
+	self.distance = vmath.length(message.position-go.get_world_position())
+	local direction = vmath.normalize(message.position-go.get_world_position())
+	if DEFAULT_RANGE<self.distance and vmath.length((self.direction-direction))<1 then
+		msg.post(self.alert, "enable")
+		go.set_position(message.position-direction*DEFAULT_RANGE,self.alert)
+	else
+		msg.post(self.alert, "disable")
+	end
+
 end
 
 function init(self)
@@ -24,8 +37,6 @@ function init(self)
 		self.rotate_direction=-1
 	end
 	self.vel=self.speed*self.direction
-	DefRX.create_stream("player_position")
-	DefRX.observe(self, "player_position", check_meteor)
 	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
 	if TYPE.strong==self.type then
 		particlefx.play("#strong_meteor_trail")
@@ -34,6 +45,12 @@ function init(self)
 		particlefx.play("#weak_meteor_trail")
 		self.damage=1
 	end
+	self.alert = factory.create("#alert",vmath.vector3(),nil,nil,20)
+
+	defrx.create_stream("player_position")
+	defrx.observe(self, "player_position", check_meteor)
+	defrx.create_stream("camera_position")
+	defrx.observe(self, "camera_position", alert_routine)
 	
 end
 
@@ -47,30 +64,31 @@ function explosion(self)
 	local gain = 1500
 	if TYPE.strong==self.type then
 		particlefx.play("#strong_explosion")
-		DefRX.notify("strong_hit")
+		defrx.notify("strong_hit")
 		gain=gain*1.5
 	else
 		particlefx.play("#weak_explosion")
-		DefRX.notify("weak_hit")
+		defrx.notify("weak_hit")
 	end
 	if self.distance then
 		gain = gain/self.distance
 	else
 		gain=0
 	end
-	DefRX.notify("play_sfx", {sound="#explosion_meteor",gain=gain})
+	defrx.notify("play_sfx", {sound="#explosion_meteor",gain=gain})
 end
 
 function final(self)
-	DefRX.cancel_all_observing(self)
+	defrx.cancel_all_observing(self)
+	go.delete(self.alert)
 end
 
 function on_message(self, message_id, message, sender)
-	DefRX.on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
 	if message_id==hash("trigger_response") and message.enter then
 		msg.post(message.other_id, "hit",{damage=self.damage,direction=self.direction})
 		explosion(self)
-		DefRX.cancel_all_observing(self)
+		defrx.cancel_all_observing(self)
 		go.delete()
 	end
 end
