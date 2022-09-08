@@ -96,6 +96,7 @@ embedded_components {
   "mask: \"planet\"\n"
   "mask: \"meteor\"\n"
   "mask: \"satellite\"\n"
+  "mask: \"ring\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_BOX\n"

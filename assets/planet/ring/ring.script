@@ -1,0 +1,39 @@
+local MAX_DISTANCE = 5000
+local defrx= require "defrx.defrx"
+local global=require "global"
+go.property("p1", hash(""))
+go.property("p2", hash(""))
+
+function check_ring(self, message_id, message, sender)
+	self.distance=vmath.length(message.position-go.get_world_position())
+	if self.distance>MAX_DISTANCE then
+		go.delete()
+	end
+end
+function init(self)
+	defrx.create_stream("jump")
+	defrx.observe(self, "jump", check_ring)
+	defrx.create_stream("planet_dead")
+	defrx.observe(self, "planet_dead", function(self, message_id, message, sender)
+		if message.id==self.p1 or message.id==self.p2 then
+			go.delete()
+		end
+	end)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id==hash("trigger_response") then
+		if global.target_planet==self.p1 then
+			global.target_planet=self.p2
+		elseif global.target_planet==self.p2 then
+			global.target_planet=self.p1
+		else
+			global.target_planet=self.p1
+		end
+		go.delete()
+	end
+end
+
+function final(self)
+	defrx.cancel_all_observing(self)
+end

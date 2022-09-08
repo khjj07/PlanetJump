@@ -80,6 +80,15 @@ function spawn_initial(self,center)
 		}
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
+
+		local middle=(center.position+new_planet.position)/2
+		local direction_from_center=vmath.normalize(new_planet.position-center.position)
+		local rot=vmath.quat_from_to(vmath.vector3(1,0,0), direction_from_center) 
+
+		
+		local ring=factory.create("#ring",middle,rot,{p1=new_planet.instance,p2=center.instance})
+
+		
 		table.insert(self.planet, new_planet)
 		table.insert(self.position,new_planet.position)
 	end
@@ -105,6 +114,14 @@ function spawn(self,center)
 		}
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
+
+		local middle=(center.position+new_planet.position)/2
+		local direction_from_center=vmath.normalize(new_planet.position-center.position)
+		local rot =nil
+		if vmath.vector3(1,0,0)~=direction_from_center then
+			rot = vmath.quat_from_to(vmath.vector3(1,0,0), direction_from_center) 
+		end
+		local ring=factory.create("#ring",middle,rot,{p1=new_planet.instance,p2=center.instance})
 		table.insert(self.planet, new_planet)
 		table.insert(self.position,new_planet.position)
 	end

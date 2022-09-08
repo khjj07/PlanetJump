@@ -1,4 +1,5 @@
 local defrx= require "defrx.defrx"
+local global=require "global"
 local G=30000
 local MAX_DISTANCE = 8000
 local RESET_DISTANCE = 5000
@@ -50,6 +51,7 @@ function check_planet(self, message_id, message, sender)
 		defrx.notify("reset_planet",{id=go.get_id()})
 	end
 	if not self.flag and self.landed then
+		global.target_planet=go.get_id()
 		self.flag=true
 		defrx.notify("flag_up", {dist_vector=self.dist_vector})
 	end
@@ -180,7 +182,7 @@ function on_message(self, message_id, message, sender)
 		if message.own_group==hash("planet") and message.other_group==hash("player")  then
 			if not self.landed then
 				self.landed=true
-				if not self.flag and self.play then
+				if not self.flag and self.play and global.target_planet==go.get_id() then
 					defrx.notify("add_score")
 					defrx.notify("add_combo")
 					self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
@@ -222,10 +224,9 @@ function on_message(self, message_id, message, sender)
 			particlefx.set_constant("#planet_explosion", "fragment4", "tint", planet_fragment(self))
 			local num = math.random(self.break_meteor_min,self.break_meteor_max) 
 			for i = 1, num do
-				print("num :"..num)
+				--print("num :"..num)
 				defrx.notify("spawn_meteor", {position=go.get_world_position(),delay=0.1})
 			end
-			
 			if self.landed then
 				defrx.notify("game_over",{position=go.get_world_position()})
 				defrx.notify("player_dead")
@@ -236,5 +237,6 @@ function on_message(self, message_id, message, sender)
 end
 
 function final(self)
+	defrx.notify("planet_dead", {id=go.get_id()})
 	defrx.cancel_all_observing(self)
 end
