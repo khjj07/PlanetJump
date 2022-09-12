@@ -54,6 +54,7 @@ function init(self)
 		defrx.notify("final_score",{score=self.score,flag=self.flag,max_combo=self.max_combo,best_score=defsave.get("basic", "best_score")})
 		defrx.notify("play_sfx", {sound="#game_over",gain=1})
 	end)
+
 	defrx.create_stream("game_start")
 	defrx.observe(self, "game_start", function(self, message_id, message, sender)
 		self.score=0
@@ -136,13 +137,10 @@ function init(self)
 				defrx.notify("set_skin_cursor",{num=_})
 			end
 		end
-		timer.delay(0.1, false, function()
-			defrx.notify("trail_initialize",{color={i=defsave.get("color", "i"),j=defsave.get("color", "j")},shape={i=defsave.get("shape", "i"),j=defsave.get("shape", "j")}})
-		end)
-
 		defrx.notify("skin_data", self.skin_data)
 		
 	end)
+	
 
 	defrx.create_stream("play_sfx")
 	defrx.observe(self, "play_sfx", function(self, message_id, message, sender)

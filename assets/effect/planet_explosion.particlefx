@@ -20,7 +20,7 @@ emitters {
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_DEFAULT
   inherit_velocity: 0.0
-  max_particle_count: 128
+  max_particle_count: 40
   type: EMITTER_TYPE_CIRCLE
   start_delay: 0.0
   properties {
@@ -330,7 +330,7 @@ emitters {
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
   inherit_velocity: 0.0
-  max_particle_count: 256
+  max_particle_count: 100
   type: EMITTER_TYPE_CIRCLE
   start_delay: 0.0
   properties {
@@ -601,7 +601,7 @@ emitters {
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
   inherit_velocity: 0.0
-  max_particle_count: 256
+  max_particle_count: 10
   type: EMITTER_TYPE_CIRCLE
   start_delay: 0.1
   properties {

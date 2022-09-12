@@ -70,6 +70,10 @@ images {
   image: "/resource/chipBlue_border.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/resource/pass.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "broken1"
   images {

@@ -1,4 +1,5 @@
 local defrx= require "defrx.defrx"
+local global=require "global"
 local STATE={
 	float=hash("float"),
 	stand=hash("stand"),
@@ -92,9 +93,9 @@ end
 
 local function initialize(self, message_id, message, sender)
 	self.play=true
-	print(self.trail_shape)
+	self.trail_shape="#trail1"
+	self.trail_color=vmath.vector4(1,1,1,1)
 	factory.load(self.trail_shape,trail_loaded)
-	--msg.post("#player_trail", "play_animation",{id=self.trail_shape})
 end
 
 local function pause_time(self, message_id, message, sender)
@@ -131,9 +132,11 @@ function init(self)
 	defrx.create_stream("on_gui")
 	defrx.observe(self, "on_gui",on_gui)
 	defrx.create_stream("trail_color")
+
 	defrx.observe(self, "trail_color",function(self, message_id, message, sender)
 		self.trail_color = message.color
 	end)
+	
 	defrx.create_stream("trail_shape")
 	defrx.observe(self, "trail_shape",function(self, message_id, message, sender)
 		self.trail_shape = message.shape
@@ -159,6 +162,8 @@ function init(self)
 end
 
 function update(self,dt)
+	--print(global.target_planet)
+
 	if self.state == STATE.float then
 		if vmath.length(self.vel)>0 and not self.rotation_fix then
 			local normal = vmath.normalize(self.vel)
@@ -200,7 +205,6 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id==hash("trigger_response") then
 		if message.enter and vmath.length(self.gravity)>0 then
-			
 			local rot = vmath.quat_from_to(vmath.vector3(0,1,0), vmath.normalize(self.gravity))
 			go.animate(".", "rotation",go.PLAYBACK_ONCE_FORWARD, rot, go.EASING_LINEAR, 0.1)
 		elseif not message.enter then

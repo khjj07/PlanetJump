@@ -2,6 +2,7 @@ local defrx= require "defrx.defrx"
 
 function init(self)
 	math.randomseed(os.clock())
+	--go.set("#sprite", "tint", vmath.vector4(0.5,0.5,0.5,1))
 	defrx.create_stream("camera_position")
 	defrx.observe(self, "camera_position", function(self, message_id, message, sender)
 		go.cancel_animations(".", "position")

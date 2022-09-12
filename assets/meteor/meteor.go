@@ -105,6 +105,7 @@ embedded_components {
   "mask: \"planet\"\n"
   "mask: \"player\"\n"
   "mask: \"satellite\"\n"
+  "mask: \"camera\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_SPHERE\n"

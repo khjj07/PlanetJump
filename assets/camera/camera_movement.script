@@ -62,6 +62,7 @@ function final(self)
 end
 
 function update(self, dt)
+	go.set_scale(rendercam.get_ortho_scale("."))
 	rendercam.set_ortho_scale(self.zoom)
 	defrx.notify("camera_position", {position=go.get_world_position()})
 end

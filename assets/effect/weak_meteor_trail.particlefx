@@ -20,14 +20,14 @@ emitters {
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
   inherit_velocity: 0.0
-  max_particle_count: 50
+  max_particle_count: 20
   type: EMITTER_TYPE_BOX
   start_delay: 0.0
   properties {
     key: EMITTER_KEY_SPAWN_RATE
     points {
       x: 0.0
-      y: 50.0
+      y: 20.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -243,25 +243,25 @@ emitters {
     key: PARTICLE_KEY_ALPHA
     points {
       x: 0.0
-      y: 0.01898296
+      y: 0.21723709
       t_x: 0.8629119
       t_y: 0.5053544
     }
     points {
-      x: 0.01
-      y: 0.040443487
+      x: 0.022917114
+      y: 0.2386976
       t_x: 0.7679984
       t_y: 0.6404518
     }
     points {
-      x: 0.7560701
-      y: 0.083689004
+      x: 0.7689872
+      y: 0.2819431
       t_x: 0.93225133
       t_y: -0.36181128
     }
     points {
       x: 1.0
-      y: -0.005483551
+      y: 0.19277057
       t_x: 0.9914234
       t_y: -0.13068885
     }

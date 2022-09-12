@@ -15,7 +15,7 @@ emitters {
     w: 0.64673036
   }
   tile_source: "/assets/particle.atlas"
-  animation: "star_05"
+  animation: "star_04"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD_ALPHA
   particle_orientation: PARTICLE_ORIENTATION_DEFAULT
@@ -77,21 +77,21 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SPEED
     points {
       x: 0.0
-      y: 600.0
+      y: 300.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 200.0
+    spread: 100.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 200.0
+      y: 20.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 100.0
+    spread: 10.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_RED
@@ -127,7 +127,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_ALPHA
     points {
       x: 0.0
-      y: 1.0
+      y: 0.8
       t_x: 1.0
       t_y: 0.0
     }
@@ -147,7 +147,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_X
     points {
       x: 0.0
-      y: 0.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -157,7 +157,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_Y
     points {
       x: 0.0
-      y: 0.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -317,7 +317,7 @@ emitters {
   size_mode: SIZE_MODE_MANUAL
   start_delay_spread: 0.0
   duration_spread: 0.0
-  stretch_with_velocity: true
+  stretch_with_velocity: false
   start_offset: 1000.0
 }
 emitters {
@@ -599,7 +599,7 @@ emitters {
     w: 0.64673036
   }
   tile_source: "/assets/particle.atlas"
-  animation: "star_05"
+  animation: "star_04"
   material: "/assets/background/star.material"
   blend_mode: BLEND_MODE_ADD_ALPHA
   particle_orientation: PARTICLE_ORIENTATION_DEFAULT
@@ -661,21 +661,21 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SPEED
     points {
       x: 0.0
-      y: 600.0
+      y: 300.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 200.0
+    spread: 100.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 200.0
+      y: 20.0
       t_x: 1.0
       t_y: 0.0
     }
-    spread: 100.0
+    spread: 10.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_RED
@@ -711,7 +711,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_ALPHA
     points {
       x: 0.0
-      y: 1.0
+      y: 0.8
       t_x: 1.0
       t_y: 0.0
     }
@@ -731,7 +731,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_X
     points {
       x: 0.0
-      y: 0.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -741,7 +741,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_Y
     points {
       x: 0.0
-      y: 0.0
+      y: 10.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -901,7 +901,7 @@ emitters {
   size_mode: SIZE_MODE_MANUAL
   start_delay_spread: 0.0
   duration_spread: 0.0
-  stretch_with_velocity: true
+  stretch_with_velocity: false
   start_offset: 1000.0
 }
 emitters {

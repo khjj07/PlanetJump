@@ -21,15 +21,14 @@ function check_meteor(self, message_id, message, sender)
 end
 
 function alert_routine(self, message_id, message, sender)
-	self.distance = vmath.length(message.position-go.get_world_position())
-	local direction = vmath.normalize(message.position-go.get_world_position())
-	if DEFAULT_RANGE<self.distance and vmath.length((self.direction-direction))<1 then
+	local result = physics.raycast(go.get_world_position(), go.get_world_position()+self.direction*10000, {hash("camera")})
+	--msg.post("@render:", "draw_line", { start_point = go.get_world_position(), end_point = go.get_world_position()+self.direction*10000, color = vmath.vector4(1,0,0,1) })
+	if result then
 		msg.post(self.alert, "enable")
-		go.set_position(message.position-direction*DEFAULT_RANGE,self.alert)
+		go.set_position(result.position,self.alert)
 	else
 		msg.post(self.alert, "disable")
 	end
-
 end
 
 function init(self)
@@ -90,5 +89,10 @@ function on_message(self, message_id, message, sender)
 		explosion(self)
 		defrx.cancel_all_observing(self)
 		go.delete()
+	end
+	if message_id==hash("collision_response") then
+		if message.other_id==hash("camera") then
+			msg.post(self.alert, "disable")
+		end 
 	end
 end

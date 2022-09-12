@@ -20,14 +20,14 @@ emitters {
   blend_mode: BLEND_MODE_ADD
   particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
   inherit_velocity: 0.0
-  max_particle_count: 50
+  max_particle_count: 30
   type: EMITTER_TYPE_BOX
   start_delay: 0.0
   properties {
     key: EMITTER_KEY_SPAWN_RATE
     points {
       x: 0.0
-      y: 50.0
+      y: 30.0
       t_x: 1.0
       t_y: 0.0
     }

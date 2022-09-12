@@ -8,12 +8,13 @@ go.property("min_rotate_speed", 30)
 go.property("max_rotate_speed", 40)
 
 local DEFAULT_RANGE = 1750
+local SPAWN_RANGE = 1800
 local SPAWN_MIN = 3
 local SPAWN_MAX = 5
 local MAX_RETRY = 10
 local INITIAL_PLANET = 
 {
-	instance=hash("/initial_planet/planet"),
+	instance=hash("/planet/planet"),
 	position=vmath.vector3(0,0,0),
 	rotate_speed=30,
 	rotate_direction=1,
@@ -83,12 +84,11 @@ function spawn_initial(self,center)
 
 		local middle=(center.position+new_planet.position)/2
 		local direction_from_center=vmath.normalize(new_planet.position-center.position)
-		local rot=vmath.quat_from_to(vmath.vector3(1,0,0), direction_from_center) 
-
-		
+		local rot=nil
+		if vmath.vector3(0,-1,0)~=direction_from_center then
+			rot = vmath.quat_from_to(vmath.vector3(0,1,0), direction_from_center) 
+		end
 		local ring=factory.create("#ring",middle,rot,{p1=new_planet.instance,p2=center.instance})
-
-		
 		table.insert(self.planet, new_planet)
 		table.insert(self.position,new_planet.position)
 	end
@@ -118,10 +118,10 @@ function spawn(self,center)
 		local middle=(center.position+new_planet.position)/2
 		local direction_from_center=vmath.normalize(new_planet.position-center.position)
 		local rot =nil
-		if vmath.vector3(1,0,0)~=direction_from_center then
-			rot = vmath.quat_from_to(vmath.vector3(1,0,0), direction_from_center) 
+		if vmath.vector3(0,-1,0)~=direction_from_center then
+			rot = vmath.quat_from_to(vmath.vector3(0,1,0), direction_from_center) 
 		end
-		local ring=factory.create("#ring",middle,rot,{p1=new_planet.instance,p2=center.instance})
+		local ring = factory.create("#ring",middle,rot,{p1=new_planet.instance,p2=center.instance})
 		table.insert(self.planet, new_planet)
 		table.insert(self.position,new_planet.position)
 	end
