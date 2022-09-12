@@ -219,7 +219,7 @@ end
 
 function update(self,dt)
 	defrx.notify("planet_position", self.position)
-	print("planet :"..#self.planet)
+	--print("planet :"..#self.planet)
 end
 
 

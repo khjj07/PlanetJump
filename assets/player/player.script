@@ -59,7 +59,7 @@ local function land(self,message)
 	else
 		go.set_rotation(vmath.quat_rotation_z(0))
 	end
-	go.set_position(go.get_position()+message.distance*normal)
+	go.set_position(go.get_world_position()+message.distance*normal)
 	go.set_parent(".",self.parent_planet,true)
 	defrx.notify("landing", {position=planet_pos})
 	particlefx.play("#player_land")
@@ -117,6 +117,7 @@ local function flag_up(self, message_id, message, sender)
 end
 
 function init(self)
+	global.set("speed", 1)
 	defrx.create_stream("gravity")
 	defrx.observe(self, "gravity", apply_gravity_force)
 	defrx.create_stream("flag_up")
@@ -177,7 +178,7 @@ function update(self,dt)
 			defrx.notify("spawn_planet", {position=go.get_world_position()})
 		end
 	end
-	local pos = go.get_position()+self.vel*dt
+	local pos = go.get_position()+self.vel*global.get("speed")*dt
 	if self.debug then
 		for i = 1, 360,10 do
 			local x=math.sin(math.pi/180*i)*1750*3.5

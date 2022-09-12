@@ -1,9 +1,16 @@
 local MAX_DISTANCE = 5000
+local SPEED_ADD_RATE=0.1
+local MAX_SPEED=2
 local defrx= require "defrx.defrx"
 local global=require "global"
 go.property("p1", hash(""))
 go.property("p2", hash(""))
 
+function add_global_speed()
+	if global.get("speed") <= MAX_SPEED then
+		global.set("speed",global.get("speed")+SPEED_ADD_RATE)
+	end
+end
 
 function init(self)
 	go.set_scale(2)
@@ -24,18 +31,25 @@ function on_message(self, message_id, message, sender)
 		end
 	end
 	if message_id==hash("trigger_response") then
-		if global.target_planet==self.p1 then
-			global.target_planet=self.p2
-			msg.post(self.p2, "remove_ring",{id=go.get_id()})
-			msg.post(self.p1, "remove_ring",{id=go.get_id()})
-			go.delete()
-		elseif global.target_planet==self.p2 then
-			global.target_planet=self.p1
-			msg.post(self.p2, "remove_ring",{id=go.get_id()})
-			msg.post(self.p1, "remove_ring",{id=go.get_id()})
-			go.delete()
-		else
-			global.target_planet=nil
+		if message.enter then
+			if tostring(global.get("target_planet"))==tostring(self.p1) then
+				global.set("target_planet",self.p2)
+				add_global_speed()
+				msg.post(self.p2, "remove_ring",{id=go.get_id()})
+				msg.post(self.p1, "remove_ring",{id=go.get_id()})
+				go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, 0.01, go.EASING_INBOUNCE, 0.5,0,function()
+					go.delete()
+				end)
+			elseif tostring(global.get("target_planet"))==tostring(self.p2) then
+				global.set("target_planet",self.p1)
+				print("target"..global.get("target_planet"))
+				add_global_speed()
+				msg.post(self.p2, "remove_ring",{id=go.get_id()})
+				msg.post(self.p1, "remove_ring",{id=go.get_id()})
+				go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, 0.01, go.EASING_INBOUNCE, 0.5,0,function()
+					go.delete()
+				end)
+			end
 		end
 	end
 end

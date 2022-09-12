@@ -89,7 +89,9 @@ end
 
 local function initialize(self, message_id, message, sender)
 	self.play=true
-	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
+	print("speed : "..global.get("speed"))
+	go.cancel_animations(".","euler")
+	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, go.get(".", "euler.z")+360*self.rotate_direction, go.EASING_LINEAR, 60/(self.rotate_speed*global.get("speed")))
 end
 local function satellite_rate()
 	local num = math.random(1,100)
@@ -122,6 +124,8 @@ function init(self)
 	defrx.observe(self, "jump", check_planet)
 	defrx.create_stream("game_start")
 	defrx.observe(self, "game_start", initialize)
+	defrx.create_stream("add_combo")
+	defrx.observe(self, "add_combo", initialize)
 	defrx.create_stream("satellite_dead")
 	defrx.observe(self, "satellite_dead", check_satellite)
 	if self.seed==0 then
@@ -137,12 +141,12 @@ function init(self)
 		self.rotate_direction=-1
 	end
 	if self.play then
-		go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/self.rotate_speed)
+		go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/(self.rotate_speed*global.get("speed")))
 		--for i = 1, satellite_rate() do
 			--spawn_setelliste(self)
 		--end
 	else
-		--defrx.notify("title_color", {color = planet_color(self)})
+		defrx.notify("title_color", {color = planet_color(self)})
 	end
 	particlefx.play("#planet_light")
 	particlefx.set_constant("#planet_light", "emitter", "tint", planet_color(self))
@@ -197,28 +201,26 @@ function on_message(self, message_id, message, sender)
 				self.landed=true
 				if not self.flag and self.play then
 					defrx.notify("add_score")
-					if global.target_planet==go.get_id() then
+					if global.get("target_planet")==go.get_id() then
 						defrx.notify("add_combo")
-						self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
-							defrx.notify("break_combo")
-						end)
+						--self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
+							--global.set("speed",1)
+							--defrx.notify("break_combo")
+							--initialize(self, message_id, message, sender)
+						--end)
 					else
+						global.set("speed",1)
 						defrx.notify("break_combo")
+						initialize(self, message_id, message, sender)
 					end
 				end
-				print(global.target_planet)
-				global.target_planet=go.get_id()
+				global.set("target_planet", go.get_id())
 			end
 			self.dist_vector=message.distance*message.normal
 		end
 	end
 	if message_id==hash("dead_response") then
 		defrx.cancel_all_observing(self)
-		for k, v in pairs(self.ring) do
-			if v then
-				msg.post(v, "planet_final",{id=go.get_id()})
-			end
-		end
 		go.delete_all(self.ids)
 	end
 	if message_id==hash("flag") then
@@ -259,6 +261,10 @@ end
 
 function final(self)
 	particlefx.stop("#planet_light", { clear = true })
-	
+	for k, v in pairs(self.ring) do
+		if v then
+			msg.post(v, "planet_final",{id=go.get_id()})
+		end
+	end
 	defrx.cancel_all_observing(self)
 end

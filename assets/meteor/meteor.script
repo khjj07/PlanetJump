@@ -44,7 +44,7 @@ function init(self)
 		particlefx.play("#weak_meteor_trail")
 		self.damage=1
 	end
-	self.alert = factory.create("#alert",vmath.vector3(),nil,nil,20)
+	self.alert = factory.create("#alert",vmath.vector3(),nil,nil,4)
 
 	defrx.create_stream("player_position")
 	defrx.observe(self, "player_position", check_meteor)
