@@ -77,8 +77,8 @@ function init(self)
 			self.max_combo=self.combo
 		end
 		local num=self.combo
-		if num>30 then
-			num=30
+		if num>10 then
+			num=10
 		end
 		sound.play("#combo"..num)
 		defrx.notify("combo", {combo=self.combo})

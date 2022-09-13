@@ -1,6 +1,6 @@
 local MAX_DISTANCE = 5000
-local SPEED_ADD_RATE=0.1
-local MAX_SPEED=2
+local SPEED_ADD_RATE=0.04
+local MAX_SPEED=1.5
 local defrx= require "defrx.defrx"
 local global=require "global"
 go.property("p1", hash(""))
@@ -35,6 +35,9 @@ function on_message(self, message_id, message, sender)
 			if tostring(global.get("target_planet"))==tostring(self.p1) then
 				global.set("target_planet",self.p2)
 				add_global_speed()
+				timer.delay(0.25, false, function()
+					particlefx.play("#twinkle_spread")
+				end)
 				msg.post(self.p2, "remove_ring",{id=go.get_id()})
 				msg.post(self.p1, "remove_ring",{id=go.get_id()})
 				go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_INCIRC,0.5)
@@ -45,6 +48,9 @@ function on_message(self, message_id, message, sender)
 				global.set("target_planet",self.p1)
 				print("target"..global.get("target_planet"))
 				add_global_speed()
+				timer.delay(0.25, false, function()
+					particlefx.play("#twinkle_spread")
+				end)
 				msg.post(self.p2, "remove_ring",{id=go.get_id()})
 				msg.post(self.p1, "remove_ring",{id=go.get_id()})
 				go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_INCIRC,0.5)
@@ -58,6 +64,6 @@ end
 
 function final(self)
 	particlefx.stop("#twinkle", { clear = true })
-	particlefx.play("#twinkle_spread")
+
 	defrx.cancel_all_observing(self)
 end
