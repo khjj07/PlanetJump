@@ -44,8 +44,7 @@ function init(self)
 		particlefx.play("#weak_meteor_trail")
 		self.damage=1
 	end
-	self.alert = factory.create("#alert",vmath.vector3(),nil,nil,4)
-
+	self.alert = factory.create("#alert",vmath.vector3(),nil,{direction=self.direction},4)
 	defrx.create_stream("player_position")
 	defrx.observe(self, "player_position", check_meteor)
 	defrx.create_stream("camera_position")
@@ -57,6 +56,7 @@ function update(self, dt)
 	local pos = go.get_position()+self.vel*dt
 	self.play=false
 	go.set_position(pos)
+	msg.post(self.alert, "direction",{direction=self.direction})
 end
 
 function explosion(self)

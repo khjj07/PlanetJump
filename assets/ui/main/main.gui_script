@@ -8,11 +8,7 @@ local MAXPOINT=6
 local PURPLE = vmath.vector4(0.6,0.4,0.6,1)
 local store = require "assets.ui.store.store" 
 local color = require("color-lib.color")
-local COMBO_BREAK_SOUND = {
-	"#combo_break1",
-	"#combo_break2",
-	"#combo_break3"
-}
+
 
 local function move_y(node,y,delay)
 	node:animate("position.y", y, gui.EASING_INBACK, 0.7,delay)
@@ -39,9 +35,6 @@ function start(self,action_id,action,button)
 			self.node["title/window"]:hide()
 			self.play=true
 			self.node["ingame/window"]:show()
-			self.node["ingame/combo"]:hide()
-			self.node["ingame/combo_break1"]:hide()
-			self.node["ingame/combo_break2"]:hide()
 			self.node["ingame/score"]:set_text(0)
 			self.node["ingame/flag"]:set_text(0)
 			msg.post(".", "acquire_input_focus")
@@ -394,7 +387,6 @@ function init(self)
 			self.node["game_over/window"]:show()
 		end)
 	end)
-
 	
 	defrx.create_stream("final_score")
 	defrx.observe(self, "final_score", function(self, message_id, message)
@@ -460,55 +452,13 @@ function init(self)
 		self.node["ingame/score"]:animate("scale", 4, gui.EASING_INBOUNCE, 0.2,0,nil,gui.PLAYBACK_ONCE_PINGPONG)
 	end)
 
-	defrx.create_stream("combo")
-	defrx.observe(self, "combo", function(self, message_id, message)
-		if self.play then
-			self.node["ingame/combo"]:show()
-			self.node["ingame/combo"]:set_scale(vmath.vector3(0.1,0.1,0))
-			self.node["ingame/combo"]:animate("scale", 2, gui.EASING_OUTBACK, 0.7,0, function()
-				self.node["ingame/combo"]:hide()
-			end,gui.PLAYBACK_ONCE_PINGPONG)
-			self.node["ingame/combo"]:set_text(tostring(message.combo).." COMBO")
-		end
-	end)
+
 	defrx.create_stream("level")
 	defrx.observe(self, "level", function(self, message_id, message, sender)
 		self.node["ingame/flag"]:set_text(message.flag)
 		flag_positioning(self,message.flag)
 	end)
 
-	defrx.create_stream("combo_break")
-	defrx.observe(self, "combo_break", function(self, message_id, message, sender)
-		if self.play then
-			sound.play(COMBO_BREAK_SOUND[math.random(#COMBO_BREAK_SOUND)])
-			self.node["ingame/combo"]:show()
-			self.node["ingame/combo"]:set_scale(vmath.vector3(0.1,0.1,0))
-			self.node["ingame/combo"]:animate("scale", 2, gui.EASING_OUTBACK, 0.7,0, function()
-				self.node["ingame/combo"]:hide()
-			end,gui.PLAYBACK_ONCE_PINGPONG)
-			local original = self.node["ingame/combo"]:get_text()
-			local O = string.find(original, "O")
-			local edit1 = string.sub(original,1,O)
-			local edit2 = string.sub(original,O+1,string.len(original))
-			timer.delay(0.3, false, function()
-				self.node["ingame/combo"]:hide()
-				self.node["ingame/combo_break1"]:show()
-				self.node["ingame/combo_break2"]:show()
-				self.node["ingame/combo_break1"]:set_text(edit1)
-				self.node["ingame/combo_break2"]:set_text(edit2)
-				self.node["ingame/combo_break1"]:animate("position", self.node["ingame/combo_break1"]:get_position()+vmath.vector3(-15,15,0), gui.EASING_OUTBACK, 0.7,0)
-				self.node["ingame/combo_break2"]:animate("position",self.node["ingame/combo_break2"]:get_position()+vmath.vector3(15,-15,0), gui.EASING_OUTBACK, 0.7,0,function()
-					self.node["ingame/combo_break1"]:hide()
-					self.node["ingame/combo_break2"]:hide()
-					self.node["ingame/combo_break1"]:set_position(self.node["ingame/combo_break1"]:get_position()+vmath.vector3(15,-15,0))
-					self.node["ingame/combo_break2"]:set_position(self.node["ingame/combo_break2"]:get_position()+vmath.vector3(-15,15,0))
-						
-				end)
-				
-			end)
-			gui.play_particlefx(gui.get_node("ingame/break"))
-		end
-	end)
 	defrx.create_stream("title_color")
 	defrx.observe(self, "title_color", function(self, message_id, message, sender)
 		self.node["title/title"]:set_color(message.color)

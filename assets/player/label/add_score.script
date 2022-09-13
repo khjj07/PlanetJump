@@ -1,0 +1,8 @@
+go.property("add_score", 0)
+function init(self)
+	label.set_text("#label", "+"..self.add_score)
+	go.animate("#label", "color.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_INCUBIC, 1)
+	go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, go.get_position().y+300, go.EASING_INCUBIC, 1,0,function()
+		go.delete()
+	end)
+end

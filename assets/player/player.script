@@ -14,7 +14,7 @@ go.property("debug", false)
 
 local function draw_line(from, to,color)
 	color=color or vmath.vector4(1,0,0,1)
-	--msg.post("@render:", "draw_line", { start_point = from, end_point = to, color = color })
+	msg.post("@render:", "draw_line", { start_point = from, end_point = to, color = color })
 end
 
 local function jump(self)
@@ -59,8 +59,12 @@ local function land(self,message)
 	else
 		go.set_rotation(vmath.quat_rotation_z(0))
 	end
-	go.set_position(go.get_world_position()+message.distance*normal)
+	local distance=message.distance
+	go.set_position(go.get_world_position()+distance*normal)
+	print("distance : "..message.distance.." normal :"..message.normal)
+
 	go.set_parent(".",self.parent_planet,true)
+	
 	defrx.notify("landing", {position=planet_pos})
 	particlefx.play("#player_land")
 end
@@ -132,8 +136,18 @@ function init(self)
 	defrx.observe(self, "play_time",play_time)
 	defrx.create_stream("on_gui")
 	defrx.observe(self, "on_gui",on_gui)
+	defrx.create_stream("combo")
+	defrx.observe(self, "combo",function(self, message_id, message, sender)
+		factory.create("#combo",go.get_world_position(),vmath.quat_rotation_z(0),{combo=message.combo})
+		print("combo"..message.combo)
+	end)
+	defrx.create_stream("score")
+	defrx.observe(self, "score",function(self, message_id, message, sender)
+		factory.create("#add_score",go.get_world_position(),vmath.quat_rotation_z(0),{add_score=message.add_score})
+		print("add"..message.add_score)
+	end)
+	
 	defrx.create_stream("trail_color")
-
 	defrx.observe(self, "trail_color",function(self, message_id, message, sender)
 		self.trail_color = message.color
 	end)
@@ -164,7 +178,7 @@ end
 
 function update(self,dt)
 	--print(global.target_planet)
-
+	print("position : "..go.get_world_position())
 	if self.state == STATE.float then
 		if vmath.length(self.vel)>0 and not self.rotation_fix then
 			local normal = vmath.normalize(self.vel)
@@ -178,14 +192,12 @@ function update(self,dt)
 			defrx.notify("spawn_planet", {position=go.get_world_position()})
 		end
 	end
-	local pos = go.get_position()+self.vel*global.get("speed")*dt
-	if self.debug then
-		for i = 1, 360,10 do
-			local x=math.sin(math.pi/180*i)*1750*3.5
-			local y=math.cos(math.pi/180*i)*1750*3.5
-			draw_line(go.get_world_position(),go.get_world_position()+vmath.vector3(x,y,0),vmath.vector4(1,1,0,1))
-		end
-		draw_line(go.get_world_position(),go.get_world_position()+self.vel*dt*10,vmath.vector4(1,1,0,1))
+	local pos=go.get_position()
+	local result = physics.raycast(go.get_position(), go.get_position()+self.vel*dt*10*global.get("speed"), {hash("planet")})
+	if result then
+		pos = go.get_position()+self.vel*dt
+	else
+		pos = go.get_position()+self.vel*global.get("speed")*dt
 	end
 	go.set_position(pos)
 	if self.play then

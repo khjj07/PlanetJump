@@ -99,11 +99,9 @@ local function satellite_rate()
 	if num <= 40 then
 		return 0 
 	elseif num <= 80 then
-		return 1 
-	elseif num <= 95 then
-		return 2 
+		return 1
 	else
-		return 3
+		return 2 
 	end
 end
 local function check_satellite(self, message_id, message, sender)
@@ -142,9 +140,9 @@ function init(self)
 	end
 	if self.play then
 		go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360*self.rotate_direction, go.EASING_LINEAR, 60/(self.rotate_speed*global.get("speed")))
-		--for i = 1, satellite_rate() do
-			--spawn_setelliste(self)
-		--end
+		for i = 1, satellite_rate() do
+			spawn_setelliste(self)
+		end
 	else
 		defrx.notify("title_color", {color = planet_color(self)})
 	end
@@ -200,7 +198,6 @@ function on_message(self, message_id, message, sender)
 			if not self.landed then
 				self.landed=true
 				if not self.flag and self.play then
-					defrx.notify("add_score")
 					if global.get("target_planet")==go.get_id() then
 						defrx.notify("add_combo")
 						--self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
@@ -213,6 +210,7 @@ function on_message(self, message_id, message, sender)
 						defrx.notify("break_combo")
 						initialize(self, message_id, message, sender)
 					end
+					defrx.notify("add_score")
 				end
 				global.set("target_planet", go.get_id())
 			end

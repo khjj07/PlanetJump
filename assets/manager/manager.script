@@ -88,7 +88,6 @@ function init(self)
 	defrx.observe(self, "break_combo", function(self, message_id, message, sender)
 		if self.combo >0 then
 			self.combo=0
-			defrx.notify("combo_break")
 		end
 	end)
 
@@ -96,7 +95,7 @@ function init(self)
 	defrx.create_stream("add_score")
 	defrx.observe(self, "add_score", function(self, message_id, message, sender)
 		self.score=self.score+DEFAULT_SCORE*(self.combo+1)
-		defrx.notify("score",{score=self.score})
+		defrx.notify("score",{score=self.score,add_score=DEFAULT_SCORE*(self.combo+1)})
 	end)
 
 	defrx.create_stream("set_sound")

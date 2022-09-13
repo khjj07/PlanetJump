@@ -1,0 +1,14 @@
+go.property("direction", vmath.vector3())
+
+function init(self)
+	timer.delay(0.7, true, function(self)
+		go.animate(".", "position",go.PLAYBACK_ONCE_PINGPONG,go.get_position()+self.direction*150, go.EASING_INEXPO, 0.4)
+	end)
+end
+
+
+function on_message(self, message_id, message, sender)
+	if message_id==hash("direction") then
+		self.direction=message.direction
+	end	
+end
