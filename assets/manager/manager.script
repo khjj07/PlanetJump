@@ -89,6 +89,7 @@ function init(self)
 		if self.combo >0 then
 			self.combo=0
 		end
+		sound.play("#combo1")
 	end)
 
 

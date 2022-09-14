@@ -353,6 +353,9 @@ function init(self)
 				sound.play("#button_touch")
 			end
 		end)
+		btn:on_not_hover(function(self,action_id,action)
+			btn:set_scale(btn.initial_scale)
+		end)
 	end
 	
 	--neon_effect(self.node["title/option_btn"])

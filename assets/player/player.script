@@ -54,7 +54,10 @@ local function land(self,message)
 	local planet_pos = go.get_world_position(self.parent_planet)
 	local normal = vmath.normalize(go.get_world_position()-planet_pos)
 	if vmath.length(normal+vmath.vector3(0,-1,0)) > 0.1  then
-		local rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
+		local rot = vmath.quat_rotation_z(0)
+		if normal ~= vmath.vector3(0,-1,0) then
+			rot = vmath.quat_from_to(vmath.vector3(0,1,0), normal)
+		end
 		go.set_rotation(rot)
 	else
 		go.set_rotation(vmath.quat_rotation_z(0))

@@ -14,8 +14,8 @@ components {
   }
 }
 components {
-  id: "twinkle"
-  component: "/assets/planet/ring/twinkle.particlefx"
+  id: "twinkle_spread"
+  component: "/assets/planet/ring/twinkle_spread.particlefx"
   position {
     x: 0.0
     y: 0.0
@@ -29,8 +29,8 @@ components {
   }
 }
 components {
-  id: "twinkle_spread"
-  component: "/assets/planet/ring/twinkle_spread.particlefx"
+  id: "twinkle"
+  component: "/assets/planet/ring/twinkle.particlefx"
   position {
     x: 0.0
     y: 0.0

@@ -14,7 +14,7 @@ end
 
 function init(self)
 	go.set_scale(2)
-	go.set("#sprite", "tint.w", 0.5)
+	go.set("#sprite", "tint.w", 1)
 	particlefx.play("#twinkle")
 	msg.post(self.p1, "add_ring",{id=go.get_id()})
 	msg.post(self.p2, "add_ring",{id=go.get_id()})

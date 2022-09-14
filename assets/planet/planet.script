@@ -96,12 +96,10 @@ end
 local function satellite_rate()
 	local num = math.random(1,100)
 	num = math.random(1,100)
-	if num <= 40 then
+	if num <= 70 then
 		return 0 
-	elseif num <= 80 then
-		return 1
 	else
-		return 2 
+		return 1
 	end
 end
 local function check_satellite(self, message_id, message, sender)
@@ -200,11 +198,6 @@ function on_message(self, message_id, message, sender)
 				if not self.flag and self.play then
 					if global.get("target_planet")==go.get_id() then
 						defrx.notify("add_combo")
-						--self.combo_timer = timer.delay(60/self.rotate_speed, false, function()
-							--global.set("speed",1)
-							--defrx.notify("break_combo")
-							--initialize(self, message_id, message, sender)
-						--end)
 					else
 						global.set("speed",1)
 						defrx.notify("break_combo")
