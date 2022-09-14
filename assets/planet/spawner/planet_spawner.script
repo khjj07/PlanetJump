@@ -81,7 +81,6 @@ function spawn_initial(self,center)
 		}
 		local instance = collectionfactory.create("#planet",new_planet.position,nil,prop,new_planet.scale)
 		new_planet.instance = instance[hash("/planet")]
-
 		local middle=(center.position+new_planet.position)/2
 		local direction_from_center=vmath.normalize(new_planet.position-center.position)
 		local rot=nil

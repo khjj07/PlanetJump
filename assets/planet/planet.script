@@ -52,7 +52,7 @@ function check_planet(self, message_id, message, sender)
 	end
 	if not self.flag and self.landed then
 		self.flag=true
-		defrx.notify("flag_up", {dist_vector=self.dist_vector})
+		--defrx.notify("flag_up", {dist_vector=self.dist_vector})
 	end
 	self.landed=false
 	if self.combo_timer then
@@ -124,6 +124,7 @@ function init(self)
 	defrx.observe(self, "add_combo", initialize)
 	defrx.create_stream("satellite_dead")
 	defrx.observe(self, "satellite_dead", check_satellite)
+	
 	if self.seed==0 then
 		self.seed=os.time()
 	end
@@ -147,6 +148,10 @@ function init(self)
 	particlefx.play("#planet_light")
 	particlefx.set_constant("#planet_light", "emitter", "tint", planet_color(self))
 	msg.post("#broken", "disable")
+	go.set("#step", "scale", vmath.vector3(1.5,1.5,1))
+	go.set("#step", "tint",vmath.vector4(0.5,0.5,0.5,0.7))
+	msg.post("#step", "disable")
+
 end
 
 local function broken(self)
@@ -204,6 +209,7 @@ function on_message(self, message_id, message, sender)
 						initialize(self, message_id, message, sender)
 					end
 					defrx.notify("add_score")
+					msg.post("#step", "enable")
 				end
 				global.set("target_planet", go.get_id())
 			end
@@ -214,9 +220,7 @@ function on_message(self, message_id, message, sender)
 		defrx.cancel_all_observing(self)
 		go.delete_all(self.ids)
 	end
-	if message_id==hash("flag") then
-		table.insert(self.ids,message.id)
-	end	
+
 	
 	if message_id==hash("hit") and self.hp>0 then
 		self.hp = self.hp-message.damage

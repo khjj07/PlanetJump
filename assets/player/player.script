@@ -19,7 +19,6 @@ end
 
 local function jump(self)
 	local planet_pos = go.get_position(self.parent_planet)
-	self.flag_parent=self.parent_planet
 	self.parent_planet=nil
 	go.set_parent(".",self.parent_planet,true)
 	local jump_direction = vmath.normalize(go.get_world_position()-planet_pos)
@@ -116,19 +115,12 @@ local function on_gui(self, message_id, message, sender)
 	self.on_gui=message.value
 end
 
-local function flag_up(self, message_id, message, sender)
-	local flag = factory.create("#flag",go.get_world_position()+message.dist_vector+vmath.vector3(0,0,0.3),nil,{color=self.trail_color})
-	go.set_parent(flag,self.flag_parent,true)
-	msg.post(self.flag_parent, "flag",{id=flag})
-	self.flag_parent=nil
-end
 
 function init(self)
 	global.set("speed", 1)
 	defrx.create_stream("gravity")
 	defrx.observe(self, "gravity", apply_gravity_force)
-	defrx.create_stream("flag_up")
-	defrx.observe(self, "flag_up", flag_up)
+
 	defrx.create_stream("game_start")
 	defrx.observe(self, "game_start", initialize)
 	defrx.create_stream("player_dead")
