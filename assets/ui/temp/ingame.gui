@@ -1,11 +1,11 @@
 script: ""
 fonts {
   name: "Astro"
-  font: "/assets/ui/Astro.font"
+  font: "/assets/font/Astro.font"
 }
 fonts {
   name: "Shark"
-  font: "/assets/ui/Shark.font"
+  font: "/assets/font/Shark.font"
 }
 textures {
   name: "ui"

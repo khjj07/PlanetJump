@@ -1,7 +1,7 @@
 script: "/assets/ui/main/main.gui_script"
 fonts {
   name: "Galaxy1"
-  font: "/assets/ui/Astro.font"
+  font: "/assets/font/Astro.font"
 }
 background_color {
   x: 0.0

@@ -26,7 +26,7 @@ function on_message(self, message_id, message, sender)
 			self.menu_loading_started_time = os.time() -- <7>
 		elseif self.menu_loading_started_time and sender.fragment == hash("ingame") then -- <8>
 			local total_menu_loading_time = os.time() - self.menu_loading_started_time
-			local minimum_splash_duration = 2
+			local minimum_splash_duration = 3
 			local delay = math.max(minimum_splash_duration - total_menu_loading_time, 0) -- <9>
 			timer.delay(delay, false, function() -- <10>
 				msg.post("#splash", "disable")

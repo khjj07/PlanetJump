@@ -1,7 +1,7 @@
 script: ""
 fonts {
   name: "Astro"
-  font: "/assets/ui/Astro.font"
+  font: "/assets/font/Astro.font"
 }
 textures {
   name: "ui"

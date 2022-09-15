@@ -67,19 +67,19 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/resource/chipBlue_border.png"
+  image: "/resource/ring/pass.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/resource/pass.png"
+  image: "/resource/alert/alert.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/resource/alert.png"
+  image: "/resource/planet/step.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/resource/step.png"
+  image: "/resource/alert/arrow.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 animations {

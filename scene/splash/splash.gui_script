@@ -1,4 +1,31 @@
+local ui = require"scene.splash.splash"
+local defui = require "defui.defui"
 function init(self)
-	local node = gui.get_node("text")
-	gui.animate(node, "color", 1, gui.EASING_INSINE, 0.5)
+	ui.init(self)
+	defui.init(self)
+
+	self.node["left_hand"]:set_color(vmath.vector4(1,1,1,0))
+	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_INBACK, 0.3)
+	:animate("position",self.node["left_hand"].initial_position,gui.EASING_OUTCIRC,1)
+	:set_position(self.node["left_hand"].initial_position-vmath.vector3(100,0,0))
+	
+	self.node["right_hand"]:set_color(vmath.vector4(1,1,1,0))
+	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_INBACK, 0.3)
+	:animate("position",self.node["right_hand"].initial_position,gui.EASING_OUTCIRC,1)
+	:set_position(self.node["right_hand"].initial_position+vmath.vector3(100,0,0))
+	
+	self.node["uni"]:set_color(vmath.vector4(1,1,1,0))
+	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_LINEAR, 1.5,0.5)
+	:animate("position",self.node["uni"].initial_position,gui.EASING_OUTEXPO,1,0.5)
+	:set_position(self.node["uni"].initial_position-vmath.vector3(0,100,0))
+	
+	self.node["games"]:set_color(vmath.vector4(1,1,1,0))
+	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_LINEAR, 1,0.5)
+	:animate("position",self.node["games"].initial_position,gui.EASING_OUTEXPO,1,0.5)
+	:set_position(self.node["games"].initial_position+vmath.vector3(0,100,0))
+	
+end
+
+function on_input(self, action_id, action)
+	defui.on_input(self, action_id, action)
 end

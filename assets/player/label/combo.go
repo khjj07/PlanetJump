@@ -23,21 +23,21 @@ embedded_components {
   "  w: 0.0\n"
   "}\n"
   "scale {\n"
-  "  x: 40.0\n"
-  "  y: 40.0\n"
+  "  x: 50.0\n"
+  "  y: 50.0\n"
   "  z: 1.0\n"
   "  w: 0.0\n"
   "}\n"
   "color {\n"
   "  x: 1.0\n"
   "  y: 0.0\n"
-  "  z: 1.0\n"
+  "  z: 0.0\n"
   "  w: 1.0\n"
   "}\n"
   "outline {\n"
-  "  x: 1.0\n"
-  "  y: 0.0\n"
-  "  z: 0.0\n"
+  "  x: 0.8\n"
+  "  y: 0.2\n"
+  "  z: 0.2\n"
   "  w: 1.0\n"
   "}\n"
   "shadow {\n"
@@ -51,13 +51,13 @@ embedded_components {
   "pivot: PIVOT_CENTER\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: false\n"
-  "text: \"1 COMBO!\"\n"
-  "font: \"/assets/ui/Shark.font\"\n"
+  "text: \"1X\"\n"
+  "font: \"/assets/font/Shark.font\"\n"
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {
     x: 0.0
-    y: 1500.0
+    y: 2000.0
     z: 0.0
   }
   rotation {
