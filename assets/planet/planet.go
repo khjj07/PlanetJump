@@ -215,7 +215,7 @@ embedded_components {
   data: "tile_set: \"/assets/space.atlas\"\n"
   "default_animation: \"step\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
-  "blend_mode: BLEND_MODE_ADD\n"
+  "blend_mode: BLEND_MODE_MULT\n"
   ""
   position {
     x: 0.0

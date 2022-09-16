@@ -5,7 +5,7 @@ function init(self)
 	local color = go.get("#label", "color")
 	local outline = go.get("#label", "outline")
 	go.set("#label", "color",vmath.vector4(0,0,0,0))
-	go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, global.get("color"), go.EASING_LINEAR, 0.3,0,function()
+	go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, color, go.EASING_LINEAR, 0.3,0,function()
 		go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(0,0,0,0), go.EASING_LINEAR, 0.7)
 	end)
 

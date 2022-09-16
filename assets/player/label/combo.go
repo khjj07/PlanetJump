@@ -23,15 +23,15 @@ embedded_components {
   "  w: 0.0\n"
   "}\n"
   "scale {\n"
-  "  x: 50.0\n"
-  "  y: 50.0\n"
+  "  x: 30.0\n"
+  "  y: 30.0\n"
   "  z: 1.0\n"
   "  w: 0.0\n"
   "}\n"
   "color {\n"
-  "  x: 1.0\n"
-  "  y: 0.0\n"
-  "  z: 0.0\n"
+  "  x: 0.6\n"
+  "  y: 0.5019608\n"
+  "  z: 0.9019608\n"
   "  w: 1.0\n"
   "}\n"
   "outline {\n"
@@ -53,11 +53,11 @@ embedded_components {
   "line_break: false\n"
   "text: \"1X\"\n"
   "font: \"/assets/font/Shark.font\"\n"
-  "material: \"/builtins/fonts/label.material\"\n"
+  "material: \"/assets/player/label/label.material\"\n"
   ""
   position {
     x: 0.0
-    y: 2000.0
+    y: 1500.0
     z: 0.0
   }
   rotation {

@@ -94,7 +94,6 @@ function init(self)
 		if num>5 then
 			num=5
 		end
-		global.set("color",COMBO_COLOR[num])
 		defrx.notify("combo", {combo=self.combo})
 	end)
 

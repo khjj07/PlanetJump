@@ -98,8 +98,6 @@ local function initialize(self, message_id, message, sender)
 end
 local function reset_color(self, message_id, message, sender)
 	if not self.print then
-		go.set("#step", "tint", global.get("color"))
-		particlefx.set_constant("#smoke", "smoke", "tint", global.get("color"))
 		particlefx.set_constant("#smoke", "purse", "tint", global.get("color"))
 	end
 end
@@ -147,6 +145,7 @@ function init(self)
 	end
 	math.randomseed(self.seed)
 	random_planet(self)
+	go.set("#step", "tint", planet_color(self))
 	self.ring={}
 	self.landed=false
 	self.hp=3
@@ -166,7 +165,6 @@ function init(self)
 	particlefx.set_constant("#planet_light", "emitter", "tint", planet_color(self))
 	msg.post("#broken", "disable")
 	go.set("#step", "scale", vmath.vector3(1.5,1.5,1))
-	go.set("#step", "tint",vmath.vector4(1,1,1,1))
 	msg.post("#step", "disable")
 
 end
@@ -222,7 +220,6 @@ function on_message(self, message_id, message, sender)
 						defrx.notify("add_combo")
 					else
 						global.set("speed",1)
-						global.set("color",vmath.vector4(1,1,1,1))
 						defrx.notify("break_combo")
 						reset_color(self, message_id, message, sender)
 						reset(self, message_id, message, sender)
@@ -236,9 +233,9 @@ function on_message(self, message_id, message, sender)
 						defrx.notify("flag_up")
 					end)
 					particlefx.play("#smoke")
+					particlefx.set_constant("#smoke", "smoke", "tint", planet_color(self))
 				elseif self.play then
 					global.set("speed",1)
-					global.set("color",vmath.vector4(1,1,1,1))
 					--defrx.notify("break_combo")
 					reset_color(self, message_id, message, sender)
 					reset(self, message_id, message, sender)
