@@ -1,5 +1,6 @@
 local defrx= require "defrx.defrx"
 local defsave = require("defsave.defsave")
+local global =require("global")
 local SCORE_DELAY = 1
 local DEFAULT_SCORE = 10
 local LEVEL={
@@ -12,6 +13,13 @@ local LEVEL={
 	215,
 	265,
 	320
+}
+local COMBO_COLOR={
+	vmath.vector4(1,0,0,1),
+	vmath.vector4(1,0.5,0,1),
+	vmath.vector4(1,1,0,1),
+	vmath.vector4(0,1,0,1),
+	vmath.vector4(0,0,1,1)
 }
 
 local SKIN = {
@@ -53,6 +61,7 @@ function init(self)
 		defsave.save("basic", true)
 		defrx.notify("final_score",{score=self.score,flag=self.flag,max_combo=self.max_combo,best_score=defsave.get("basic", "best_score")})
 		defrx.notify("play_sfx", {sound="#game_over",gain=1})
+		global.reset()
 	end)
 
 	defrx.create_stream("game_start")
@@ -66,7 +75,6 @@ function init(self)
 	defrx.observe(self, "flag_up", function(self, message_id, message, sender)
 		self.flag=self.flag+1
 		self.level=get_level(self)
-		print("level : "..self.level)
 		defrx.notify("level",{level=self.level,flag=self.flag})
 	end)
 
@@ -81,6 +89,12 @@ function init(self)
 			num=10
 		end
 		sound.play("#combo"..num)
+		
+		local num=self.combo
+		if num>5 then
+			num=5
+		end
+		global.set("color",COMBO_COLOR[num])
 		defrx.notify("combo", {combo=self.combo})
 	end)
 
@@ -228,6 +242,7 @@ end
 function final(self)
 	defrx.cancel_all_observing(self)
 	defsave.save_all(true)
+	global.reset()
 end
 
 function on_message(self, message_id, message, sender)

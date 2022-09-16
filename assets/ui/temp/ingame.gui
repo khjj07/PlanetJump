@@ -218,7 +218,7 @@ nodes {
     w: 1.0
   }
   size {
-    x: 75.0
+    x: 50.0
     y: 75.0
     z: 0.0
     w: 1.0
@@ -231,7 +231,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/flag"
+  texture: "ui/step"
   id: "flag_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

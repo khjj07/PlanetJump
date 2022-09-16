@@ -1,0 +1,22 @@
+local defrx = require "defrx.defrx"
+
+function init(self)
+	particlefx.play("#gravity")
+	defrx.create_stream("game_start")
+	msg.post("#sprite", "disable")
+	defrx.observe(self, "game_start", function()
+		msg.post("#sprite", "enable")
+		local scale=go.get_scale()
+		go.set_scale(0.01)
+		go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, scale, go.EASING_OUTBACK, 1)
+	end)
+end
+
+function on_message(self, message_id, message, sender)
+	defrx.on_message(self, message_id, message, sender)
+end
+
+function final(self)
+	particlefx.stop("#gravity")
+	defrx.cancel_all_observing(self)
+end

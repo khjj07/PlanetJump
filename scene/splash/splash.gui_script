@@ -15,13 +15,13 @@ function init(self)
 	:set_position(self.node["right_hand"].initial_position+vmath.vector3(100,0,0))
 	
 	self.node["uni"]:set_color(vmath.vector4(1,1,1,0))
-	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_LINEAR, 1.5,0.5)
-	:animate("position",self.node["uni"].initial_position,gui.EASING_OUTEXPO,1,0.5)
+	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_LINEAR, 1.5,0.7)
+	:animate("position",self.node["uni"].initial_position,gui.EASING_OUTEXPO,1,0.7)
 	:set_position(self.node["uni"].initial_position-vmath.vector3(0,100,0))
 	
 	self.node["games"]:set_color(vmath.vector4(1,1,1,0))
-	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_LINEAR, 1,0.5)
-	:animate("position",self.node["games"].initial_position,gui.EASING_OUTEXPO,1,0.5)
+	:animate("color", vmath.vector4(1,1,1,1), gui.EASING_LINEAR, 1,0.7)
+	:animate("position",self.node["games"].initial_position,gui.EASING_OUTEXPO,1,0.7)
 	:set_position(self.node["games"].initial_position+vmath.vector3(0,100,0))
 	
 end

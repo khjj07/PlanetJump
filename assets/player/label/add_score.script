@@ -1,16 +1,17 @@
+local global=require "global"
 go.property("add_score", 0)
 function init(self)
 	label.set_text("#label", "+"..self.add_score)
 	local color = go.get("#label", "color")
 	local outline = go.get("#label", "outline")
 	go.set("#label", "color",vmath.vector4(0,0,0,0))
-	go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, color, go.EASING_LINEAR, 0.3,0,function()
+	go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, global.get("color"), go.EASING_LINEAR, 0.3,0,function()
 		go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(0,0,0,0), go.EASING_LINEAR, 0.7)
 	end)
 
 	go.set("#label", "outline",vmath.vector4(0,0,0,0))
 	go.animate("#label", "outline", go.PLAYBACK_ONCE_FORWARD, outline, go.EASING_LINEAR, 0.3,0,function()
-		go.animate("#label", "outline.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.7)
+		go.animate("#label", "outline.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.3)
 	end)
 
 	go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, go.get_position().y+500, go.EASING_OUTELASTIC, 1,0,function()

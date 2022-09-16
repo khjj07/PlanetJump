@@ -146,6 +146,53 @@ nodes {
 }
 nodes {
   position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 1.0
+    y: 1.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  type: TYPE_PARTICLEFX
+  id: "light"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  adjust_mode: ADJUST_MODE_FIT
+  parent: "planet"
+  layer: ""
+  inherit_alpha: true
+  alpha: 1.0
+  template_node_child: false
+  size_mode: SIZE_MODE_AUTO
+  particlefx: "planet_light_ui"
+  custom_type: 0
+  enabled: true
+  visible: true
+}
+nodes {
+  position {
     x: 640.0
     y: 400.0
     z: 0.0
@@ -887,7 +934,7 @@ nodes {
     w: 1.0
   }
   size {
-    x: 50.0
+    x: 40.0
     y: 50.0
     z: 0.0
     w: 1.0
@@ -900,7 +947,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/flag"
+  texture: "space/step"
   id: "flag_icon"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -934,3 +981,7 @@ layers {
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT
 max_nodes: 512
+particlefxs {
+  name: "planet_light_ui"
+  particlefx: "/assets/ui/planet_light_ui.particlefx"
+}

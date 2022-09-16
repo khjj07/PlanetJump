@@ -43,6 +43,21 @@ components {
     w: 1.0
   }
 }
+components {
+  id: "smoke"
+  component: "/assets/planet/smoke.particlefx"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
 embedded_components {
   id: "sprite"
   type: "sprite"
@@ -200,7 +215,7 @@ embedded_components {
   data: "tile_set: \"/assets/space.atlas\"\n"
   "default_animation: \"step\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
-  "blend_mode: BLEND_MODE_ALPHA\n"
+  "blend_mode: BLEND_MODE_ADD\n"
   ""
   position {
     x: 0.0

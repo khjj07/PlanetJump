@@ -1,8 +1,8 @@
 emitters {
-  id: "tail"
+  id: "emitter"
   mode: PLAY_MODE_LOOP
-  duration: 0.1
-  space: EMISSION_SPACE_WORLD
+  duration: 10.0
+  space: EMISSION_SPACE_EMITTER
   position {
     x: 0.0
     y: 0.0
@@ -14,14 +14,14 @@ emitters {
     z: 0.0
     w: 1.0
   }
-  tile_source: "/assets/player_trail.atlas"
-  animation: "star_04"
-  material: "/builtins/materials/particlefx.material"
-  blend_mode: BLEND_MODE_ADD_ALPHA
-  particle_orientation: PARTICLE_ORIENTATION_MOVEMENT_DIRECTION
+  tile_source: "/builtins/graphics/particle_blob.tilesource"
+  animation: "anim"
+  material: "/assets/background/star.material"
+  blend_mode: BLEND_MODE_ALPHA
+  particle_orientation: PARTICLE_ORIENTATION_DEFAULT
   inherit_velocity: 0.0
-  max_particle_count: 128
-  type: EMITTER_TYPE_BOX
+  max_particle_count: 10
+  type: EMITTER_TYPE_CIRCLE
   start_delay: 0.0
   properties {
     key: EMITTER_KEY_SPAWN_RATE
@@ -37,7 +37,7 @@ emitters {
     key: EMITTER_KEY_SIZE_X
     points {
       x: 0.0
-      y: 1.0
+      y: 8.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -47,7 +47,7 @@ emitters {
     key: EMITTER_KEY_SIZE_Y
     points {
       x: 0.0
-      y: 1.0
+      y: 12.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -67,7 +67,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_LIFE_TIME
     points {
       x: 0.0
-      y: 1.5
+      y: 3.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -87,7 +87,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 900.0
+      y: 1400.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -127,7 +127,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_ALPHA
     points {
       x: 0.0
-      y: 30.0
+      y: 0.1
       t_x: 1.0
       t_y: 0.0
     }
@@ -177,19 +177,7 @@ emitters {
     key: PARTICLE_KEY_SCALE
     points {
       x: 0.0
-      y: 1.844501
-      t_x: 0.24102056
-      t_y: -0.97052
-    }
-    points {
-      x: 0.4579618
-      y: 0.7710205
-      t_x: 0.51237875
-      t_y: -0.8587596
-    }
-    points {
-      x: 1.0
-      y: 0.5443286
+      y: 1.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -225,27 +213,33 @@ emitters {
     key: PARTICLE_KEY_ALPHA
     points {
       x: 0.0
-      y: -0.3863708
-      t_x: 1.0
-      t_y: 0.0
+      y: 0.32128394
+      t_x: 0.1909977
+      t_y: 0.9815905
     }
     points {
-      x: 0.05405063
-      y: -0.0057678903
-      t_x: 0.2914353
-      t_y: 0.95659053
+      x: 0.16076852
+      y: 0.74645686
+      t_x: 0.99418455
+      t_y: 0.10768964
     }
     points {
-      x: 0.08244414
-      y: 0.9718782
-      t_x: 0.93925816
-      t_y: -0.3432115
+      x: 0.8405229
+      y: 0.5984939
+      t_x: 0.5694311
+      t_y: -0.82203907
+    }
+    points {
+      x: 0.99
+      y: 0.3394181
+      t_x: 0.46351492
+      t_y: -0.8860891
     }
     points {
       x: 1.0
-      y: 0.10583211
-      t_x: 0.9692194
-      t_y: 0.24619867
+      y: 0.32850936
+      t_x: 0.4737472
+      t_y: -0.8806609
     }
   }
   particle_properties {
@@ -287,6 +281,6 @@ emitters {
   size_mode: SIZE_MODE_MANUAL
   start_delay_spread: 0.0
   duration_spread: 0.0
-  stretch_with_velocity: true
-  start_offset: 0.0
+  stretch_with_velocity: false
+  start_offset: 100.0
 }

@@ -52,7 +52,6 @@ function check_planet(self, message_id, message, sender)
 	end
 	if not self.flag and self.landed then
 		self.flag=true
-		--defrx.notify("flag_up", {dist_vector=self.dist_vector})
 	end
 	self.landed=false
 	if self.combo_timer then
@@ -89,10 +88,26 @@ end
 
 local function initialize(self, message_id, message, sender)
 	self.play=true
-	print("speed : "..global.get("speed"))
+	msg.post("#step", "enable")
+	local scale = go.get("#step", "scale")
+	go.set("#step", "scale", scale/10)
+	go.animate("#step", "scale", go.PLAYBACK_ONCE_FORWARD, scale, go.EASING_OUTBOUNCE, 0.3)
+	
 	go.cancel_animations(".","euler")
 	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, go.get(".", "euler.z")+360*self.rotate_direction, go.EASING_LINEAR, 60/(self.rotate_speed*global.get("speed")))
 end
+local function reset_color(self, message_id, message, sender)
+	if not self.print then
+		go.set("#step", "tint", global.get("color"))
+		particlefx.set_constant("#smoke", "smoke", "tint", global.get("color"))
+		particlefx.set_constant("#smoke", "purse", "tint", global.get("color"))
+	end
+end
+local function reset(self, message_id, message, sender)
+	go.cancel_animations(".","euler")
+	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, go.get(".", "euler.z")+360*self.rotate_direction, go.EASING_LINEAR, 60/(self.rotate_speed*global.get("speed")))
+end
+
 local function satellite_rate()
 	local num = math.random(1,100)
 	num = math.random(1,100)
@@ -121,7 +136,9 @@ function init(self)
 	defrx.create_stream("game_start")
 	defrx.observe(self, "game_start", initialize)
 	defrx.create_stream("add_combo")
-	defrx.observe(self, "add_combo", initialize)
+	defrx.observe(self, "add_combo", reset)
+	defrx.create_stream("combo")
+	defrx.observe(self, "combo", reset_color)
 	defrx.create_stream("satellite_dead")
 	defrx.observe(self, "satellite_dead", check_satellite)
 	
@@ -149,7 +166,7 @@ function init(self)
 	particlefx.set_constant("#planet_light", "emitter", "tint", planet_color(self))
 	msg.post("#broken", "disable")
 	go.set("#step", "scale", vmath.vector3(1.5,1.5,1))
-	go.set("#step", "tint",vmath.vector4(0.5,0.5,0.5,0.7))
+	go.set("#step", "tint",vmath.vector4(1,1,1,1))
 	msg.post("#step", "disable")
 
 end
@@ -205,11 +222,26 @@ function on_message(self, message_id, message, sender)
 						defrx.notify("add_combo")
 					else
 						global.set("speed",1)
+						global.set("color",vmath.vector4(1,1,1,1))
 						defrx.notify("break_combo")
-						initialize(self, message_id, message, sender)
+						reset_color(self, message_id, message, sender)
+						reset(self, message_id, message, sender)
 					end
 					defrx.notify("add_score")
 					msg.post("#step", "enable")
+					local scale = go.get("#step", "scale")
+					go.set("#step", "scale", scale/10)
+					go.animate("#step", "scale", go.PLAYBACK_ONCE_FORWARD, scale, go.EASING_OUTBOUNCE, 0.3,0,function()
+						self.print=true
+						defrx.notify("flag_up")
+					end)
+					particlefx.play("#smoke")
+				elseif self.play then
+					global.set("speed",1)
+					global.set("color",vmath.vector4(1,1,1,1))
+					--defrx.notify("break_combo")
+					reset_color(self, message_id, message, sender)
+					reset(self, message_id, message, sender)
 				end
 				global.set("target_planet", go.get_id())
 			end

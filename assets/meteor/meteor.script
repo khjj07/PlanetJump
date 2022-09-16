@@ -25,9 +25,11 @@ function alert_routine(self, message_id, message, sender)
 	--msg.post("@render:", "draw_line", { start_point = go.get_world_position(), end_point = go.get_world_position()+self.direction*10000, color = vmath.vector4(1,0,0,1) })
 	if result then
 		msg.post(self.alert, "enable")
+		msg.post(self.arrow, "enable")
 		go.set_position(result.position,self.alert)
 	else
 		msg.post(self.alert, "disable")
+		msg.post(self.arrow, "disable")
 	end
 end
 
@@ -45,6 +47,9 @@ function init(self)
 		self.damage=1
 	end
 	self.alert = factory.create("#alert",vmath.vector3(),nil,{direction=self.direction},4)
+	self.arrow = factory.create("#arrow",vmath.vector3(),nil,{direction=self.direction},1)
+	go.set_parent(self.arrow,self.alert)
+	go.set_scale(0.5,self.arrow)
 	defrx.create_stream("player_position")
 	defrx.observe(self, "player_position", check_meteor)
 	defrx.create_stream("camera_position")
@@ -57,6 +62,7 @@ function update(self, dt)
 	self.play=false
 	go.set_position(pos)
 	msg.post(self.alert, "direction",{direction=self.direction})
+	msg.post(self.arrow, "direction",{direction=self.direction})
 end
 
 function explosion(self)

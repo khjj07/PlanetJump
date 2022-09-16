@@ -7,6 +7,7 @@ local STATE={
 }
 local ROTATE_SCALING = 30
 local HEX = {0,1,2,3,4,5,6,7,8,9,"A","B","C","D","E","F"}
+
 go.property("jumpforce", 4800)
 go.property("play", false)
 go.property("debug", false)
@@ -92,7 +93,7 @@ local function dead(self, message_id, message, sender)
 end
 
 function trail_loaded(self, url, result)
-	local trail = factory.create(self.trail_shape,vmath.vector3(),nil,{color=self.trail_color},1)
+	trail = factory.create(self.trail_shape,vmath.vector3(),nil,{color=self.trail_color},1)
 	go.set_parent(trail,".",false)
 	table.insert(self.ids, trail)
 end
@@ -134,7 +135,6 @@ function init(self)
 	defrx.create_stream("combo")
 	defrx.observe(self, "combo",function(self, message_id, message, sender)
 		factory.create("#combo",go.get_world_position(),vmath.quat_rotation_z(0),{combo=message.combo})
-		print("combo"..message.combo)
 	end)
 	defrx.create_stream("score")
 	defrx.observe(self, "score",function(self, message_id, message, sender)

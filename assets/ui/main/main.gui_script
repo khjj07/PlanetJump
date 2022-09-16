@@ -6,6 +6,16 @@ local PROXY = msg.url("main:/scene_proxy")
 local CAM_MOVE_OFFSET=3000
 local MAXPOINT=6
 local PURPLE = vmath.vector4(0.6,0.4,0.6,1)
+local COLOR={
+	{vmath.vector3(209,157,206),vmath.vector3(255,217,144),vmath.vector3(137,130,254)},
+	{vmath.vector3(234,129,73)},
+	{vmath.vector3(147,130,255)},
+	{vmath.vector3(197,174,137),vmath.vector3(242,103,142),vmath.vector3(138,255,190)},
+	{vmath.vector3(255,202,227),vmath.vector3(74,174,191)},
+	{vmath.vector3(192,123,123),vmath.vector3(185,249,246)},--재조정 필요
+	{vmath.vector3(54,114,74)},
+	{vmath.vector3(212,119,204)}
+}
 local store = require "assets.ui.store.store" 
 local color = require("color-lib.color")
 
@@ -43,6 +53,8 @@ function start(self,action_id,action,button)
 end
 
 function show_store(self,action_id,action,button)
+	local rand = math.random(1,8)
+	gui.play_particlefx(gui.get_node("store/light"))
 		sound.play("#slide_in",{delay=0.1})
 		self.node["title/window"]:animate("position.y", 1500, gui.EASING_INBACK, 1,0)
 		defrx.notify("move_cam", {position=vmath.vector3(0,-CAM_MOVE_OFFSET,0),duration=1,easing=gui.EASING_INBACK})
@@ -52,7 +64,7 @@ function show_store(self,action_id,action,button)
 		self.node["store/window"]:animate("position.y", 0, gui.EASING_OUTBACK, 1,0.8,function()
 			msg.post(".", "acquire_input_focus")
 		end)
-		self.node["store/planet"]:change_texture("planet"..math.random(1,8))
+		self.node["store/planet"]:change_texture("planet"..rand)
 		button:set_scale(button.original_scale)
 end
 
@@ -139,6 +151,7 @@ function hide_credits(self,action_id,action,button)
 end
 
 function hide_store(self,action_id,action,button)
+	gui.stop_particlefx(gui.get_node("store/light"))
 		sound.play("#slide_out")
 		msg.post(".", "release_input_focus")
 		self.node["store/window"]:animate("position.y", -1500, gui.EASING_OUTBACK, 1,0,function()
@@ -332,13 +345,15 @@ function init(self)
 	
 	self.node["title/title"]:set_scale(vmath.vector3(0.01,0.01,0.01))
 	self.node["title/title"]:animate("scale", vmath.vector3(0.5,0.5,1), gui.EASING_OUTBACK, 1,0,function()
-		--self.node["title/title"]:animate("scale.x",0.550,gui.EASING_INELASTIC,3,5,nil,gui.PLAYBACK_LOOP_PINGPONG)
-		--self.node["title/title"]:animate("scale.y",0.450,gui.EASING_INELASTIC,3,5,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		self.node["title/title"]:animate_relatively("rotation.z",1,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		--self.node["title/title"]:animate("scale.x",0.550,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
+		--self.node["title/title"]:animate("scale.y",0.450,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 		--self.node["title/title"]:animate("position.y",self.node["title/title"]:get_position().y-50,gui.EASING_INBACK,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 	end)
 	self.node["title/tap_to_start"]:animate("scale",self.node["title/tap_to_start"]:get_scale()*1.1,gui.EASING_INELASTIC,3,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 	self.node["title/tap_to_start"]:animate("rotation.z",5,gui.EASING_INELASTIC,1.5,0,nil,gui.PLAYBACK_LOOP_PINGPONG)
 	gui.play_particlefx(gui.get_node("title/twinkle"))
+	
 	button_initialize(self.node["title/option_btn"],0.1)
 	button_initialize(self.node["title/credit_btn"],0.1)
 	button_initialize(self.node["title/medal_btn"],0.2)

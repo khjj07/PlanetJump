@@ -2,7 +2,6 @@ function init(self)
 	particlefx.play("#gravity")
 end
 
-
 function final(self)
 	particlefx.stop("#gravity")
 end

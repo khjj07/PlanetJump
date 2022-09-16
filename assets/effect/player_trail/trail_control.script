@@ -1,5 +1,11 @@
+local global = require "global"
 go.property("color", vmath.vector4())
+
 function init(self)
 	particlefx.play("#trail")
-	particlefx.set_constant("#trail", "tail", "tint", self.color)
+	particlefx.set_constant("#trail", "tail", "tint", global.get("color"))
+end
+
+function update(self,dt)
+	particlefx.set_constant("#trail", "tail", "tint", global.get("color"))
 end

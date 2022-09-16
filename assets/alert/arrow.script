@@ -1,0 +1,11 @@
+go.property("direction", vmath.vector3())
+
+function on_message(self, message_id, message, sender)
+	if message_id==hash("direction") then
+		self.direction=message.direction
+		if self.direction ~= -vmath.vector3(1,0,0) then
+			go.set_rotation(vmath.quat_from_to(vmath.vector3(1,0,0), self.direction))
+			go.set_position(self.direction*100)
+		end
+	end	
+end
